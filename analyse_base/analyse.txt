@@ -1,0 +1,796 @@
+(venv) (base) remipierron@MacBook-Air-de-Remi BD_sqlite % python describe.py
+🔍 ANALYSE DE LA BASE : dental_data.db
+
+Nombre de tables trouvées : 80
+
+📦 TABLE : BI_users
+==================================================
+  • id                   : 1
+  • username             : admin
+  • password             : $2b$10$e1TibLgMVqUdiTYYTQCHCu7OiO0CgGXn7uX693HsHEByZ.V475AVi
+
+
+📦 TABLE : action
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : autocomplete
+==================================================
+  • id                   : 1
+  • code1                : 058
+  • code2                : 0
+  • value                : Abachi (poussière de bois)
+  • description1         : Allergie
+  • description2         : None
+  • description3         : None
+
+
+📦 TABLE : backup
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : calendar
+==================================================
+  • id                   : 1
+  • service_id           : 1
+  • bgColor              : #D9534F
+  • type                 : Personal
+  • schedulesChecking    : 0
+
+
+📦 TABLE : capture_vitale
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : cardiology_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : category
+==================================================
+  • id                   : 0
+  • name                 : Tous
+  • description          : None
+
+
+📦 TABLE : checkup
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : consultation
+==================================================
+  • id                   : 2
+  • motive               : None
+  • diagnostic           : None
+  • notifiableDiseases   : None
+  • note                 : None
+  • user_list_id         : 24
+  • behavior             : None
+  • todayTest            : None
+
+
+📦 TABLE : convention
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : dental_diagram
+==================================================
+  • id                   : 4
+  • patient_id           : 2
+  • date                 : 2023-02-03
+  • tooth_number         : s:2:"36";
+  • tooth_state          : -
+  • type                 : 1
+  • consultation_id      : 2
+  • current_acts         : None
+  • next_acts            : None
+  • visible              : 1
+  • reason               : None
+  • document_id          : None
+
+
+📦 TABLE : dental_diagram_udc
+==================================================
+  • dental_diagram_id    : 4
+  • udc_id               : 1079
+
+
+📦 TABLE : doctor
+==================================================
+  • id                   : 21
+  • title                : Omnipraticien
+  • company              : None
+  • personOpeningAccount : kbmadmin
+  • dateOpened           : 2021-02-24
+  • taxRateArea          : None
+  • licenceNumber        : None
+  • numProf              : None
+  • bgColor              : 45F84A
+  • consult_percent      : 0.0
+  • care_percent         : 0.0
+  • prosthesis_percent   : 0.0
+  • surgery_percent      : 0.0
+  • periodontics_percent : 0.0
+  • implant_percent      : 0.0
+  • orthodontics_percent : 0.0
+  • expendable_percent   : 0.0
+  • implant_exp_percent  : None
+  • orthodontics_exp_percent : None
+  • prosthesis_exp_percent : None
+  • invisalign_exp_percent : None
+
+
+📦 TABLE : document
+==================================================
+  • id                   : 2
+  • consultation_id      : 2
+  • body                 : <table border="0" cellpadding="0" cellspacing="0" style="width:100%">\r\n    <tb...
+  • date                 : 2023-02-03
+  • type                 : Invoice
+  • persist              : None
+  • note                 : None
+  • convention_id        : None
+  • duration             : None
+  • number               : None
+
+
+📦 TABLE : document_scan
+==================================================
+  • id                   : 237
+  • visit_id             : 2
+  • name                 : None
+
+
+📦 TABLE : document_sent
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : document_type
+==================================================
+  • id                   : 1
+  • service_id           : 12
+  • user_created_id      : 24
+  • name                 : test
+  • body                 : iuiuyik;ufuot;:gfu;ro<br />\r\n&nbsp;
+  • date                 : 2023-02-06
+  • type                 : Certificate
+
+
+📦 TABLE : drug
+==================================================
+  • id                   : 1
+  • denomination         : CETICHATENETARLIE VILAINLORHYDRATE
+  • brand                : ALBUISINE
+  • form                 : Comprimé(s)
+  • Type                 : Boite(s)
+  • dosage               : 10MG
+  • category_id          : None
+  • posology             : None
+  • quantity             : None
+
+
+📦 TABLE : endocrinology_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : evenement
+==================================================
+  • id                   : 1
+  • title                : 10 - DURAND JACQUELDIANA - 0660395947. consultation
+  • startDatetime        : 2023-02-04 10:00:00
+  • endDatetime          : 2023-02-04 10:15:00
+  • url                  : /web/fullcalendar/fc-add-events
+  • allDay               : None
+  • bgColor              : #E15055
+  • fgColor              : #FFFFFF
+  • cssClass             : None
+  • calendar_id          : 20
+  • discr                : PatientUserEvent
+
+
+📦 TABLE : expense
+==================================================
+  • id                   : 1
+  • title                : Compresses
+  • cost                 : 1000.0
+  • date                 : 2023-03-11
+  • dateEntry            : 2023-03-11
+  • doctor_id            : 26
+  • note                 : None
+  • type                 : Materiel
+  • date_expiration      : None
+  • description          : None
+  • brand                : None
+  • quantity             : 03
+  • entered_by_id        : 26
+  • amount               : 1000.0
+  • remaining_amount     : 0.0
+  • provider_id          : None
+
+
+📦 TABLE : file
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : general_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : graphic_tooth
+==================================================
+  • id                   : 1
+  • picturePath          : uploads/Dent
+  • pictureName          : 32124d89dcf67786d24d6071b4ee46ed.png
+  • acte_liste_udc       : a:1:{i:0;i:218;}
+  • tooth_number         : 11
+
+
+📦 TABLE : gynecology_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : historique_test
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : hospital_center
+==================================================
+  • id                   : 1
+  • user_created_id      : 22
+  • name                 : My Dental Clinic
+  • address              : New City
+  • type                 : Clinique
+  • phone                : None
+  • wilaya               : New City
+  • town                 : New City
+  • updateDate           : 2016-05-23
+  • fax                  : None
+  • webSite              : None
+  • validation_sms       : Bonjour _prenom _nom ! Votre prochain RDV chez .... est le _date à _heure. Si...
+  • cancellation_sms     : Bonjour _prenom _nom ! Votre RDV chez ..... le _date @ _heure est annulé. Veu...
+  • update_sms           : Bonjour _prenom _nom ! Votre prochain RDV chez .. est le _date @ _heure. Si v...
+  • reminder_sms         : Bonjour, ceci est pour confirmer le rendez-vous de _prenom _nom avec... le _d...
+  • creationDate         : 2024-02-04
+  • expirationDate       : 2025-02-04
+  • alert_before_expiration : Votre compte sera bientôt en souffrance. \nDate d'expiration 04 Février 2024....
+  • alert_after_expiration : None
+  • delay_before_alert   : 30
+  • deny_acces           : 0
+
+
+📦 TABLE : importbd
+==================================================
+  • id                   : 1
+  • link                 : /var/www/html/mydental.clinic.mydentalcloud.com/public_html/web/uploads/backu...
+  • importDate           : 2023-02-07
+
+
+📦 TABLE : invoice
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : invoice_prothese
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : laboratoire_test
+==================================================
+  • id                   : 119
+  • measurementUnit      : %
+  • name                 : GB
+  • calculated           : 0
+  • bilan                : None
+
+
+📦 TABLE : login_history
+==================================================
+  • id                   : 1
+  • action_time          : 2023-01-31 13:30:20
+  • action               : Connexion
+  • user_id              : 22
+
+
+📦 TABLE : lot
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : medical_personal_history
+==================================================
+  • id                   : 2
+  • allergy              : None
+  • medicalHistories     : None
+  • surgicalHistories    : None
+  • familysurgical       : None
+  • familymedical        : None
+  • summary              : None
+  • menarche             : None
+  • menopause            : None
+  • parity               : None
+  • gravidity            : None
+  • cycle                : None
+  • dysmenorrhea         : None
+  • dyspareunia          : None
+  • other                : None
+  • traumatic_histories  : None
+  • obstetrical_histories : None
+  • initialWeight        : None
+  • psychiatric          : None
+  • toxic                : None
+  • prison               : None
+  • trauma               : None
+  • psychomotor_development : None
+  • abundance            : None
+  • menstruationDuration : None
+  • cesarean             : None
+  • abortion             : None
+  • contraceptionType    : None
+
+
+📦 TABLE : message
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : message_metadata
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : normal_value
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : ophthalmology_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : orl_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : orthodontic_consultation
+==================================================
+  • id                   : 2
+  • phase                : None
+  • maxillary            : None
+  • ring_type_top        : None
+  • ring_type_bottom     : None
+  • tim                  : None
+  • turbo_bites          : None
+  • bracket_top          : None
+  • bracket_bottom       : None
+  • extractions_treatment_plan : None
+  • stripping            : 0
+  • other_treatment_plan : None
+  • a_p_sens             : None
+  • vertical_sens        : a:0:{}
+  • transversal_sens     : a:0:{}
+  • d_a_m                : a:0:{}
+  • problem              : None
+  • extractions_diag     : None
+  • current_acts         : None
+  • next_acts            : None
+  • device_type          : a:0:{}
+  • device_type_invisalign : a:0:{}
+  • other_device_invisalign : a:0:{}
+  • maxillary_invisalign : None
+  • extractions_invisalign : None
+  • other_invisalign     : None
+  • type_ortho           : Ortho
+  • tooth_number         : None
+  • dental_care_note     : None
+  • dental_prosthesis_tooth_number : None
+  • dental_prosthesis_note : None
+  • dental_surgery_tooth_number : None
+  • dental_surgery_note  : None
+  • dental_implant_note  : None
+  • dental_implant_tooth_number : None
+  • dental_implant_diameter : None
+  • dental_implant_length : None
+  • dental_implant_correction : None
+  • dental_prosthesis_type : 
+  • dental_prosthesis_lab_price : 0
+  • dental_implant_brand : None
+  • dental_implant_model : None
+  • dental_implant_lab_price : 0
+  • treatment_plan       : None
+  • diagnosis            : None
+  • note_consult         : None
+  • dental_care_diag     : None
+  • dental_prosthesis_diag : None
+  • dental_surgery_diag  : None
+  • dental_implant_diag  : None
+  • dental_paro_note     : None
+  • dental_paro_diag     : None
+  • dental_prosthesis_user_id : None
+  • prosthesis_note      : None
+  • dental_implant_impression_type : 
+  • dental_prosthesis_clinical_stage_id : None
+  • dental_prosthesis_lab_state_id : None
+  • dental_prosthesis_end_date : None
+  • dental_implant_type  : 
+  • dental_implant_clinical_stage_id : None
+  • dental_implant_lab_state_id : None
+  • dental_prosthesis_status : 0
+  • dental_prosthesis_lab_status : Non réglé
+  • dental_prosthesis_start_date : None
+  • dental_ortho_lab_state_id : None
+  • dental_ortho_lab_price : 0
+  • dental_prosthesis_ortho_user_id : None
+  • dental_prosthesis_implant_user_id : None
+  • dental_ortho_impression_type : 
+  • dental_prosthesis_impression_type : 
+  • dental_ortho_prosthesis_status : 0
+  • dental_implant_prosthesis_status : 0
+  • prosthesis_note_ortho : None
+  • prosthesis_note_implant : None
+  • note_radio           : None
+  • invoice_prothese_id  : None
+  • doc_note_proth_for_prosthesis : None
+  • doc_note_ortho_for_prosthesis : None
+  • doc_note_implant_for_prosthesis : None
+  • new_doc_proth_note   : 0
+  • new_doc_ortho_note   : 0
+  • new_doc_implant_note : 0
+  • doc_proth_note_checked : 0
+  • doc_ortho_note_checked : 0
+  • doc_implant_note_checked : 0
+  • note_checked         : 0
+  • new_prosthesis_note  : 0
+  • dental_aesthetic_tooth_number : None
+  • dental_Aesthetic_note : None
+  • dental_Aesthetic_diag : None
+
+
+📦 TABLE : orthodontic_consultation_dentalAesthetic
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : orthodontic_consultation_dentalcare
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : orthodontic_consultation_implant
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : orthodontic_consultation_prosthesis
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : orthodontic_consultation_surgery
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : patient
+==================================================
+  • id                   : 2
+  • medical_personal_history_id : 2
+  • lastName             : MARTIN
+  • firstName            : MARIE
+  • birthDate            : 1900-01-01
+  • birthPlace           : None
+  • address              : New City
+  • gender               : Feminin
+  • phone                : 0797156996
+  • numCartechifae       : None
+  • familyStatus         : None
+  • EmergencyPhone       : None
+  • traitingDoctor       : None
+  • bloodGroup           : None
+  • profession           : None
+  • origin               : None
+  • NbPrintCard          : None
+  • referencedBy         : None
+  • husbandsName         : None
+  • characteristics      : traitement d urgence 36 sr
+  • cat1                 : None
+  • cat2                 : None
+  • cat3                 : None
+  • cat4                 : None
+  • cat5                 : None
+  • fax                  : None
+  • email                : None
+  • picturePath          : None
+  • pictureName          : None
+  • doctor_id            : 24
+  • smsConfirmation      : 1
+  • emailConfirmation    : 1
+  • user_created_id      : 24
+  • arabic_last_name     : 
+  • arabic_first_name    : 
+  • converted            : 0
+  • convertedDate        : None
+
+
+📦 TABLE : patient_service_event
+==================================================
+  • id                   : 1
+  • patient_id           : 10
+  • basic_visit_id       : 0
+  • note                 : 489_consultation
+  • validation           : None
+  • user_taking_id       : 29
+  • user_modifying_id    : None
+  • dateTaking           : 2023-02-04 09:58:25
+
+
+📦 TABLE : patient_user_event
+==================================================
+  • id                   : 1
+  • user_id              : 25
+  • sms_id               : None
+  • smsSent              : 0
+
+
+📦 TABLE : payment
+==================================================
+  • id                   : 9
+  • consultation_id      : 2
+  • starting_price       : 40.0
+  • price                : 40.0
+  • discount             : 0.0
+  • amount               : 40.0
+  • type                 : 1
+  • remaining_amount     : 0.0
+  • convention_id        : None
+  • payment_type         : Espèces
+  • discount_reason      : /
+  • discount_percent     : 0.0
+  • date                 : 2023-02-03 23:35:39
+
+
+📦 TABLE : payment_history
+==================================================
+  • id                   : 3
+  • visit_id             : 2
+  • idudc                : 485
+  • description1         : Traitement endo sur pluri
+  • value                : 240
+
+
+📦 TABLE : payment_invoice
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : payment_invoice_prothese
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : physiotherapy_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : pregnancy
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : prescription
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : prescription_type
+==================================================
+  • id                   : 83
+  • prescription_type_name : 001
+
+
+📦 TABLE : product
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : product_log
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : radio_test
+==================================================
+  • id                   : 230
+  • name                 : Panoramique dentaire
+
+
+📦 TABLE : receptionniste
+==================================================
+  • id                   : 29
+  • title                : None
+  • company              : None
+  • personOpeningAccount : admin
+  • dateOpened           : 2023-02-04
+  • taxRateArea          : None
+  • numProf              : None
+
+
+📦 TABLE : registered_prescription
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : reminding_event
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : result_test
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : sample
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : service
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : service_hospital_center
+==================================================
+  • service_id           : 1
+  • hospital_center_id   : 1
+
+
+📦 TABLE : sms
+==================================================
+  • id                   : 1
+  • title                : Prise de RDV
+  • body                 : Bonjour _nom _prenom. Votre RDV est le _date à _heure. Si vous décidez de le ...
+
+
+📦 TABLE : status
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : sterilization
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : supplier
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : test
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : thread
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : thread_metadata
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : udc
+==================================================
+  • id                   : 1
+  • code1                : 01
+  • code2                : 01
+  • value                : 0
+  • description1         : Règlement
+  • description2         : 0
+  • description3         : 0
+  • description4         : Règlement
+  • description5         : 
+  • description6         : #E15055
+
+
+📦 TABLE : urological_surgery_consultation
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : user
+==================================================
+  • id                   : 21
+  • username             : radio
+  • username_canonical   : radio
+  • enabled              : 1
+  • salt                 : ae38i296m6g48k08cws4wowk0sws004
+  • password             : keRvZgSdzvSt2FIP6asumkPj2YX9MbeA2NVJzlyagY9xUYIBHhqbFGNNLoMMyncCsWYW6VDMEhk5W...
+  • last_login           : 2024-11-04 09:58:15
+  • locked               : 0
+  • expired              : 0
+  • expires_at           : None
+  • confirmation_token   : None
+  • password_requested_at : None
+  • roles                : a:1:{i:0;s:11:"ROLE_DOCTOR";}
+  • credentials_expired  : 0
+  • credentials_expire_at : None
+  • picturePath          : None
+  • pictureName          : None
+  • lastName             : RADIO
+  • firstName            : User
+  • birthDate            : None
+  • birthPlace           : Paris
+  • address              : None
+  • gender               : Homme
+  • phone                : None
+  • email                : None
+  • emailCanonical       : None
+  • discr                : Doctor
+  • last_activity        : 2024-11-04 10:11:47
+  • first_login_today    : 2024-11-04 09:58:15
+  • specialisation_id    : 12
+
+
+📦 TABLE : user_event
+==================================================
+  (⚠️ Table vide, aucune donnée)
+
+
+📦 TABLE : visit
+==================================================
+  • id                   : 2
+  • current_location_id  : 12
+  • current_hospital_center_id : 1
+  • patient_id           : 2
+  • user_created_id      : 24
+  • visit_created_id     : None
+  • arrivalDate          : 2023-02-03 23:34:44
+  • currentLocalTimeAssignment : 2023-02-03 23:34:44
+  • status               : A revoir
+  • price                : 0.0
+  • reason               : None
+  • priority             : 1
+  • discr                : OrthodonticConsultation
+  • user_activated_id    : 24
+  • startDate            : 2023-02-03 23:34:00
+  • endDate              : 2023-02-03 23:41:46
+  • starting_price       : 0.0
+  • discount             : 0.0
+  • amount               : 0.0
+  • remaining_amount     : 0.0
+  • first_payment        : 0.0
+  • second_payment       : 0.0
+  • payment_method       : None
+  • payment_note         : None
+  • notice               : None
+  • act                  : None
+  • type                 : None
+  • next_visit_note      : None
+  • bg_Color             : None
+  • cashed_user_id       : None
+  • invoiced             : 0
+
+
+📦 TABLE : visit_test
+==================================================
+  (⚠️ Table vide, aucune donnée)
