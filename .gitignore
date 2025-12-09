@@ -2,3 +2,4 @@ db/sql/import.sql
 .DS_Store
 start-app.sh
 wait-for-it.sh
+BD_sqlite
