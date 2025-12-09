@@ -111,9 +111,6 @@ app.use('/api/doctor-performance', authenticateToken,require('./routes/doctor/do
 app.use('/api/doctor/patient-evolution',authenticateToken, require('./routes/doctor/patientEvolutionRoute')(connection));
 app.use('/api/doctor/monthly-stats', authenticateToken,require('./routes/doctor/monthlyStatsRoute')(connection));
 
-
-
-
 // Démarrer le serveur
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
