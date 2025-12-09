@@ -88,3 +88,16 @@ export function formatNumber(value) {
         return value;  // Pour les valeurs inférieures à 1000
     }
 }
+
+// Fonction pour obtenir la plage de dates depuis les inputs
+export function getDateRange() {
+    const startDate = document.getElementById('start-date')?.value;
+    const endDate = document.getElementById('end-date')?.value;
+    
+    // Si les dates ne sont pas définies, retourner le mois dernier par défaut
+    if (!startDate || !endDate) {
+        return getLastMonthDateRange();
+    }
+    
+    return { startDate, endDate };
+}
