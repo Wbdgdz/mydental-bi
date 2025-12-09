@@ -36,11 +36,18 @@ function populateDoctorDropdown() {
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
-    const { startDate, endDate } = getLastMonthDateRange();
 
-    // Initialiser les champs de date avec les valeurs du mois précédent
-    document.getElementById('start-date').value = startDate;
-    document.getElementById('end-date').value = endDate;
+    // --- MODIFICATION : Dates fixes par défaut ---
+    const startDate = '2022-01-01';
+    const endDate = '2024-12-31';
+
+    // Initialiser les champs de date avec ces valeurs
+    const startInput = document.getElementById('start-date');
+    const endInput = document.getElementById('end-date');
+
+    if (startInput) startInput.value = startDate;
+    if (endInput) endInput.value = endDate;
+    
     populateDoctorDropdown(); // Call the function to populate the doctor dropdown
     setupEventListeners(); // Setup the other event listeners
 });
