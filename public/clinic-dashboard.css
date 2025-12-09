@@ -1,0 +1,68 @@
+/* CSS Spécifique au Dashboard Clinique */
+
+/* Menu latéral (Déplacé ici car unique à cette page) */
+.sidebar {
+    height: calc(100% - 60px); /* Hauteur totale moins la nav */
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 60px; /* On commence SOUS la barre de navigation */
+    left: 0;
+    background-color: #333;
+    overflow-x: hidden;
+    transition: 0.3s;
+    padding-top: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 10px 15px;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px; /* Légèrement réduit pour lisibilité */
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #575757;
+    color: #fff;
+}
+
+/* Bouton toggle menu */
+.menu-icon {
+    position: fixed;
+    top: 75px; /* Décalé pour être sous la nav */
+    left: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 1001;
+    background: rgba(255,255,255,0.7); /* Petit fond pour lisibilité */
+    border-radius: 4px;
+    padding: 0 5px;
+}
+
+/* Transition du contenu principal quand le menu s'ouvre */
+#menu-toggle.open + .sidebar {
+    width: 250px;
+}
+
+/* Ajustement du body quand sidebar ouverte */
+body.with-sidebar {
+    margin-left: 250px;
+    transition: margin-left 0.3s;
+}
+
+/* Mobile */
+@media screen and (max-width: 768px) {
+    .sidebar { width: 0; }
+    #menu-toggle.open + .sidebar { width: 200px; }
+    body.with-sidebar { margin-left: 200px; }
+}
