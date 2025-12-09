@@ -33,12 +33,16 @@ function updateParamsSummary(remunerationMedecin, coutCentre, margeCible) {
     }
 }
 
-// Fonction pour initialiser les dates avec le mois précédent
+// Fonction pour initialiser les dates (01/01/2022 au 31/12/2024)
 function initializeDates() {
-    const { startDate, endDate } = getLastMonthDateRange();
+    // Dates fixes
+    const startDate = '2022-01-01';
+    const endDate = '2024-12-31';
+
     const startInput = document.getElementById('start-date');
     const endInput = document.getElementById('end-date');
     
+    // On remplit les champs s'ils sont vides
     if (startInput && !startInput.value) {
         startInput.value = startDate;
     }

@@ -91,13 +91,16 @@ export function formatNumber(value) {
 
 // Fonction pour obtenir la plage de dates depuis les inputs
 export function getDateRange() {
-    const startDate = document.getElementById('start-date')?.value;
-    const endDate = document.getElementById('end-date')?.value;
+    const startDateInput = document.getElementById('start-date')?.value;
+    const endDateInput = document.getElementById('end-date')?.value;
     
-    // Si les dates ne sont pas définies, retourner le mois dernier par défaut
-    if (!startDate || !endDate) {
-        return getLastMonthDateRange();
+    // Si les dates ne sont pas définies, retourner votre plage fixe
+    if (!startDateInput || !endDateInput) {
+        return { 
+            startDate: '2022-01-01', // Format YYYY-MM-DD obligatoire
+            endDate: '2024-12-31'    // Format YYYY-MM-DD obligatoire
+        };
     }
     
-    return { startDate, endDate };
+    return { startDate: startDateInput, endDate: endDateInput };
 }
