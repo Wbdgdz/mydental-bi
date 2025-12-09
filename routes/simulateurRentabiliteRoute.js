@@ -52,10 +52,10 @@ module.exports = (db) => {
             apv.acte_id,
             COUNT(DISTINCT v.id) AS total_visits,
             COUNT(DISTINCT v.patient_id) AS unique_patients,
-            SUM(TIMESTAMPDIFF(MINUTE, v.startdate, v.enddate)) / 60.0 AS total_hours
+            SUM(TIMESTAMPDIFF(MINUTE, v.startDate, v.endDate)) / 60.0 AS total_hours
         FROM actes_par_visit apv
         JOIN visit v ON v.id = apv.visit_id
-        WHERE v.startdate IS NOT NULL AND v.enddate IS NOT NULL
+        WHERE v.startDate IS NOT NULL AND v.endDate IS NOT NULL
         GROUP BY apv.acte, apv.acte_id
       )
       SELECT 
