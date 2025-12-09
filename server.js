@@ -105,6 +105,8 @@ app.use('/api/waiting-times-heatmap', authenticateToken, require('./routes/waiti
 app.use('/api/waiting-times-heatmap-doctor', authenticateToken,require('./routes/waitingTimeHeatmapDoctorRoute')(connection));
 app.use('/api/rendezvous', authenticateToken,require('./routes/rendezvousRoute')(connection));
 
+// Nouvelle route pour le simulateur de rentabilité (protégée)
+app.use('/api/simulateur-rentabilite', authenticateToken, require('./routes/simulateurRentabiliteRoute')(connection));
 
 // Nouvelle route pour l'analyse des performances des médecins (protégée)
 app.use('/api/doctor-performance', authenticateToken,require('./routes/doctor/doctorPerformanceRoute')(connection));

@@ -44,7 +44,7 @@ statistiques_actes AS (
         apv.acte,
         COUNT(DISTINCT v.id) AS total_visits,  -- Comptage unique des visites
         COUNT(DISTINCT v.patient_id) AS unique_patients,
-        SUM(DISTINCT TIMESTAMPDIFF(MINUTE, v.startdate, v.enddate)) / 60 AS total_hours -- Heures uniques par visite
+        SUM(DISTINCT TIMESTAMPDIFF(MINUTE, v.startDate, v.endDate)) / 60 AS total_hours -- Heures uniques par visite
     FROM actes_par_visit apv
     JOIN visit v ON v.id = apv.visit_id
     GROUP BY apv.acte
