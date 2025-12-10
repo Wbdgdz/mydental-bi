@@ -113,6 +113,9 @@ app.use('/api/doctor-performance', authenticateToken,require('./routes/doctor/do
 app.use('/api/doctor/patient-evolution',authenticateToken, require('./routes/doctor/patientEvolutionRoute')(connection));
 app.use('/api/doctor/monthly-stats', authenticateToken,require('./routes/doctor/monthlyStatsRoute')(connection));
 
+// Nouvelle route pour l'analyse financière avancée (protégée)
+app.use('/api/financial-analysis', authenticateToken, require('./routes/financialAnalysisRoute')(connection));
+
 
 
 
