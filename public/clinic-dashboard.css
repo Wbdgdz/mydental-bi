@@ -1,68 +1,105 @@
-/* CSS Spécifique au Dashboard Clinique */
+/* --- SIDEBAR MODE "DRAWER" (OVERLAY) --- */
 
-/* Menu latéral (Déplacé ici car unique à cette page) */
-.sidebar {
-    height: calc(100% - 60px); /* Hauteur totale moins la nav */
-    width: 0;
+/* 1. Bouton Flottant (Toujours visible) */
+.menu-icon {
     position: fixed;
-    z-index: 1000;
-    top: 60px; /* On commence SOUS la barre de navigation */
+    top: 90px; /* Sous la nav */
+    left: 20px;
+    width: 45px;
+    height: 45px;
+    background: white;
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    cursor: pointer;
+    z-index: 2500; /* Au-dessus de tout sauf la sidebar */
+    transition: transform 0.2s;
+    border: 1px solid #f0f0f0;
+}
+
+.menu-icon:hover { transform: scale(1.1); color: var(--primary-dark); }
+
+/* 2. Fond sombre (Backdrop) */
+#sidebar-overlay {
+    position: fixed;
+    top: 0;
     left: 0;
-    background-color: #333;
-    overflow-x: hidden;
-    transition: 0.3s;
-    padding-top: 20px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Voile noir semi-transparent */
+    backdrop-filter: blur(3px); /* Effet flou moderne */
+    z-index: 2999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
 }
 
+#sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 3. Le Menu Latéral (Glisse depuis la gauche) */
+.sidebar {
+    height: 100vh;
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    left: calc(var(--sidebar-width) * -1); /* Caché à gauche */
+    background-color: white;
+    z-index: 3000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Animation fluide */
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* État ouvert */
+.sidebar.open {
+    left: 0;
+}
+
+/* En-tête du menu interne */
+.sidebar-header {
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    padding: 0 25px;
+    border-bottom: 1px solid #f0f0f0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    background: #fafafa;
+}
+
+/* Liste des liens */
 .sidebar ul {
-    list-style-type: none;
-    padding: 0;
+    list-style: none;
+    padding: 20px 15px;
+    margin: 0;
+    overflow-y: auto;
 }
 
-.sidebar ul li {
-    padding: 10px 15px;
-}
+.sidebar ul li { margin-bottom: 5px; }
 
 .sidebar ul li a {
-    color: white;
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #555;
     text-decoration: none;
-    font-size: 16px; /* Légèrement réduit pour lisibilité */
-    display: block;
-    transition: 0.3s;
+    font-size: 14px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    font-weight: 500;
 }
 
 .sidebar ul li a:hover {
-    background-color: #575757;
-    color: #fff;
-}
-
-/* Bouton toggle menu */
-.menu-icon {
-    position: fixed;
-    top: 75px; /* Décalé pour être sous la nav */
-    left: 20px;
-    font-size: 30px;
-    cursor: pointer;
-    z-index: 1001;
-    background: rgba(255,255,255,0.7); /* Petit fond pour lisibilité */
-    border-radius: 4px;
-    padding: 0 5px;
-}
-
-/* Transition du contenu principal quand le menu s'ouvre */
-#menu-toggle.open + .sidebar {
-    width: 250px;
-}
-
-/* Ajustement du body quand sidebar ouverte */
-body.with-sidebar {
-    margin-left: 250px;
-    transition: margin-left 0.3s;
-}
-
-/* Mobile */
-@media screen and (max-width: 768px) {
-    .sidebar { width: 0; }
-    #menu-toggle.open + .sidebar { width: 200px; }
-    body.with-sidebar { margin-left: 200px; }
+    background-color: #eff6ff; /* Bleu très pâle */
+    color: var(--primary-color);
+    transform: translateX(5px);
 }

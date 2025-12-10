@@ -4,13 +4,15 @@ export function updateTimeAnalysisChart(timeAnalysisData) {
     svg.selectAll('*').remove(); // Effacer les anciens éléments du graphique
 
     const margin = { top: 20, right: 70, bottom: 40, left: 50 };
-    const width = 1000 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const fullWidth = 1200;
+    const fullHeight = 500;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
 
     // Créer un groupe 'g' pour le graphique
     const g = svg
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${fullWidth} ${fullHeight}`)
+        .attr("preserveAspectRatio", "xMidYMid meet")
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
