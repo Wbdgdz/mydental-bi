@@ -59,6 +59,7 @@ module.exports = (connection) => {
   });
 
   // Endpoint: Top 10 patients avec soldes impayés (Top 10 patients with unpaid balances)
+  // Note: payment.consultation_id references visit.id (consultation extends visit)
   router.get('/top-unpaid-patients', (req, res) => {
     const { startDate, endDate } = req.query;
 
@@ -122,6 +123,10 @@ module.exports = (connection) => {
   });
 
   // Endpoint: Taux de recouvrement (Recovery rate)
+  // Payment categorization:
+  // - partial_payments: 0 < remaining_amount < amount (partially paid)
+  // - full_payments: remaining_amount = 0 (fully paid)
+  // - no_payments: remaining_amount = amount (not paid at all)
   router.get('/recovery-rate', (req, res) => {
     const { startDate, endDate } = req.query;
 
