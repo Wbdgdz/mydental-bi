@@ -16,13 +16,13 @@ module.exports = (connection) => {
                 -- Calcule le nombre total d'heures travaillées pour chaque médecin dans la période donnée
                 SELECT 
                     visit.user_activated_id,
-                    SUM(TIMESTAMPDIFF(HOUR, visit.startdate, visit.enddate)) AS total_hours_worked
+                    SUM(TIMESTAMPDIFF(HOUR, visit.startDate, visit.endDate)) AS total_hours_worked
                 FROM 
                     visit
                 WHERE 
-                    visit.startdate IS NOT NULL 
-                    AND visit.enddate IS NOT NULL
-                    AND visit.startdate BETWEEN ? AND ?  -- Filtrage par période
+                    visit.startDate IS NOT NULL 
+                    AND visit.endDate IS NOT NULL
+                    AND visit.startDate BETWEEN ? AND ?  -- Filtrage par période
                 GROUP BY 
                     visit.user_activated_id
             ),
@@ -39,7 +39,7 @@ module.exports = (connection) => {
                 JOIN 
                     visit ON consultation.id = visit.id
                 WHERE 
-                    visit.startdate BETWEEN ? AND ?  -- Filtrage par période
+                    visit.startDate BETWEEN ? AND ?  -- Filtrage par période
                 GROUP BY 
                     visit.user_activated_id
             )
