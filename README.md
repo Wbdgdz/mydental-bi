@@ -30,6 +30,41 @@ Le centre dentaire "MYDental" est doté d'une application BI permettant de suivr
 - **Tableau de bord de performance des médecins :**  
   [http://localhost:3000/doctorPerformance.html](http://localhost:3000/doctorPerformance.html)  
 
+- **Simulateur de rentabilité :**  
+  [http://localhost:3000/simulateur-rentabilite.html](http://localhost:3000/simulateur-rentabilite.html)  
+
+- **Analyse financière avancée :**  
+  [http://localhost:3000/financial-analysis.html](http://localhost:3000/financial-analysis.html)  
+
+---
+
+## **Fonctionnalités**
+
+### **Tableau de Bord Clinique**
+- Indicateurs clés de performance (KPI)
+- Suivi des visites et revenus
+- Détail des actes dentaires
+- Performance des médecins
+- Temps d'attente moyen
+
+### **Performance des Médecins**
+- Analyse comparative des médecins
+- Évolution des consultations
+- Statistiques mensuelles
+- Taux de fidélisation patients
+
+### **Simulateur de Rentabilité**
+- Calcul de rentabilité par acte
+- Optimisation tarifaire
+- Analyse coûts/marges
+
+### **Analyse Financière Avancée** ⭐ *Nouveau*
+- **Taux d'impayés** : Suivi du pourcentage de CA non encaissé
+- **Créances par ancienneté** : Classification des impayés (< 30j, 30-60j, 60-90j, > 90j)
+- **Top 10 patients** : Liste des patients avec soldes impayés
+- **Évolution mensuelle** : Tendances des créances dans le temps
+- **Taux de recouvrement** : Analyse des paiements partiels et complets
+
 ---
 
 ## **Informations de Connexion**  
