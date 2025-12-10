@@ -71,6 +71,8 @@ body {
     gap: 40px;
     margin: 0;
     padding: 0;
+    margin-left: auto; /* pousse le groupe de liens vers la droite */
+    margin-right: 32px; /* espace avant le bouton de déconnexion */
 }
 
 .nav-links a {
