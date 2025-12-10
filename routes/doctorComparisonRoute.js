@@ -1,55 +1,45 @@
 const express = require('express');
 const router = express.Router();
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
 
-const dbPath = path.join(__dirname, '..', 'db', 'clinique.db');
-
-router.post('/', async (req, res) => {
-    const { doctorIds, startDate, endDate } = req.body;
-    
-    // Validation
-    if (!doctorIds || !Array.isArray(doctorIds) || doctorIds.length < 2) {
-        return res.status(400).json({ error: 'Au moins 2 médecins doivent être sélectionnés' });
-    }
-    
-    if (!startDate || !endDate) {
-        return res.status(400).json({ error: 'Les dates de début et de fin sont requises' });
-    }
-    
-    const db = new sqlite3.Database(dbPath);
-    
-    try {
-        // Préparer les placeholders pour la requête SQL
-        const placeholders = doctorIds.map(() => '?').join(',');
+module.exports = (connection) => {
+    router.post('/', async (req, res) => {
+        const { doctorIds, startDate, endDate } = req.body;
         
-        // Récupérer les données de chaque médecin
-        const doctorsData = await Promise.all(doctorIds.map(doctorId => 
-            getDoctorComparisonData(db, doctorId, startDate, endDate)
-        ));
+        // Validation
+        if (!doctorIds || !Array.isArray(doctorIds) || doctorIds.length < 2) {
+            return res.status(400).json({ error: 'Au moins 2 médecins doivent être sélectionnés' });
+        }
         
-        // Calculer les scores globaux
-        const enrichedData = doctorsData.map(doctor => ({
-            ...doctor,
-            globalScore: calculateGlobalScore(doctor),
-            loyaltyRate: calculateLoyaltyRate(doctor)
-        }));
+        if (!startDate || !endDate) {
+            return res.status(400).json({ error: 'Les dates de début et de fin sont requises' });
+        }
         
-        res.json({
-            doctors: enrichedData,
-            period: { startDate, endDate }
-        });
-        
-    } catch (error) {
-        console.error('Erreur lors de la comparaison:', error);
-        res.status(500).json({ error: 'Erreur lors de la comparaison des médecins' });
-    } finally {
-        db.close();
-    }
-});
+        try {
+            // Récupérer les données de chaque médecin
+            const doctorsData = await Promise.all(doctorIds.map(doctorId => 
+                getDoctorComparisonData(connection, doctorId, startDate, endDate)
+            ));
+            
+            // Calculer les scores globaux
+            const enrichedData = doctorsData.map(doctor => ({
+                ...doctor,
+                globalScore: calculateGlobalScore(doctor),
+                loyaltyRate: calculateLoyaltyRate(doctor)
+            }));
+            
+            res.json({
+                doctors: enrichedData,
+                period: { startDate, endDate }
+            });
+            
+        } catch (error) {
+            console.error('Erreur lors de la comparaison:', error);
+            res.status(500).json({ error: 'Erreur lors de la comparaison des médecins' });
+        }
+    });
 
 // Fonction pour récupérer toutes les données d'un médecin
-function getDoctorComparisonData(db, doctorId, startDate, endDate) {
+function getDoctorComparisonData(connection, doctorId, startDate, endDate) {
     return new Promise((resolve, reject) => {
         const query = `
             SELECT 
@@ -75,25 +65,23 @@ function getDoctorComparisonData(db, doctorId, startDate, endDate) {
                 END) as newPatients,
                 
                 -- Temps patient moyen (en minutes)
-                CAST(AVG(CAST(
-                    (julianday(c.heureFin) - julianday(c.heureDebut)) * 24 * 60 
-                    AS INTEGER)) AS INTEGER) as avgPatientTime,
+                CAST(AVG(
+                    TIMESTAMPDIFF(MINUTE, c.heureDebut, c.heureFin)
+                ) AS SIGNED) as avgPatientTime,
                 
                 -- Temps d'attente moyen (en minutes)
                 CAST(AVG(CASE 
                     WHEN c.heureArrivee IS NOT NULL AND c.heureDebut IS NOT NULL
-                    THEN CAST(
-                        (julianday(c.heureDebut) - julianday(c.heureArrivee)) * 24 * 60 
-                        AS INTEGER)
+                    THEN TIMESTAMPDIFF(MINUTE, c.heureArrivee, c.heureDebut)
                     ELSE NULL
-                END) AS INTEGER) as avgWaitingTime,
+                END) AS SIGNED) as avgWaitingTime,
                 
                 -- Revenus total
                 COALESCE(SUM(a.tarif), 0) as totalRevenue,
                 
                 -- Temps de travail total (en heures)
                 SUM(
-                    (julianday(c.heureFin) - julianday(c.heureDebut)) * 24
+                    TIMESTAMPDIFF(MINUTE, c.heureDebut, c.heureFin) / 60
                 ) as totalWorkingHours
                 
             FROM Medecins m
@@ -104,10 +92,14 @@ function getDoctorComparisonData(db, doctorId, startDate, endDate) {
             GROUP BY m.idMedecin, m.nom, m.prenom
         `;
         
-        db.get(query, [startDate, endDate, doctorId], (err, row) => {
+        connection.query(query, [startDate, endDate, doctorId], (err, results) => {
             if (err) {
                 reject(err);
+            } else if (results.length === 0) {
+                reject(new Error(`Médecin avec ID ${doctorId} non trouvé`));
             } else {
+                const row = results[0];
+                
                 // Calculer le CA par heure
                 const revenuePerHour = row.totalWorkingHours > 0 
                     ? row.totalRevenue / row.totalWorkingHours 
@@ -122,8 +114,8 @@ function getDoctorComparisonData(db, doctorId, startDate, endDate) {
                     newPatients: row.newPatients || 0,
                     avgPatientTime: row.avgPatientTime || 0,
                     avgWaitingTime: row.avgWaitingTime || 0,
-                    totalRevenue: row.totalRevenue || 0,
-                    totalWorkingHours: row.totalWorkingHours || 0,
+                    totalRevenue: parseFloat(row.totalRevenue) || 0,
+                    totalWorkingHours: parseFloat(row.totalWorkingHours) || 0,
                     revenuePerHour: revenuePerHour
                 });
             }
@@ -173,4 +165,5 @@ function calculateLoyaltyRate(doctor) {
     return (recurringPatients / doctor.uniquePatients) * 100;
 }
 
-module.exports = router;
+    return router;
+};

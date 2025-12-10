@@ -92,7 +92,7 @@ app.use('/api/actes', authenticateToken, require('./routes/actesRoute')(connecti
 app.use('/api/stats', authenticateToken, require('./routes/statsRoute')(connection));
 app.use('/api/doctors', authenticateToken, require('./routes/doctorsRoute')(connection));
 app.use('/api/doctor-indicators', authenticateToken, require('./routes/doctorIndicatorsRoute')(connection));
-app.use('/api/doctor-comparison', authenticateToken, require('./routes/doctorComparisonRoute'));
+app.use('/api/doctor-comparison', authenticateToken, require('./routes/doctorComparisonRoute')(connection));
 app.use('/api/visits-revenue', authenticateToken,require('./routes/visitsRevenueRoute')(connection));
 app.use('/api/patient-visits', authenticateToken, require('./routes/patientVisitsRoute')(connection));
 app.use('/api/consultations', authenticateToken, require('./routes/consultationsRoute')(connection));
