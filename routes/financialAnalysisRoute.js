@@ -3,6 +3,8 @@ const router = express.Router();
 
 module.exports = (connection) => {
   // Endpoint: Taux d'impayés (Unpaid rate)
+  // Note: remaining_amount represents the unpaid portion of a payment
+  // Formula: unpaid_rate = (total_remaining / total_amount) * 100
   router.get('/unpaid-rate', (req, res) => {
     const { startDate, endDate } = req.query;
 
@@ -72,8 +74,7 @@ module.exports = (connection) => {
         COUNT(pay.id) AS payment_count,
         MAX(pay.date) AS last_payment_date
       FROM payment pay
-      JOIN consultation c ON pay.consultation_id = c.id
-      JOIN visit v ON c.id = v.id
+      JOIN visit v ON pay.consultation_id = v.id
       JOIN patient p ON v.patient_id = p.id
       WHERE pay.date BETWEEN ? AND ? AND pay.remaining_amount > 0
       GROUP BY p.id, p.firstName, p.lastName

@@ -408,12 +408,17 @@
                 });
                 const data = await response.json();
 
-                const total = data.total_receivables || 1;
+                const total = data.total_receivables || 0;
+                if (total === 0) {
+                    document.getElementById('aging-bars').innerHTML = '<p style="text-align: center; color: #7f8c8d;">Aucune créance impayée pour cette période</p>';
+                    return;
+                }
+
                 const agingBarsHtml = `
                     <div class="aging-bar-item">
                         <div class="aging-bar-label">&lt; 30 jours</div>
                         <div class="aging-bar-container">
-                            <div class="aging-bar-fill green" style="width: ${(data.less_than_30_days / total * 100)}%">
+                            <div class="aging-bar-fill green" style="width: ${((data.less_than_30_days || 0) / total * 100)}%">
                                 ${formatCurrency(data.less_than_30_days)}
                             </div>
                         </div>
@@ -421,7 +426,7 @@
                     <div class="aging-bar-item">
                         <div class="aging-bar-label">30-60 jours</div>
                         <div class="aging-bar-container">
-                            <div class="aging-bar-fill yellow" style="width: ${(data.between_30_60_days / total * 100)}%">
+                            <div class="aging-bar-fill yellow" style="width: ${((data.between_30_60_days || 0) / total * 100)}%">
                                 ${formatCurrency(data.between_30_60_days)}
                             </div>
                         </div>
@@ -429,7 +434,7 @@
                     <div class="aging-bar-item">
                         <div class="aging-bar-label">60-90 jours</div>
                         <div class="aging-bar-container">
-                            <div class="aging-bar-fill orange" style="width: ${(data.between_60_90_days / total * 100)}%">
+                            <div class="aging-bar-fill orange" style="width: ${((data.between_60_90_days || 0) / total * 100)}%">
                                 ${formatCurrency(data.between_60_90_days)}
                             </div>
                         </div>
@@ -437,7 +442,7 @@
                     <div class="aging-bar-item">
                         <div class="aging-bar-label">&gt; 90 jours</div>
                         <div class="aging-bar-container">
-                            <div class="aging-bar-fill red" style="width: ${(data.more_than_90_days / total * 100)}%">
+                            <div class="aging-bar-fill red" style="width: ${((data.more_than_90_days || 0) / total * 100)}%">
                                 ${formatCurrency(data.more_than_90_days)}
                             </div>
                         </div>
