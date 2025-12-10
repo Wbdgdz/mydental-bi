@@ -40,11 +40,10 @@ function switchMode(mode) {
 const doctorSelects = [
     document.getElementById('doctor-select-1'),
     document.getElementById('doctor-select-2'),
-    document.getElementById('doctor-select-3'),
-    document.getElementById('doctor-select-4')
+    document.getElementById('doctor-select-3')
 ];
 
-const compareBtn = document.getElementById('btn-compare');
+const compareBtn = document.getElementById('compare-btn');
 const comparisonStartDate = document.getElementById('comparison-start-date');
 const comparisonEndDate = document.getElementById('comparison-end-date');
 

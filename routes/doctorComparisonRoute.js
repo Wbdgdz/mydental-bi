@@ -43,25 +43,25 @@ function getDoctorComparisonData(connection, doctorId, startDate, endDate) {
     return new Promise((resolve, reject) => {
         const query = `
             SELECT 
-                m.idMedecin,
-                m.nom,
-                m.prenom,
+                u.id as idMedecin,
+                u.lastName as nom,
+                u.firstName as prenom,
                 
                 -- Patients uniques
-                COUNT(DISTINCT c.idPatient) as uniquePatients,
+                COUNT(DISTINCT v.patient_id) as uniquePatients,
                 
                 -- Nombre total de visites
-                COUNT(DISTINCT c.idConsultation) as totalVisits,
+                COUNT(DISTINCT v.id) as totalVisits,
                 
-                -- Nouveaux patients (première consultation dans la période)
+                -- Nouveaux patients (première visite dans la période)
                 COUNT(DISTINCT CASE 
-                    WHEN c.dateConsultation = (
-                        SELECT MIN(c2.dateConsultation) 
-                        FROM Consultations c2 
-                        WHERE c2.idPatient = c.idPatient 
-                        AND c2.idMedecin = m.idMedecin
+                    WHEN v.currentLocalTimeAssignment = (
+                        SELECT MIN(v2.currentLocalTimeAssignment) 
+                        FROM visit v2 
+                        WHERE v2.patient_id = v.patient_id 
+                        AND v2.user_activated_id = u.id
                     ) 
-                    THEN c.idPatient 
+                    THEN v.patient_id 
                 END) as newPatients,
                 
                 -- Temps patient moyen (en minutes)
@@ -77,19 +77,20 @@ function getDoctorComparisonData(connection, doctorId, startDate, endDate) {
                 END) AS SIGNED) as avgWaitingTime,
                 
                 -- Revenus total
-                COALESCE(SUM(a.tarif), 0) as totalRevenue,
+                COALESCE(SUM(p.montant), 0) as totalRevenue,
                 
                 -- Temps de travail total (en heures)
                 SUM(
                     TIMESTAMPDIFF(MINUTE, c.heureDebut, c.heureFin) / 60
                 ) as totalWorkingHours
                 
-            FROM Medecins m
-            LEFT JOIN Consultations c ON m.idMedecin = c.idMedecin
-                AND DATE(c.dateConsultation) BETWEEN ? AND ?
-            LEFT JOIN Actes a ON c.idConsultation = a.idConsultation
-            WHERE m.idMedecin = ?
-            GROUP BY m.idMedecin, m.nom, m.prenom
+            FROM user u
+            LEFT JOIN visit v ON u.id = v.user_activated_id
+                AND DATE(v.currentLocalTimeAssignment) BETWEEN ? AND ?
+            LEFT JOIN consultation c ON v.id = c.visit_id
+            LEFT JOIN payment p ON c.id = p.consultation_id
+            WHERE u.id = ?
+            GROUP BY u.id, u.lastName, u.firstName
         `;
         
         connection.query(query, [startDate, endDate, doctorId], (err, results) => {
