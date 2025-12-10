@@ -149,3 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+// Fonction pour obtenir la plage de dates depuis les inputs
+export function getDateRange() {
+    const startDateInput = document.getElementById('start-date')?.value;
+    const endDateInput = document.getElementById('end-date')?.value;
+    
+    // Si les dates ne sont pas définies, retourner votre plage fixe
+    if (!startDateInput || !endDateInput) {
+        return { 
+            startDate: '2022-01-01', // Format YYYY-MM-DD obligatoire
+            endDate: '2024-12-31'    // Format YYYY-MM-DD obligatoire
+        };
+    }
+    
+    return { startDate: startDateInput, endDate: endDateInput };
+}
