@@ -59,8 +59,8 @@ async function loadDoctorsForComparison() {
             select.innerHTML = '<option value="">-- Sélectionner un médecin --</option>';
             doctors.forEach(doctor => {
                 const option = document.createElement('option');
-                option.value = doctor.idMedecin;
-                option.textContent = `${doctor.nom} ${doctor.prenom}`;
+                option.value = doctor.id;
+                option.textContent = `${doctor.lastName} ${doctor.firstName}`;
                 select.appendChild(option);
             });
         });
