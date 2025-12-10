@@ -71,6 +71,8 @@ body {
     gap: 40px;
     margin: 0;
     padding: 0;
+    margin-left: auto; /* pousse le groupe de liens vers la droite */
+    margin-right: 32px; /* espace avant le bouton de déconnexion */
 }
 
 .nav-links a {
@@ -83,6 +85,29 @@ body {
 
 .nav-links a:hover, .nav-links a.active {
     color: var(--primary-color);
+}
+
+/* Logout button in navbar */
+.nav-logout-btn {
+    background-color: #e53935;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: auto;
+}
+
+.nav-logout-btn:hover {
+    background-color: #c62828;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+}
+
+.nav-logout-btn:active {
+    transform: scale(0.98);
 }
 
 /* Titre de page plus élégant */

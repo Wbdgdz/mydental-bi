@@ -164,3 +164,21 @@ export function getDateRange() {
     
     return { startDate: startDateInput, endDate: endDateInput };
 }
+
+    // Fonction pour gérer la déconnexion
+    export function setupLogoutButton() {
+        const logoutBtn = document.getElementById('logout-btn');
+    
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                // Supprimer le token du localStorage
+                localStorage.removeItem('token');
+            
+                // Rediriger vers la page de connexion
+                window.location.href = '/login.html';
+            });
+        }
+    }
+
+    // Appeler automatiquement setupLogoutButton au chargement du DOM
+    document.addEventListener('DOMContentLoaded', setupLogoutButton);
