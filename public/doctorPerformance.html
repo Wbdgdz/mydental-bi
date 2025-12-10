@@ -6,13 +6,14 @@
     <title>Analyse des Performances des Médecins</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="doctor-performance.css">
+    <link rel="stylesheet" href="doctor-comparison.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
     
     <nav class="main-nav">
         <a href="/" class="nav-brand">
-            <img src="logo_2.png" alt="Logo" class="nav-logo">
+            <img src="logo3.png" alt="Logo" class="nav-logo">
             MYDental BI
         </a>
         <ul class="nav-links">
@@ -25,18 +26,93 @@
 
     <h1 class="page-title">Analyse des Performances des Médecins</h1>
 
-    <div class="period-selector">
-        <label for="doctor-select">Médecin :</label>
-        <select id="doctor-select">
+    <!-- Switch Mode Performance / Comparaison -->
+    <div class="mode-switch-container">
+        <button id="mode-individual" class="mode-btn active">
+            <span class="mode-icon">👤</span>
+            Performance Individuelle
+        </button>
+        <button id="mode-comparison" class="mode-btn">
+            <span class="mode-icon">📊</span>
+            Comparaison
+        </button>
+    </div>
+
+    <!-- Mode Performance Individuelle -->
+    <div id="individual-mode" class="mode-content">
+        <div class="period-selector">
+            <label for="doctor-select">Médecin :</label>
+            <select id="doctor-select">
             </select>
 
-        <label for="start-date">Début :</label>
-        <input type="date" id="start-date" name="start-date">
-        
-        <label for="end-date">Fin :</label>
-        <input type="date" id="end-date" name="end-date">
-        
-        <button id="apply-period">Appliquer</button>
+            <label for="start-date">Début :</label>
+            <input type="date" id="start-date" name="start-date">
+            
+            <label for="end-date">Fin :</label>
+            <input type="date" id="end-date" name="end-date">
+            
+            <button id="apply-period">Appliquer</button>
+        </div>
+    </div>
+
+    <!-- Mode Comparaison -->
+    <div id="comparison-mode" class="mode-content" style="display: none;">
+        <div class="comparison-selector">
+            <div class="doctor-selectors">
+                <div class="doctor-selector-group">
+                    <label for="doctor-compare-1">Médecin 1 :</label>
+                    <select id="doctor-compare-1" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+                <div class="doctor-selector-group">
+                    <label for="doctor-compare-2">Médecin 2 :</label>
+                    <select id="doctor-compare-2" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+                <div class="doctor-selector-group">
+                    <label for="doctor-compare-3">Médecin 3 (optionnel) :</label>
+                    <select id="doctor-compare-3" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+                <div class="doctor-selector-group">
+                    <label for="doctor-compare-4">Médecin 4 (optionnel) :</label>
+                    <select id="doctor-compare-4" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="comparison-period">
+                <label for="comparison-start-date">Période :</label>
+                <input type="date" id="comparison-start-date" name="comparison-start-date">
+                <span>au</span>
+                <input type="date" id="comparison-end-date" name="comparison-end-date">
+            </div>
+
+            <button id="compare-btn" class="btn-compare" disabled>
+                <span class="btn-icon">📊</span>
+                Comparer
+            </button>
+        </div>
+
+        <!-- Message d'instructions -->
+        <div id="comparison-instruction" class="instruction-card">
+            <div class="instruction-icon">👆</div>
+            <h3>Comment utiliser la comparaison ?</h3>
+            <ol>
+                <li>Sélectionnez au minimum 2 médecins (maximum 4)</li>
+                <li>Choisissez une période d'analyse</li>
+                <li>Cliquez sur "Comparer" pour voir les résultats</li>
+            </ol>
+        </div>
+
+        <!-- Résultats de comparaison (cachés par défaut) -->
+        <div id="comparison-results" style="display: none;">
+            <!-- Le contenu sera injecté dynamiquement -->
+        </div>
     </div>
 
     <div id="stats-card-container">
@@ -172,5 +248,7 @@
     <button id="back-to-top" title="Retour en haut">↑</button>
 
     <script type="module" src="./doctor/main.js"></script>
-    <script type="module" src="./utilities/utils.js"></script> </body>
+    <script type="module" src="./utilities/utils.js"></script>
+    <script type="module" src="./doctor/comparisonMode.js"></script>
+</body>
 </html>
