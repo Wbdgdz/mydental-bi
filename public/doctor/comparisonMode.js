@@ -1,23 +1,12 @@
 // --- IMPORTS ---
 import { createComparisonBarChart, createComparisonRadarChart, createComparisonTimeline } from './comparisonCharts.js';
 
-// --- GESTION DU MODE (INDIVIDUAL / COMPARISON) ---
-
-const individualMode = document.getElementById('individual-mode');
-const comparisonMode = document.getElementById('comparison-mode');
-const individualBtn = document.getElementById('individual-btn');
-const comparisonBtn = document.getElementById('comparison-btn');
-
-// Initialiser en mode Individual
+// --- VARIABLES GLOBALES ---
+let individualMode, comparisonMode, individualBtn, comparisonBtn;
+let doctorSelects, compareBtn, comparisonStartDate, comparisonEndDate;
 let currentMode = 'individual';
 
-individualBtn.addEventListener('click', () => {
-    switchMode('individual');
-});
-
-comparisonBtn.addEventListener('click', () => {
-    switchMode('comparison');
-});
+// --- GESTION DU MODE (INDIVIDUAL / COMPARISON) ---
 
 function switchMode(mode) {
     currentMode = mode;
@@ -36,16 +25,6 @@ function switchMode(mode) {
 }
 
 // --- GESTION DES DROPDOWNS DE COMPARAISON ---
-
-const doctorSelects = [
-    document.getElementById('doctor-select-1'),
-    document.getElementById('doctor-select-2'),
-    document.getElementById('doctor-select-3')
-];
-
-const compareBtn = document.getElementById('compare-btn');
-const comparisonStartDate = document.getElementById('comparison-start-date');
-const comparisonEndDate = document.getElementById('comparison-end-date');
 
 // Charger la liste des médecins dans tous les dropdowns
 async function loadDoctorsForComparison() {
@@ -71,19 +50,21 @@ async function loadDoctorsForComparison() {
 }
 
 // Empêcher la sélection du même médecin dans plusieurs dropdowns
-doctorSelects.forEach((select, index) => {
-    select.addEventListener('change', () => {
-        updateDoctorSelectsAvailability();
-        validateComparisonForm();
-        
-        // Ajouter classe "selected" si un médecin est choisi
-        if (select.value) {
-            select.classList.add('selected');
-        } else {
-            select.classList.remove('selected');
-        }
+function setupDoctorSelectListeners() {
+    doctorSelects.forEach((select, index) => {
+        select.addEventListener('change', () => {
+            updateDoctorSelectsAvailability();
+            validateComparisonForm();
+            
+            // Ajouter classe "selected" si un médecin est choisi
+            if (select.value) {
+                select.classList.add('selected');
+            } else {
+                select.classList.remove('selected');
+            }
+        });
     });
-});
+}
 
 function updateDoctorSelectsAvailability() {
     // Récupérer tous les médecins sélectionnés
@@ -124,8 +105,10 @@ function validateComparisonForm() {
 }
 
 // Écouter les changements de dates
-comparisonStartDate.addEventListener('change', validateComparisonForm);
-comparisonEndDate.addEventListener('change', validateComparisonForm);
+function setupDateListeners() {
+    comparisonStartDate.addEventListener('change', validateComparisonForm);
+    comparisonEndDate.addEventListener('change', validateComparisonForm);
+}
 
 // --- INITIALISATION DES DATES ---
 function initializeComparisonDates() {
@@ -138,15 +121,16 @@ function initializeComparisonDates() {
 }
 
 // --- LANCER LA COMPARAISON ---
-compareBtn.addEventListener('click', async () => {
-    const selectedDoctorIds = doctorSelects
-        .map(select => select.value)
-        .filter(value => value !== '');
-    
-    const startDate = comparisonStartDate.value;
-    const endDate = comparisonEndDate.value;
-    
-    if (selectedDoctorIds.length < 2) {
+function setupCompareButton() {
+    compareBtn.addEventListener('click', async () => {
+        const selectedDoctorIds = doctorSelects
+            .map(select => select.value)
+            .filter(value => value !== '');
+        
+        const startDate = comparisonStartDate.value;
+        const endDate = comparisonEndDate.value;
+        
+        if (selectedDoctorIds.length < 2) {
         alert('Veuillez sélectionner au moins 2 médecins pour effectuer une comparaison.');
         return;
     }
@@ -185,7 +169,8 @@ compareBtn.addEventListener('click', async () => {
         console.error('Erreur:', error);
         resultsContainer.innerHTML = '<div style="text-align: center; padding: 50px; color: #da1e28;"><p>❌ Erreur lors du chargement de la comparaison</p></div>';
     }
-});
+    });
+}
 
 // --- AFFICHAGE DES RÉSULTATS DE COMPARAISON ---
 function displayComparisonResults(data) {
@@ -502,6 +487,36 @@ function exportToExcel(data) {
 
 // --- INITIALISATION AU CHARGEMENT DE LA PAGE ---
 window.addEventListener('DOMContentLoaded', () => {
+    // Initialiser les références DOM
+    individualMode = document.getElementById('individual-mode');
+    comparisonMode = document.getElementById('comparison-mode');
+    individualBtn = document.getElementById('individual-btn');
+    comparisonBtn = document.getElementById('comparison-btn');
+    
+    doctorSelects = [
+        document.getElementById('doctor-select-1'),
+        document.getElementById('doctor-select-2'),
+        document.getElementById('doctor-select-3')
+    ];
+    
+    compareBtn = document.getElementById('compare-btn');
+    comparisonStartDate = document.getElementById('comparison-start-date');
+    comparisonEndDate = document.getElementById('comparison-end-date');
+    
+    // Configurer les event listeners
+    individualBtn.addEventListener('click', () => {
+        switchMode('individual');
+    });
+    
+    comparisonBtn.addEventListener('click', () => {
+        switchMode('comparison');
+    });
+    
+    setupDoctorSelectListeners();
+    setupDateListeners();
+    setupCompareButton();
+    
+    // Initialiser
     loadDoctorsForComparison();
     initializeComparisonDates();
     switchMode('individual'); // Démarrer en mode Individual

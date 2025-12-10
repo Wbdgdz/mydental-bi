@@ -66,29 +66,28 @@ function getDoctorComparisonData(connection, doctorId, startDate, endDate) {
                 
                 -- Temps patient moyen (en minutes)
                 CAST(AVG(
-                    TIMESTAMPDIFF(MINUTE, c.heureDebut, c.heureFin)
+                    TIMESTAMPDIFF(MINUTE, v.startDate, v.endDate)
                 ) AS SIGNED) as avgPatientTime,
                 
                 -- Temps d'attente moyen (en minutes)
                 CAST(AVG(CASE 
-                    WHEN c.heureArrivee IS NOT NULL AND c.heureDebut IS NOT NULL
-                    THEN TIMESTAMPDIFF(MINUTE, c.heureArrivee, c.heureDebut)
+                    WHEN v.arrivalDate IS NOT NULL AND v.startDate IS NOT NULL
+                    THEN TIMESTAMPDIFF(MINUTE, v.arrivalDate, v.startDate)
                     ELSE NULL
                 END) AS SIGNED) as avgWaitingTime,
                 
                 -- Revenus total
-                COALESCE(SUM(p.montant), 0) as totalRevenue,
+                COALESCE(SUM(p.amount), 0) as totalRevenue,
                 
                 -- Temps de travail total (en heures)
                 SUM(
-                    TIMESTAMPDIFF(MINUTE, c.heureDebut, c.heureFin) / 60
+                    TIMESTAMPDIFF(MINUTE, v.startDate, v.endDate) / 60
                 ) as totalWorkingHours
                 
             FROM user u
             LEFT JOIN visit v ON u.id = v.user_activated_id
                 AND DATE(v.currentLocalTimeAssignment) BETWEEN ? AND ?
-            LEFT JOIN consultation c ON v.id = c.visit_id
-            LEFT JOIN payment p ON c.id = p.consultation_id
+            LEFT JOIN payment p ON v.id = p.consultation_id
             WHERE u.id = ?
             GROUP BY u.id, u.lastName, u.firstName
         `;
@@ -107,9 +106,8 @@ function getDoctorComparisonData(connection, doctorId, startDate, endDate) {
                     : 0;
                 
                 resolve({
-                    idMedecin: row.idMedecin,
-                    nom: row.nom,
-                    prenom: row.prenom,
+                    id: row.idMedecin,
+                    name: `${row.nom} ${row.prenom}`,
                     uniquePatients: row.uniquePatients || 0,
                     totalVisits: row.totalVisits || 0,
                     newPatients: row.newPatients || 0,
@@ -117,7 +115,7 @@ function getDoctorComparisonData(connection, doctorId, startDate, endDate) {
                     avgWaitingTime: row.avgWaitingTime || 0,
                     totalRevenue: parseFloat(row.totalRevenue) || 0,
                     totalWorkingHours: parseFloat(row.totalWorkingHours) || 0,
-                    revenuePerHour: revenuePerHour
+                    avgRevenuePerVisit: row.totalVisits > 0 ? parseFloat(row.totalRevenue) / row.totalVisits : 0
                 });
             }
         });

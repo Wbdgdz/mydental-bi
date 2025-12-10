@@ -1,3 +1,46 @@
+/* --- NAVIGATION BUTTON --- */
+.btn-navigate-comparison {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, var(--primary-color), #0043ce);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(15, 98, 254, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-navigate-comparison:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(15, 98, 254, 0.4);
+}
+
+.btn-navigate-comparison .btn-icon {
+    font-size: 1.3rem;
+}
+
+/* --- EMPTY STATE --- */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
 /* --- MODE SWITCH --- */
 .mode-switch-container {
     display: flex;

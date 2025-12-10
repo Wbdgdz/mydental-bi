@@ -26,16 +26,12 @@
 
     <h1 class="page-title">Analyse des Performances des Médecins</h1>
 
-    <!-- Switch Mode Performance / Comparaison -->
-    <div class="mode-switch-container">
-        <button id="mode-individual" class="mode-btn active">
-            <span class="mode-icon">👤</span>
-            Performance Individuelle
-        </button>
-        <button id="mode-comparison" class="mode-btn">
-            <span class="mode-icon">📊</span>
-            Comparaison
-        </button>
+    <!-- Bouton pour aller à la comparaison -->
+    <div style="text-align: center; margin: 20px 0;">
+        <a href="/doctorComparison.html" class="btn-navigate-comparison">
+            <span class="btn-icon">📊</span>
+            Comparer plusieurs médecins
+        </a>
     </div>
 
     <!-- Mode Performance Individuelle -->
@@ -53,61 +49,6 @@
             
             <button id="apply-period">Appliquer</button>
         </div>
-    </div>
-
-    <!-- Mode Comparaison -->
-    <div id="comparison-mode" class="mode-content" style="display: none;">
-        <div class="comparison-selector">
-            <div class="doctor-selectors">
-                <div class="doctor-selector-group">
-                    <label for="doctor-select-1">Médecin 1 :</label>
-                    <select id="doctor-select-1" class="doctor-compare-select">
-                        <option value="">-- Sélectionner --</option>
-                    </select>
-                </div>
-                <div class="doctor-selector-group">
-                    <label for="doctor-select-2">Médecin 2 :</label>
-                    <select id="doctor-select-2" class="doctor-compare-select">
-                        <option value="">-- Sélectionner --</option>
-                    </select>
-                </div>
-                <div class="doctor-selector-group">
-                    <label for="doctor-select-3">Médecin 3 (optionnel) :</label>
-                    <select id="doctor-select-3" class="doctor-compare-select">
-                        <option value="">-- Sélectionner --</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="comparison-period">
-                <label for="comparison-start-date">Période :</label>
-                <input type="date" id="comparison-start-date" name="comparison-start-date">
-                <span>au</span>
-                <input type="date" id="comparison-end-date" name="comparison-end-date">
-            </div>
-
-            <button id="compare-btn" class="btn-compare" disabled>
-                <span class="btn-icon">📊</span>
-                Comparer
-            </button>
-        </div>
-
-        <!-- Message d'instructions -->
-        <div id="comparison-instruction" class="instruction-card">
-            <div class="instruction-icon">👆</div>
-            <h3>Comment utiliser la comparaison ?</h3>
-            <ol>
-                <li>Sélectionnez au minimum 2 médecins (maximum 4)</li>
-                <li>Choisissez une période d'analyse</li>
-                <li>Cliquez sur "Comparer" pour voir les résultats</li>
-            </ol>
-        </div>
-
-        <!-- Résultats de comparaison (cachés par défaut) -->
-        <div id="comparison-results" style="display: none;">
-            <!-- Le contenu sera injecté dynamiquement -->
-        </div>
-    </div>
 
     <div id="stats-card-container">
         <div class="stats-card">
