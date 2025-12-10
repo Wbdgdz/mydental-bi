@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse Financière - MYDental BI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="finanial-analysis.css">
+</head>
+<body>
+    <!-- Navigation principale -->
+    <nav class="main-nav">
+        <a href="/" class="nav-brand">
+            <img src="logo.png" alt="Logo" class="nav-logo">
+            MYDental BI
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Tableau de bord Clinique</a></li>
+            <li><a href="/doctorPerformance.html">Performance Médecins</a></li>
+            <li><a href="/simulateur-rentabilite.html">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html" class="active">Analyse Financière</a></li>
+        </ul>
+        <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
+    </nav>
+
+    <!-- Titre de la page -->
+    <h1 class="page-title">📊 Analyse Financière Avancée - Gestion des Impayés</h1>
+
+    <div class="main-container">
+        <!-- Indicateurs clés -->
+        <div class="metrics-grid" id="metrics-grid">
+            <div class="metric-card">
+                <h3>💰 Taux d'Impayés Global</h3>
+                <div class="metric-value" id="unpaid-rate">-</div>
+                <div class="metric-label">Pourcentage du CA non encaissé</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="total-amount">-</div>
+                        <div class="metric-secondary-label">CA Total</div>
+                    </div>
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="total-remaining">-</div>
+                        <div class="metric-secondary-label">Impayés</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>📈 Taux de Recouvrement</h3>
+                <div class="metric-value" id="full-payment-rate">-</div>
+                <div class="metric-label">Paiements complets</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="partial-payment-rate">-</div>
+                        <div class="metric-secondary-label">Paiements partiels</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top 10 patients avec impayés -->
+        <div class="chart-card">
+            <h3>👥 Top 10 Patients avec Soldes Impayés</h3>
+            <table class="patients-table" id="patients-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Patient</th>
+                        <th>Montant Impayé</th>
+                        <th>Nombre de Paiements</th>
+                        <th>Dernier Paiement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" class="loading">Chargement des données...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Évolution mensuelle -->
+        <div class="chart-card">
+            <h3>📊 Évolution Mensuelle des Créances</h3>
+            <div id="monthly-chart" class="loading">Chargement des données...</div>
+        </div>
+
+        <!-- Statistiques de recouvrement -->
+        <div class="chart-card">
+            <h3>💳 Détail des Paiements</h3>
+            <div class="recovery-stats" id="recovery-stats">
+                <div class="loading">Chargement des données...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion de l'authentification
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        // Dates fixes pour toute la page
+        const START_DATE = '2015-12-01';
+        const END_DATE = new Date().toISOString().split('T')[0];
+
+        // Fonction pour formater les montants
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('fr-FR', {
+                style: 'currency',
+                currency: 'MAD'
+            }).format(amount || 0);
+        }
+
+        // Fonction pour formater les dates
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        // Chargement du taux d'impayés
+        async function loadUnpaidRate() {
+            try {
+                const response = await fetch(`/api/financial-analysis/unpaid-rate?startDate=${START_DATE}&endDate=${END_DATE}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                document.getElementById('unpaid-rate').textContent = (data.unpaid_rate_percent || 0) + '%';
+                document.getElementById('total-amount').textContent = formatCurrency(data.total_amount);
+                document.getElementById('total-remaining').textContent = formatCurrency(data.total_remaining);
+            } catch (error) {
+                console.error('Erreur lors du chargement du taux d\'impayés:', error);
+            }
+        }
+
+        // Chargement des top patients avec impayés
+        async function loadTopUnpaidPatients() {
+            try {
+                const response = await fetch(`/api/financial-analysis/top-unpaid-patients?startDate=${START_DATE}&endDate=${END_DATE}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                const tbody = document.querySelector('#patients-table tbody');
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Aucun patient avec impayés</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.map((patient, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${patient.patient_name}</td>
+                        <td class="amount-unpaid">${formatCurrency(patient.total_unpaid)}</td>
+                        <td>${patient.payment_count}</td>
+                        <td>${formatDate(patient.last_payment_date)}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Erreur lors du chargement des patients avec impayés:', error);
+            }
+        }
+
+        // Chargement du taux de recouvrement
+        async function loadRecoveryRate() {
+            try {
+                const response = await fetch(`/api/financial-analysis/recovery-rate?startDate=${START_DATE}&endDate=${END_DATE}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                document.getElementById('full-payment-rate').textContent = (data.full_payment_rate || 0) + '%';
+                document.getElementById('partial-payment-rate').textContent = (data.partial_payment_rate || 0) + '%';
+
+                const recoveryStatsHtml = `
+                    <div class="recovery-stat-item">
+                        <div class="recovery-stat-value" style="color: #27ae60;">${data.full_payments || 0}</div>
+                        <div class="recovery-stat-label">Paiements complets</div>
+                    </div>
+                    <div class="recovery-stat-item">
+                        <div class="recovery-stat-value" style="color: #f39c12;">${data.partial_payments || 0}</div>
+                        <div class="recovery-stat-label">Paiements partiels</div>
+                    </div>
+                    <div class="recovery-stat-item">
+                        <div class="recovery-stat-value" style="color: #e74c3c;">${data.no_payments || 0}</div>
+                        <div class="recovery-stat-label">Aucun paiement</div>
+                    </div>
+                    <div class="recovery-stat-item">
+                        <div class="recovery-stat-value" style="color: #3498db;">${data.total_payments || 0}</div>
+                        <div class="recovery-stat-label">Total paiements</div>
+                    </div>
+                `;
+                document.getElementById('recovery-stats').innerHTML = recoveryStatsHtml;
+            } catch (error) {
+                console.error('Erreur lors du chargement du taux de recouvrement:', error);
+            }
+        }
+
+        // Chargement de l'évolution mensuelle
+        async function loadMonthlyEvolution() {
+            try {
+                const response = await fetch(`/api/financial-analysis/monthly-receivables?startDate=${START_DATE}&endDate=${END_DATE}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.length === 0) {
+                    document.getElementById('monthly-chart').innerHTML = '<p style="text-align: center;">Aucune donnée disponible</p>';
+                    return;
+                }
+
+                const chartHtml = `
+                    <table class="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Mois</th>
+                                <th>CA Total</th>
+                                <th>Impayés</th>
+                                <th>Taux d'Impayés</th>
+                                <th>Nb Paiements</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.map(row => `
+                                <tr>
+                                    <td>${row.month}</td>
+                                    <td>${formatCurrency(row.total_amount)}</td>
+                                    <td class="amount-unpaid">${formatCurrency(row.total_remaining)}</td>
+                                    <td>${row.unpaid_rate_percent || 0}%</td>
+                                    <td>${row.payment_count}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('monthly-chart').innerHTML = chartHtml;
+            } catch (error) {
+                console.error('Erreur lors du chargement de l\'évolution mensuelle:', error);
+                document.getElementById('monthly-chart').innerHTML = '<div class="error-message">Erreur de chargement</div>';
+            }
+        }
+
+        // Charger toutes les données
+        function loadAllData() {
+            loadUnpaidRate();
+            loadTopUnpaidPatients();
+            loadRecoveryRate();
+            loadMonthlyEvolution();
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        });
+
+        // Initialisation - charger directement les données
+        loadAllData();
+    </script>
+</body>
+</html>
