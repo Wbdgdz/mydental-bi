@@ -5,13 +5,15 @@ export function updatePatientAnalysisChart(stats) {
 
     // Définir les marges et dimensions du graphique
     const margin = { top: 30, right: 70, bottom: 50, left: 70 };
-    const width = 1000 - margin.left - margin.right;
-    const height = 500 - margin.top - margin.bottom;
+    const fullWidth = 1200;
+    const fullHeight = 500;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
 
     // Sélectionner ou créer le conteneur SVG
     const svg = d3.select("#patients-chart")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("viewBox", `0 0 ${fullWidth} ${fullHeight}`)
+        .attr("preserveAspectRatio", "xMidYMid meet")
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 

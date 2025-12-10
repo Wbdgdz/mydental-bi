@@ -58,6 +58,7 @@ export function loadVisitsRevenue(startDate, endDate) {
             .attr("y", d => yLeft(d.visit_count))
             .attr("width", x.bandwidth())
             .attr("height", d => height - yLeft(d.visit_count))
+            .attr("fill", "#0f62fe")
             .on("mouseover", function(event, d) {
                 tooltip.transition().duration(200).style("opacity", .9);
                 tooltip.html(`Visites: ${d.visit_count}<br>Revenus: ${d.revenue} €`)
@@ -80,7 +81,10 @@ export function loadVisitsRevenue(startDate, endDate) {
         svg.append("path")
             .datum(data)
             .attr("class", "line")
-            .attr("d", line);
+            .attr("d", line)
+            .attr("stroke", "#ff832b")
+            .attr("stroke-width", 3)
+            .attr("fill", "none");
 
         svg.append("g")
             .attr("class", "x-axis")
@@ -124,8 +128,8 @@ export function loadVisitsRevenue(startDate, endDate) {
             .attr("transform", `translate(${width - 200},${-margin.top + 10})`); // Position ajustée
 
         const legendData = [
-            { label: "Nombre de Visites", color: "#0f62fe" }, // Couleur primaire mise à jour
-            { label: "Revenus (€)", color: "orange" }
+            { label: "Nombre de Visites", color: "#0f62fe" },
+            { label: "Revenus (€)", color: "#ff832b" }
         ];
 
         legend.selectAll("rect")

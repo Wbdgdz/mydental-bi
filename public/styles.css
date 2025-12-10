@@ -209,8 +209,8 @@ button:hover {
 svg path {
     fill: none; 
 }
-/* Mais on veut que les barres soient remplies */
-svg rect, svg .bar {
+/* Les barres par défaut utilisent la couleur primaire, mais les couleurs inline (définies en JS) sont prioritaires */
+svg rect:not([fill]), svg .bar:not([fill]) {
     fill: var(--primary-color);
 }
 /* Exceptions spécifiques pour vos classes D3 */

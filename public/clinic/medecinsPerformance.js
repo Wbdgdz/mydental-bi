@@ -42,14 +42,14 @@ export function loadMedecinsData(startDate, endDate) {
 function generateGraph(data, periodMonths) {
     data.sort((a, b) => b.total_hours - a.total_hours);
 
-    // Dimensions Fixes pour le calcul D3 (Responsive via CSS)
+    // Dimensions avec viewBox pour responsive
     const fullWidth = 1200;
-    const fullHeight = 600;
+    const fullHeight = 500;
     const margin = {top: 40, right: 80, bottom: 100, left: 80}; // Marge du bas augmentée pour les noms
     const width = fullWidth - margin.left - margin.right;
     const height = fullHeight - margin.top - margin.bottom;
 
-    // Sélection et configuration du viewBox
+    // Sélection et configuration du SVG
     const svg = d3.select('#tarif-heure-chart');
     svg.selectAll("*").remove();
 

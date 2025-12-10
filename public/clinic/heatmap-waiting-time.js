@@ -37,13 +37,15 @@ export function loadWaitingTimeHeatmap(startDate, endDate) {
         // Sélectionner le conteneur du heatmap
         d3.select("#waiting-time-heatmap").selectAll("*").remove();
 
-        const margin = { top: 30, right: 50, bottom: 50, left: 90 };
-        const width = 1200 - margin.left - margin.right;
-        const height = 600 - margin.top - margin.bottom;
+        const margin = { top: 30, right: 50, bottom: 100, left: 120 };
+        const fullWidth = 1400;
+        const fullHeight = 700;
+        const width = fullWidth - margin.left - margin.right;
+        const height = fullHeight - margin.top - margin.bottom;
 
         const svg = d3.select("#waiting-time-heatmap")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("viewBox", `0 0 ${fullWidth} ${fullHeight}`)
+            .attr("preserveAspectRatio", "xMidYMid meet")
             .append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -81,7 +83,8 @@ export function loadWaitingTimeHeatmap(startDate, endDate) {
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle")
             .style("fill", "black")
-            .style("font-size", "12px")
+            .style("font-size", "13px")
+            .style("font-weight", "500")
             .text(d => formatWaitingTime(d.avg_waiting_time));  // Utilise la fonction formatée
 
         // Ajouter l'axe X (mois)
