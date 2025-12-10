@@ -1,3 +1,6 @@
+// --- IMPORTS ---
+import { createComparisonBarChart, createComparisonRadarChart, createComparisonTimeline } from './comparisonCharts.js';
+
 // --- GESTION DU MODE (INDIVIDUAL / COMPARISON) ---
 
 const individualMode = document.getElementById('individual-mode');
@@ -252,9 +255,9 @@ function displayComparisonResults(data) {
     generateKPICards(data);
     
     // Générer les graphiques
-    generateComparisonBarChart(data);
-    generateComparisonRadarChart(data);
-    generateComparisonTimeline(data);
+    createComparisonBarChart(data);
+    createComparisonRadarChart(data);
+    createComparisonTimeline(data);
     
     // Générer les suggestions
     generateSuggestions(data);
@@ -352,42 +355,141 @@ function generateKPICards(data) {
     });
 }
 
-// --- GRAPHIQUES (placeholders pour l'instant) ---
-function generateComparisonBarChart(data) {
-    // TODO: Implémenter avec D3.js
-    console.log('Bar chart:', data);
-}
-
-function generateComparisonRadarChart(data) {
-    // TODO: Implémenter avec D3.js
-    console.log('Radar chart:', data);
-}
-
-function generateComparisonTimeline(data) {
-    // TODO: Implémenter avec D3.js
-    console.log('Timeline chart:', data);
-}
-
 // --- SUGGESTIONS ---
 function generateSuggestions(data) {
     const container = document.getElementById('suggestions-grid');
+    container.innerHTML = '';
     
-    // TODO: Algorithme de suggestions basé sur les données
-    // Pour l'instant, exemple statique
+    // Analyser chaque médecin
     data.doctors.forEach(doctor => {
-        const suggestionCard = document.createElement('div');
-        suggestionCard.className = 'suggestion-card strength';
-        suggestionCard.innerHTML = `
-            <div class="suggestion-header">
-                <div class="suggestion-doctor">${doctor.nom} ${doctor.prenom}</div>
-                <span class="suggestion-type strength">Forces</span>
-            </div>
-            <div class="suggestion-content">
-                <p>Analyse en cours...</p>
-            </div>
-        `;
-        container.appendChild(suggestionCard);
+        const analysis = analyzeDoctorPerformance(doctor, data.doctors);
+        
+        // Carte des forces
+        if (analysis.strengths.length > 0) {
+            const strengthCard = document.createElement('div');
+            strengthCard.className = 'suggestion-card strength';
+            strengthCard.innerHTML = `
+                <div class="suggestion-header">
+                    <div class="suggestion-doctor">${doctor.nom} ${doctor.prenom}</div>
+                    <span class="suggestion-type strength">💪 Forces</span>
+                </div>
+                <div class="suggestion-content">
+                    <ul>
+                        ${analysis.strengths.map(s => `<li>${s}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            container.appendChild(strengthCard);
+        }
+        
+        // Carte des axes d'amélioration
+        if (analysis.improvements.length > 0) {
+            const improvementCard = document.createElement('div');
+            improvementCard.className = 'suggestion-card weakness';
+            improvementCard.innerHTML = `
+                <div class="suggestion-header">
+                    <div class="suggestion-doctor">${doctor.nom} ${doctor.prenom}</div>
+                    <span class="suggestion-type weakness">📈 Axes d'Amélioration</span>
+                </div>
+                <div class="suggestion-content">
+                    <ul>
+                        ${analysis.improvements.map(i => `<li>${i}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            container.appendChild(improvementCard);
+        }
     });
+}
+
+// Analyser les performances d'un médecin par rapport aux autres
+function analyzeDoctorPerformance(doctor, allDoctors) {
+    const strengths = [];
+    const improvements = [];
+    
+    // Calculer les moyennes
+    const avgMetrics = {
+        uniquePatients: d3.mean(allDoctors, d => d.uniquePatients),
+        totalVisits: d3.mean(allDoctors, d => d.totalVisits),
+        newPatients: d3.mean(allDoctors, d => d.newPatients),
+        revenuePerHour: d3.mean(allDoctors, d => d.revenuePerHour),
+        avgPatientTime: d3.mean(allDoctors, d => d.avgPatientTime),
+        avgWaitingTime: d3.mean(allDoctors, d => d.avgWaitingTime),
+        totalRevenue: d3.mean(allDoctors, d => d.totalRevenue),
+        loyaltyRate: d3.mean(allDoctors, d => d.loyaltyRate)
+    };
+    
+    // Trouver le meilleur pour chaque métrique
+    const bestMetrics = {
+        uniquePatients: d3.max(allDoctors, d => d.uniquePatients),
+        totalVisits: d3.max(allDoctors, d => d.totalVisits),
+        newPatients: d3.max(allDoctors, d => d.newPatients),
+        revenuePerHour: d3.max(allDoctors, d => d.revenuePerHour),
+        avgWaitingTime: d3.min(allDoctors, d => d.avgWaitingTime),
+        totalRevenue: d3.max(allDoctors, d => d.totalRevenue),
+        loyaltyRate: d3.max(allDoctors, d => d.loyaltyRate)
+    };
+    
+    // Analyser les patients uniques
+    if (doctor.uniquePatients >= avgMetrics.uniquePatients * 1.1) {
+        strengths.push(`Excellent volume de patients uniques (${doctor.uniquePatients} vs moyenne de ${avgMetrics.uniquePatients.toFixed(0)})`);
+    } else if (doctor.uniquePatients < avgMetrics.uniquePatients * 0.8) {
+        improvements.push(`Augmenter le nombre de patients uniques (actuellement ${doctor.uniquePatients} vs moyenne de ${avgMetrics.uniquePatients.toFixed(0)})`);
+    }
+    
+    // Analyser le CA par heure
+    if (doctor.revenuePerHour >= avgMetrics.revenuePerHour * 1.15) {
+        strengths.push(`Très bon rendement financier avec ${doctor.revenuePerHour.toFixed(2)}€/heure`);
+    } else if (doctor.revenuePerHour < avgMetrics.revenuePerHour * 0.85) {
+        improvements.push(`Optimiser le CA par heure (${doctor.revenuePerHour.toFixed(2)}€ vs moyenne ${avgMetrics.revenuePerHour.toFixed(2)}€)`);
+    }
+    
+    // Analyser le temps d'attente
+    if (doctor.avgWaitingTime <= avgMetrics.avgWaitingTime * 0.8) {
+        strengths.push(`Excellente gestion du temps d'attente (${doctor.avgWaitingTime} min)`);
+    } else if (doctor.avgWaitingTime > avgMetrics.avgWaitingTime * 1.2) {
+        improvements.push(`Réduire le temps d'attente moyen (${doctor.avgWaitingTime} min vs ${avgMetrics.avgWaitingTime.toFixed(0)} min)`);
+    }
+    
+    // Analyser les nouveaux patients
+    if (doctor.newPatients >= avgMetrics.newPatients * 1.2) {
+        strengths.push(`Fort taux d'acquisition de nouveaux patients (${doctor.newPatients})`);
+    } else if (doctor.newPatients < avgMetrics.newPatients * 0.7) {
+        improvements.push(`Développer l'acquisition de nouveaux patients (${doctor.newPatients} vs ${avgMetrics.newPatients.toFixed(0)})`);
+    }
+    
+    // Analyser la fidélisation
+    if (doctor.loyaltyRate >= avgMetrics.loyaltyRate * 1.1) {
+        strengths.push(`Excellent taux de fidélisation (${doctor.loyaltyRate.toFixed(1)}%)`);
+    } else if (doctor.loyaltyRate < avgMetrics.loyaltyRate * 0.9) {
+        improvements.push(`Améliorer la fidélisation des patients (${doctor.loyaltyRate.toFixed(1)}% vs ${avgMetrics.loyaltyRate.toFixed(1)}%)`);
+    }
+    
+    // Analyser le temps patient
+    if (doctor.avgPatientTime >= avgMetrics.avgPatientTime * 1.2) {
+        improvements.push(`Optimiser le temps passé par patient (${doctor.avgPatientTime} min vs ${avgMetrics.avgPatientTime.toFixed(0)} min)`);
+    } else if (doctor.avgPatientTime <= avgMetrics.avgPatientTime * 0.8) {
+        // Peut être une force ou une faiblesse selon le contexte
+        strengths.push(`Efficacité dans la prise en charge (${doctor.avgPatientTime} min par patient)`);
+    }
+    
+    // Score global
+    if (doctor.globalScore >= 75) {
+        strengths.push(`Performance globale excellente (score: ${doctor.globalScore}/100)`);
+    } else if (doctor.globalScore < 50) {
+        improvements.push(`Améliorer la performance globale (score actuel: ${doctor.globalScore}/100)`);
+    }
+    
+    // Si aucune suggestion spécifique
+    if (strengths.length === 0) {
+        strengths.push('Performance dans la moyenne, continuer les efforts');
+    }
+    
+    if (improvements.length === 0) {
+        improvements.push('Maintenir le niveau de performance actuel');
+    }
+    
+    return { strengths, improvements };
 }
 
 // --- EXPORT ---
