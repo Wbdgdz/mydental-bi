@@ -49,7 +49,7 @@ module.exports = (connection) => {
       ),
       retention_stats AS (
         SELECT 
-          -- Nouveaux patients qui sont revenus
+          -- Nouveaux patients qui sont revenus (ont plus d'une visite au total)
           COUNT(DISTINCT CASE 
             WHEN first_visit.first_visit_date BETWEEN ? AND ?
             AND patient_visit_count.visit_count > 1
@@ -64,7 +64,6 @@ module.exports = (connection) => {
         LEFT JOIN (
           SELECT patient_id, COUNT(id) AS visit_count
           FROM visit
-          WHERE currentLocalTimeAssignment BETWEEN ? AND ?
           GROUP BY patient_id
         ) AS patient_visit_count ON v.patient_id = patient_visit_count.patient_id
         WHERE v.currentLocalTimeAssignment BETWEEN ? AND ?
@@ -168,8 +167,7 @@ module.exports = (connection) => {
           patient_id,
           COUNT(id) AS total_visits,
           MIN(currentLocalTimeAssignment) AS first_visit,
-          MAX(currentLocalTimeAssignment) AS last_visit,
-          DATEDIFF(MAX(currentLocalTimeAssignment), MIN(currentLocalTimeAssignment)) AS days_between_first_last
+          MAX(currentLocalTimeAssignment) AS last_visit
         FROM visit
         WHERE currentLocalTimeAssignment BETWEEN ? AND ?
         GROUP BY patient_id

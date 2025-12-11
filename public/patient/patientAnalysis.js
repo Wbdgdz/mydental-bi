@@ -12,9 +12,12 @@ document.getElementById('start-date').valueAsDate = oneYearAgo;
 document.getElementById('end-date').valueAsDate = today;
 
 // Tooltip global unique pour tous les graphiques
-let globalTooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+let globalTooltip = d3.select("body").select(".tooltip");
+if (globalTooltip.empty()) {
+    globalTooltip = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+}
 
 // Fonction pour formater les dates
 function formatDate(dateString) {
