@@ -119,6 +119,9 @@ app.use('/api/financial-analysis', authenticateToken, require('./routes/financia
 // Nouvelle route pour l'analyse des patients (protégée)
 app.use('/api/patient-analysis', authenticateToken, require('./routes/patientAnalysisRoute')(connection));
 
+// Nouvelle route pour l'analyse des flux clients (protégée)
+app.use('/api/patient-flow', authenticateToken, require('./routes/patientFlowRoute')(connection));
+
 // Démarrer le serveur
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

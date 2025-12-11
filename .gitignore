@@ -6,3 +6,6 @@ BD_sqlite/import.sql
 BD_sqlite/dental_data.db
 #exclude virtual environment folder
 BD_sqlite/venv/
+# Dependencies
+node_modules/
+package-lock.json
