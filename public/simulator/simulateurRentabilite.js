@@ -3,6 +3,71 @@
 import { getDateRange, getLastMonthDateRange } from '../utilities/utils.js';
 
 let currentData = null;
+let currentSuggestions = null;
+
+// Fonction pour sauvegarder les données de simulation dans localStorage
+function saveSimulationData() {
+    if (!currentData && !currentSuggestions) {
+        alert('⚠️ Aucune simulation à sauvegarder. Veuillez d\'abord calculer la rentabilité ou les suggestions.');
+        return;
+    }
+
+    const simulationData = {
+        rentabilite: currentData,
+        suggestions: currentSuggestions,
+        timestamp: new Date().toISOString(),
+        period: getDateRange(),
+        doctorId: document.getElementById('doctor-select').value,
+        doctorName: document.getElementById('doctor-select').selectedOptions[0].text
+    };
+
+    localStorage.setItem('simulationRentabilite', JSON.stringify(simulationData));
+    
+    // Afficher un message de confirmation
+    const btn = document.getElementById('save-simulation');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="btn-icon">✅</span>Sauvegardé !';
+    btn.style.backgroundColor = '#27ae60';
+    
+    setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.style.backgroundColor = '';
+    }, 2000);
+}
+
+// Fonction pour charger la liste des médecins
+async function loadDoctors() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.error('Token non disponible');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/doctors', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des médecins');
+        }
+
+        const doctors = await response.json();
+        const select = document.getElementById('doctor-select');
+        
+        // Ajouter les médecins au select
+        doctors.forEach(doctor => {
+            const option = document.createElement('option');
+            option.value = doctor.id;
+            option.textContent = `${doctor.firstName} ${doctor.lastName}`;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erreur lors du chargement des médecins:', error);
+    }
+}
 
 // Fonction pour formater les nombres avec séparateur de milliers
 function formatNumber(num) {
@@ -77,6 +142,7 @@ async function loadRentabiliteData() {
     const remunerationMedecin = parseFloat(document.getElementById('remuneration-medecin').value) || 40;
     const coutCentre = parseFloat(document.getElementById('cout-centre').value) || 25;
     const margeCible = parseFloat(document.getElementById('marge-cible').value) || 30;
+    const doctorId = document.getElementById('doctor-select').value;
 
     // Vérifier que la somme ne dépasse pas 100%
     if (remunerationMedecin + coutCentre > 100) {
@@ -110,7 +176,7 @@ async function loadRentabiliteData() {
 
     try {
         const response = await fetch(
-            `/api/simulateur-rentabilite?start=${startDate}&end=${endDate}&remunerationMedecin=${remunerationMedecin}&coutCentre=${coutCentre}`,
+            `/api/simulateur-rentabilite?start=${startDate}&end=${endDate}&remunerationMedecin=${remunerationMedecin}&coutCentre=${coutCentre}&doctorId=${doctorId}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -126,6 +192,9 @@ async function loadRentabiliteData() {
         currentData = data;
         displayRentabiliteTable(data);
         calculateGlobalStats(data.actes);
+        
+        // Afficher le bouton de sauvegarde
+        document.getElementById('save-simulation').style.display = 'inline-block';
         
         // Scroll vers la section des résultats
         section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -218,6 +287,7 @@ async function loadTarifsSuggestions() {
     const remunerationMedecin = parseFloat(document.getElementById('remuneration-medecin').value) || 40;
     const coutCentre = parseFloat(document.getElementById('cout-centre').value) || 25;
     const margeCible = parseFloat(document.getElementById('marge-cible').value) || 30;
+    const doctorId = document.getElementById('doctor-select').value;
 
     // Vérifier que la somme ne dépasse pas 100%
     if (remunerationMedecin + coutCentre + margeCible > 100) {
@@ -251,7 +321,7 @@ async function loadTarifsSuggestions() {
 
     try {
         const response = await fetch(
-            `/api/simulateur-rentabilite/suggestion-tarifs?start=${startDate}&end=${endDate}&remunerationMedecin=${remunerationMedecin}&coutCentre=${coutCentre}&margeCible=${margeCible}`,
+            `/api/simulateur-rentabilite/suggestion-tarifs?start=${startDate}&end=${endDate}&remunerationMedecin=${remunerationMedecin}&coutCentre=${coutCentre}&margeCible=${margeCible}&doctorId=${doctorId}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -264,8 +334,12 @@ async function loadTarifsSuggestions() {
         }
 
         const data = await response.json();
+        currentSuggestions = data;
         displayTarifsSuggestions(data);
         calculateSuggestionStats(data.suggestions);
+        
+        // Afficher le bouton de sauvegarde
+        document.getElementById('save-simulation').style.display = 'inline-block';
         
         // Scroll vers la section des suggestions
         section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -363,6 +437,9 @@ function exportToCSV() {
 
 // Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
+    // Charger la liste des médecins
+    loadDoctors();
+    
     // Initialiser les dates
     initializeDates();
     
@@ -370,6 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('calculer-rentabilite').addEventListener('click', loadRentabiliteData);
     document.getElementById('suggerer-tarifs').addEventListener('click', loadTarifsSuggestions);
     document.getElementById('export-data').addEventListener('click', exportToCSV);
+    document.getElementById('save-simulation').addEventListener('click', saveSimulationData);
     document.getElementById('apply-period').addEventListener('click', () => {
         if (currentData) {
             loadRentabiliteData();

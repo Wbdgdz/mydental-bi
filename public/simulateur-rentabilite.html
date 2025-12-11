@@ -33,6 +33,11 @@
             <label for="end-date">Fin :</label>
             <input type="date" id="end-date" name="end-date">
             
+            <label for="doctor-select">Médecin :</label>
+            <select id="doctor-select" name="doctor-select">
+                <option value="all">Tous les médecins</option>
+            </select>
+            
             <button id="apply-period" class="btn-apply">Appliquer</button>
         </div>
     </div>
@@ -131,9 +136,13 @@
                     <span class="btn-icon">💡</span>
                     Suggérer Nouveaux Tarifs
                 </button>
+                <button id="save-simulation" class="btn-save" style="display: none;">
+                    <span class="btn-icon">💾</span>
+                    Sauvegarder la Simulation
+                </button>
                 <button id="export-data" class="btn-export">
                     <span class="btn-icon">📥</span>
-                    Exporter les Résultats
+                    Exporter CSV
                 </button>
             </div>
         </div>
