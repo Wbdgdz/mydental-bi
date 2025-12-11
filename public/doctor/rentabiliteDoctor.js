@@ -108,30 +108,30 @@ function createTopCAChart(doctorId = null) {
     const container = document.getElementById('rentabilite-scatter-chart');
     if (!container) return;
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const margin = { top: 40, right: 30, bottom: 60, left: 200 };
+    const margin = { top: 60, right: 80, bottom: 80, left: 250 };
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Titre
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', 20)
+        .attr('x', fullWidth / 2)
+        .attr('y', 30)
         .attr('text-anchor', 'middle')
-        .attr('font-size', '16px')
+        .attr('font-size', '18px')
         .attr('font-weight', 'bold')
         .attr('fill', '#2c3e50')
         .text('Top 10 Actes par Chiffre d\'Affaires');
@@ -139,22 +139,22 @@ function createTopCAChart(doctorId = null) {
     // Échelles
     const y = d3.scaleBand()
         .domain(topActes.map(d => d.acte))
-        .range([0, chartHeight])
+        .range([0, height])
         .padding(0.2);
 
     const x = d3.scaleLinear()
         .domain([0, d3.max(topActes, d => d.CA)])
         .nice()
-        .range([0, chartWidth]);
+        .range([0, width]);
 
     // Axes
     g.append('g')
         .call(d3.axisLeft(y))
         .selectAll('text')
-        .style('font-size', '11px');
+        .style('font-size', '12px');
 
     g.append('g')
-        .attr('transform', `translate(0,${chartHeight})`)
+        .attr('transform', `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d => formatNumber(d) + ' DA'));
 
     // Barres
@@ -202,30 +202,31 @@ function createCADistributionChart(doctorId = null) {
     const container = document.getElementById('rentabilite-top-marge-chart');
     if (!container) return;
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const radius = Math.min(width, height) / 2 - 40;
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const radius = Math.min(fullWidth, fullHeight) / 2 - 100;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     // Titre
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', 20)
+        .attr('x', fullWidth / 2)
+        .attr('y', 30)
         .attr('text-anchor', 'middle')
-        .attr('font-size', '16px')
+        .attr('font-size', '18px')
         .attr('font-weight', 'bold')
         .attr('fill', '#2c3e50')
         .text('Distribution du CA par Acte (Top 8)');
 
     const g = svg.append('g')
-        .attr('transform', `translate(${width / 2},${height / 2 + 20})`);
+        .attr('transform', `translate(${fullWidth / 2},${fullHeight / 2 + 20})`);
 
     // Couleurs
     const color = d3.scaleOrdinal()
@@ -286,7 +287,7 @@ function createCADistributionChart(doctorId = null) {
 
     // Légende
     const legend = svg.append('g')
-        .attr('transform', `translate(${width - 180}, 50)`);
+        .attr('transform', `translate(${fullWidth - 280}, 50)`);
 
     topActes.forEach((d, i) => {
         const legendRow = legend.append('g')
@@ -317,30 +318,30 @@ function createTopVisitsChart(doctorId = null) {
     const container = document.getElementById('rentabilite-potentiel-chart');
     if (!container) return;
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const margin = { top: 40, right: 30, bottom: 60, left: 200 };
+    const margin = { top: 60, right: 80, bottom: 80, left: 250 };
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Titre
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', 20)
+        .attr('x', fullWidth / 2)
+        .attr('y', 30)
         .attr('text-anchor', 'middle')
-        .attr('font-size', '16px')
+        .attr('font-size', '18px')
         .attr('font-weight', 'bold')
         .attr('fill', '#2c3e50')
         .text('Top 10 Actes les Plus Pratiqués');
@@ -348,22 +349,22 @@ function createTopVisitsChart(doctorId = null) {
     // Échelles
     const y = d3.scaleBand()
         .domain(topActes.map(d => d.acte))
-        .range([0, chartHeight])
+        .range([0, height])
         .padding(0.2);
 
     const x = d3.scaleLinear()
         .domain([0, d3.max(topActes, d => d.total_visits)])
         .nice()
-        .range([0, chartWidth]);
+        .range([0, width]);
 
     // Axes
     g.append('g')
         .call(d3.axisLeft(y))
         .selectAll('text')
-        .style('font-size', '11px');
+        .style('font-size', '12px');
 
     g.append('g')
-        .attr('transform', `translate(0,${chartHeight})`)
+        .attr('transform', `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d => d));
 
     // Barres
