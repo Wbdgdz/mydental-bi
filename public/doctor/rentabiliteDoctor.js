@@ -101,7 +101,28 @@ function displayRentabiliteStats(doctorId = null) {
 // Créer le graphique Top 10 Actes par CA
 function createTopCAChart(doctorId = null) {
     const actes = getActesRentabilite(doctorId);
-    const topActes = actes
+    
+    // Agréger par nom d'acte (au cas où il y aurait des doublons)
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0,
+                prix_moyen: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    // Recalculer prix moyen après agrégation
+    Object.values(actesAggregated).forEach(acte => {
+        acte.prix_moyen = acte.total_visits > 0 ? acte.CA / acte.total_visits : 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
         .sort((a, b) => b.CA - a.CA)
         .slice(0, 10);
 
@@ -195,12 +216,37 @@ function createTopCAChart(doctorId = null) {
 // Créer le graphique de distribution du CA par Acte (Pie Chart)
 function createCADistributionChart(doctorId = null) {
     const actes = getActesRentabilite(doctorId);
-    const topActes = actes
+    
+    // Agréger par nom d'acte
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
         .sort((a, b) => b.CA - a.CA)
         .slice(0, 8); // Top 8 pour meilleure lisibilité
 
+    console.log('[RentabiliteDoctor] Données pour pie chart:', topActes);
+
     const container = document.getElementById('rentabilite-top-marge-chart');
-    if (!container) return;
+    if (!container) {
+        console.error('Conteneur rentabilite-top-marge-chart non trouvé');
+        return;
+    }
+    
+    if (topActes.length === 0) {
+        console.warn('Aucune donnée pour le pie chart');
+        return;
+    }
 
     const fullWidth = 1200;
     const fullHeight = 600;
@@ -311,7 +357,28 @@ function createCADistributionChart(doctorId = null) {
 // Créer le graphique Top 10 Actes par Nombre de Visites
 function createTopVisitsChart(doctorId = null) {
     const actes = getActesRentabilite(doctorId);
-    const topActes = actes
+    
+    // Agréger par nom d'acte
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0,
+                prix_moyen: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    // Recalculer prix moyen après agrégation
+    Object.values(actesAggregated).forEach(acte => {
+        acte.prix_moyen = acte.total_visits > 0 ? acte.CA / acte.total_visits : 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
         .sort((a, b) => b.total_visits - a.total_visits)
         .slice(0, 10);
 

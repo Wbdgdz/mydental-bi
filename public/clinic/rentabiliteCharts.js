@@ -74,8 +74,23 @@ function displayRentabiliteStats() {
 // Créer le graphique de distribution du CA par acte (Top 10)
 function createCADistributionChart() {
     const actes = getActesRentabilite();
-    const topActes = actes
-        .sort((a, b) => (b.CA || 0) - (a.CA || 0))
+    
+    // Agréger par nom d'acte (somme des CA de tous les médecins)
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
+        .sort((a, b) => b.CA - a.CA)
         .slice(0, 10);
 
     const container = document.getElementById('rentabilite-ca-chart');
@@ -151,10 +166,21 @@ function createCADistributionChart() {
 function createMargeDistributionChart() {
     const actes = getActesRentabilite();
     
-    // Regrouper les actes par catégorie (basé sur les premiers mots du nom)
-    const categories = {};
-    
+    // D'abord agréger par nom d'acte
+    const actesAggregated = {};
     actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+    });
+    
+    // Ensuite regrouper par catégorie (basé sur les premiers mots du nom)
+    const categories = {};
+    Object.values(actesAggregated).forEach(acte => {
         // Extraire les 2-3 premiers mots comme catégorie
         const words = acte.acte.split(' ');
         const category = words.slice(0, Math.min(2, words.length)).join(' ');
@@ -163,7 +189,7 @@ function createMargeDistributionChart() {
             categories[category] = { count: 0, ca: 0 };
         }
         categories[category].count++;
-        categories[category].ca += acte.CA || 0;
+        categories[category].ca += acte.CA;
     });
 
     // Trier par CA et prendre le top 6
@@ -180,9 +206,16 @@ function createMargeDistributionChart() {
         color: colors[i]
     }));
 
+    console.log('[RentabiliteCharts] Données pour camembert:', data);
+
     const container = document.getElementById('rentabilite-marge-chart');
     if (!container) {
         console.error('Conteneur rentabilite-marge-chart non trouvé');
+        return;
+    }
+    
+    if (data.length === 0) {
+        console.warn('Aucune donnée pour le camembert');
         return;
     }
 
