@@ -11,6 +11,11 @@ const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.get
 document.getElementById('start-date').valueAsDate = oneYearAgo;
 document.getElementById('end-date').valueAsDate = today;
 
+// Tooltip global unique pour tous les graphiques
+let globalTooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 // Fonction pour formater les dates
 function formatDate(dateString) {
     if (!dateString) return '-';
@@ -100,11 +105,6 @@ function createMonthlyEvolutionChart(data) {
         .nice()
         .range([height, 0]);
 
-    // Tooltip
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
     // Barres pour nouveaux patients
     svg.selectAll(".bar-new")
         .data(data)
@@ -116,13 +116,13 @@ function createMonthlyEvolutionChart(data) {
         .attr("height", d => height - y(d.new_patients))
         .attr("fill", "#27ae60")
         .on("mouseover", function(event, d) {
-            tooltip.transition().duration(200).style("opacity", .9);
-            tooltip.html(`Nouveaux patients: ${d.new_patients}`)
+            globalTooltip.transition().duration(200).style("opacity", .9);
+            globalTooltip.html(`Nouveaux patients: ${d.new_patients}`)
                 .style("left", (event.pageX + 5) + "px")
                 .style("top", (event.pageY - 28) + "px");
         })
         .on("mouseout", function() {
-            tooltip.transition().duration(500).style("opacity", 0);
+            globalTooltip.transition().duration(500).style("opacity", 0);
         });
 
     // Barres pour patients fidèles
@@ -136,13 +136,13 @@ function createMonthlyEvolutionChart(data) {
         .attr("height", d => height - y(d.returning_patients))
         .attr("fill", "#3498db")
         .on("mouseover", function(event, d) {
-            tooltip.transition().duration(200).style("opacity", .9);
-            tooltip.html(`Patients fidèles: ${d.returning_patients}`)
+            globalTooltip.transition().duration(200).style("opacity", .9);
+            globalTooltip.html(`Patients fidèles: ${d.returning_patients}`)
                 .style("left", (event.pageX + 5) + "px")
                 .style("top", (event.pageY - 28) + "px");
         })
         .on("mouseout", function() {
-            tooltip.transition().duration(500).style("opacity", 0);
+            globalTooltip.transition().duration(500).style("opacity", 0);
         });
 
     // Ligne pour le total
@@ -255,11 +255,6 @@ function createRetentionChart(data) {
         .nice()
         .range([height, 0]);
 
-    // Tooltip
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
     // Barres
     svg.selectAll(".bar")
         .data(data)
@@ -271,13 +266,13 @@ function createRetentionChart(data) {
         .attr("height", d => height - y(d.patient_count))
         .attr("fill", (d, i) => d3.schemeCategory10[i])
         .on("mouseover", function(event, d) {
-            tooltip.transition().duration(200).style("opacity", .9);
-            tooltip.html(`${d.visit_category}<br/>Patients: ${d.patient_count}<br/>Pourcentage: ${d.percentage}%`)
+            globalTooltip.transition().duration(200).style("opacity", .9);
+            globalTooltip.html(`${d.visit_category}<br/>Patients: ${d.patient_count}<br/>Pourcentage: ${d.percentage}%`)
                 .style("left", (event.pageX + 5) + "px")
                 .style("top", (event.pageY - 28) + "px");
         })
         .on("mouseout", function() {
-            tooltip.transition().duration(500).style("opacity", 0);
+            globalTooltip.transition().duration(500).style("opacity", 0);
         });
 
     // Labels sur les barres
@@ -363,10 +358,6 @@ function createPatientVisitsChart(data) {
         .nice()
         .range([height, 0]);
 
-    const tooltip = d3.select("body").append("div")
-        .attr("class", "tooltip")
-        .style("opacity", 0);
-
     function createBars(className, key, color, offsetIndex, label) {
         svg.selectAll(`.${className}`)
             .data(data)
@@ -378,13 +369,13 @@ function createPatientVisitsChart(data) {
             .attr("height", d => height - yLeft(d[key]))
             .attr("fill", color)
             .on("mouseover", function(event, d) {
-                tooltip.transition().duration(200).style("opacity", .9);
-                tooltip.html(`${label} : ${d[key]}`)
+                globalTooltip.transition().duration(200).style("opacity", .9);
+                globalTooltip.html(`${label} : ${d[key]}`)
                     .style("left", (event.pageX + 5) + "px")
                     .style("top", (event.pageY - 28) + "px");
             })
             .on("mouseout", function() {
-                tooltip.transition().duration(500).style("opacity", 0);
+                globalTooltip.transition().duration(500).style("opacity", 0);
             });
     }
 

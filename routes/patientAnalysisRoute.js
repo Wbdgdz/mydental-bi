@@ -173,32 +173,37 @@ module.exports = (connection) => {
         FROM visit
         WHERE currentLocalTimeAssignment BETWEEN ? AND ?
         GROUP BY patient_id
+      ),
+      total_patients AS (
+        SELECT COUNT(DISTINCT patient_id) AS total_count
+        FROM visit
+        WHERE currentLocalTimeAssignment BETWEEN ? AND ?
       )
       SELECT 
         '1 visite' AS visit_category,
         COUNT(*) AS patient_count,
-        ROUND((COUNT(*) / (SELECT COUNT(DISTINCT patient_id) FROM visit WHERE currentLocalTimeAssignment BETWEEN ? AND ?)) * 100, 2) AS percentage
+        ROUND((COUNT(*) / (SELECT total_count FROM total_patients)) * 100, 2) AS percentage
       FROM patient_visit_summary
       WHERE total_visits = 1
       UNION ALL
       SELECT 
         '2-3 visites' AS visit_category,
         COUNT(*) AS patient_count,
-        ROUND((COUNT(*) / (SELECT COUNT(DISTINCT patient_id) FROM visit WHERE currentLocalTimeAssignment BETWEEN ? AND ?)) * 100, 2) AS percentage
+        ROUND((COUNT(*) / (SELECT total_count FROM total_patients)) * 100, 2) AS percentage
       FROM patient_visit_summary
       WHERE total_visits BETWEEN 2 AND 3
       UNION ALL
       SELECT 
         '4-6 visites' AS visit_category,
         COUNT(*) AS patient_count,
-        ROUND((COUNT(*) / (SELECT COUNT(DISTINCT patient_id) FROM visit WHERE currentLocalTimeAssignment BETWEEN ? AND ?)) * 100, 2) AS percentage
+        ROUND((COUNT(*) / (SELECT total_count FROM total_patients)) * 100, 2) AS percentage
       FROM patient_visit_summary
       WHERE total_visits BETWEEN 4 AND 6
       UNION ALL
       SELECT 
         '7+ visites' AS visit_category,
         COUNT(*) AS patient_count,
-        ROUND((COUNT(*) / (SELECT COUNT(DISTINCT patient_id) FROM visit WHERE currentLocalTimeAssignment BETWEEN ? AND ?)) * 100, 2) AS percentage
+        ROUND((COUNT(*) / (SELECT total_count FROM total_patients)) * 100, 2) AS percentage
       FROM patient_visit_summary
       WHERE total_visits >= 7
       ORDER BY patient_count DESC;
@@ -206,7 +211,7 @@ module.exports = (connection) => {
 
     connection.query(
       query,
-      [startDate, endDate, startDate, endDate, startDate, endDate, startDate, endDate, startDate, endDate],
+      [startDate, endDate, startDate, endDate],
       (error, results) => {
         if (error) {
           console.error('Erreur lors de la récupération de l\'analyse de rétention:', error);
