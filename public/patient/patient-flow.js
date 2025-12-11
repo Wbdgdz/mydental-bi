@@ -468,10 +468,14 @@ async function exportPatientFlowCSV() {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         
+        // Sanitize dates for filename
+        const safeStartDate = startDate.replace(/[^0-9-]/g, '');
+        const safeEndDate = endDate.replace(/[^0-9-]/g, '');
+        
         // Create download link and trigger download
         const a = document.createElement('a');
         a.href = url;
-        a.download = `patient-flow-data-${startDate}-to-${endDate}.csv`;
+        a.download = `patient-flow-data-${safeStartDate}-to-${safeEndDate}.csv`;
         document.body.appendChild(a);
         a.click();
         

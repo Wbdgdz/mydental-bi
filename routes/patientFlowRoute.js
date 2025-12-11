@@ -198,6 +198,12 @@ module.exports = (connection) => {
       return res.status(400).json({ message: 'Les paramètres "startDate" et "endDate" sont requis.' });
     }
 
+    // Validate date format to prevent injection (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+      return res.status(400).json({ message: 'Format de date invalide. Utilisez YYYY-MM-DD.' });
+    }
+
     const query = `
       SELECT 
         DATE(v.currentLocalTimeAssignment) AS date,
@@ -243,9 +249,13 @@ module.exports = (connection) => {
         csvContent += csvRow.join(',') + '\n';
       });
 
+      // Sanitize dates for filename (already validated above, but extra safety)
+      const safeStartDate = startDate.replace(/[^0-9-]/g, '');
+      const safeEndDate = endDate.replace(/[^0-9-]/g, '');
+
       // Set headers for CSV download
       res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', `attachment; filename=patient-flow-data-${startDate}-to-${endDate}.csv`);
+      res.setHeader('Content-Disposition', `attachment; filename=patient-flow-data-${safeStartDate}-to-${safeEndDate}.csv`);
       res.send(csvContent);
     });
   });
