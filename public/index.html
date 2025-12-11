@@ -18,6 +18,8 @@
             <li><a href="/" class="active">Tableau de bord Clinique</a></li>
             <li><a href="/doctorPerformance.html">Performance Médecins</a></li>
             <li><a href="/simulateur-rentabilite.html">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html">Analyse Financière</a></li>
+            <li><a href="/patient-analysis.html">Analyse Patients</a></li>
         </ul>
             <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
     </nav>
@@ -197,6 +199,34 @@
     <div class="chart-container">
         <h2>Analyse des rendez-vous</h2>
         <svg id="stacked-bar-chart"></svg>
+    </div>
+
+    <!-- Section Rentabilité des Actes (basée sur simulation sauvegardée) -->
+    <div id="rentabilite-section" class="chart-container" style="display: none;">
+        <h2>📊 Analyse de Rentabilité des Actes</h2>
+        <p class="section-description">
+            Données issues de la dernière simulation du simulateur de rentabilité.
+            <a href="/simulateur-rentabilite.html" style="color: #667eea;">→ Aller au simulateur</a>
+        </p>
+        
+        <div id="rentabilite-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+            <strong>ℹ️ Simulation:</strong> <span id="simulation-info-text">Aucune simulation disponible</span>
+        </div>
+
+        <div id="rentabilite-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <!-- Stats seront ajoutées dynamiquement -->
+        </div>
+
+        <!-- Graphiques généraux -->
+        <div style="margin-top: 30px;">
+            <h3 style="margin-bottom: 15px;">Distribution du Chiffre d'Affaires (Top 10)</h3>
+            <div id="rentabilite-ca-chart" style="width: 100%; min-height: 400px;"></div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3 style="margin-bottom: 15px;">Répartition des Actes par Niveau de Rentabilité</h3>
+            <div id="rentabilite-marge-chart" style="width: 100%; min-height: 400px;"></div>
+        </div>
     </div>
 
     <!-- Scripts pour les visualisations -->

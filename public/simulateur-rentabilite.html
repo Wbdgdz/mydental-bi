@@ -18,6 +18,8 @@
             <li><a href="/">Tableau de bord Clinique</a></li>
             <li><a href="/doctorPerformance.html">Performance Médecins</a></li>
             <li><a href="/simulateur-rentabilite.html" class="active">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html">Analyse Financière</a></li>
+            <li><a href="/patient-analysis.html">Analyse Patients</a></li>
         </ul>
             <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
     </nav>
@@ -26,6 +28,21 @@
     <h1 class="page-title">Simulateur de rentabilité des actes</h1>
 
     <!-- Sélecteur de période -->
+    <div class="period-selector-container">
+        <div class="period-selector">
+            <label for="start-date">Période d'analyse - Début :</label>
+            <input type="date" id="start-date" name="start-date">
+            
+            <label for="end-date">Fin :</label>
+            <input type="date" id="end-date" name="end-date">
+            
+            <label for="doctor-select">Médecin :</label>
+            <select id="doctor-select" name="doctor-select">
+                <option value="all">Tous les médecins</option>
+            </select>
+            
+            <button id="apply-period" class="btn-apply">Appliquer</button>
+        </div>
     <div class="period-selector">
         <label for="start-date">Début :</label>
         <input type="date" id="start-date" name="start-date">
@@ -130,9 +147,13 @@
                     <span class="btn-icon">💡</span>
                     Suggérer Nouveaux Tarifs
                 </button>
+                <button id="save-simulation" class="btn-save" style="display: none;">
+                    <span class="btn-icon">💾</span>
+                    Sauvegarder la Simulation
+                </button>
                 <button id="export-data" class="btn-export">
                     <span class="btn-icon">📥</span>
-                    Exporter les Résultats
+                    Exporter CSV
                 </button>
             </div>
         </div>

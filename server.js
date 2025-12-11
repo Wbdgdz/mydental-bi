@@ -113,8 +113,14 @@ app.use('/api/doctor-performance', authenticateToken,require('./routes/doctor/do
 app.use('/api/doctor/patient-evolution',authenticateToken, require('./routes/doctor/patientEvolutionRoute')(connection));
 app.use('/api/doctor/monthly-stats', authenticateToken,require('./routes/doctor/monthlyStatsRoute')(connection));
 
+// Nouvelle route pour l'analyse financière avancée (protégée)
+app.use('/api/financial-analysis', authenticateToken, require('./routes/financialAnalysisRoute')(connection));
 
+// Nouvelle route pour l'analyse des patients (protégée)
+app.use('/api/patient-analysis', authenticateToken, require('./routes/patientAnalysisRoute')(connection));
 
+// Nouvelle route pour l'analyse des flux clients (protégée)
+app.use('/api/patient-flow', authenticateToken, require('./routes/patientFlowRoute')(connection));
 
 // Démarrer le serveur
 app.listen(port, () => {

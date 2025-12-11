@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse des Patients - MYDental BI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="patient-analysis.css">
+    <link rel="stylesheet" href="patient-flow.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <!-- Navigation principale -->
+    <nav class="main-nav">
+        <a href="/" class="nav-brand">
+            <img src="logo3.png" alt="Logo" class="nav-logo">
+            MYDental BI
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Tableau de bord Clinique</a></li>
+            <li><a href="/doctorPerformance.html">Performance Médecins</a></li>
+            <li><a href="/simulateur-rentabilite.html">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html">Analyse Financière</a></li>
+            <li><a href="/patient-analysis.html" class="active">Analyse Patients</a></li>
+        </ul>
+        <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
+    </nav>
+
+    <!-- Titre de la page -->
+    <h1 class="page-title">👥 Analyse des Patients - Indicateurs de Performance</h1>
+
+    <div class="main-container">
+        <!-- Indicateurs clés -->
+        <div class="metrics-grid" id="metrics-grid">
+            <div class="metric-card">
+                <h3>👥 Total Patients</h3>
+                <div class="metric-value" id="total-patients">-</div>
+                <div class="metric-label">Patients uniques dans la période</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="new-patients">-</div>
+                        <div class="metric-secondary-label">Nouveaux</div>
+                    </div>
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="returning-patients">-</div>
+                        <div class="metric-secondary-label">Fidèles</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>📈 Taux de Rétention</h3>
+                <div class="metric-value" id="retention-rate">-</div>
+                <div class="metric-label">Nouveaux patients revenus</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="new-patients-returned">-</div>
+                        <div class="metric-secondary-label">Patients retenus</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>🔄 Visites Moyennes</h3>
+                <div class="metric-value" id="avg-visits-per-patient">-</div>
+                <div class="metric-label">Nombre moyen de visites par patient</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="single-visit-patients">-</div>
+                        <div class="metric-secondary-label">1 seule visite</div>
+                    </div>
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="multi-visit-patients">-</div>
+                        <div class="metric-secondary-label">Visites multiples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique: Évolution mensuelle des patients -->
+        <div class="chart-card">
+            <h3>📊 Évolution Mensuelle des Patients</h3>
+            <div class="chart-subtitle">Comparaison des nouveaux patients et des patients fidèles</div>
+            <svg id="monthly-evolution-chart"></svg>
+        </div>
+
+        <!-- Graphique: Analyse de la rétention -->
+        <div class="chart-card">
+            <h3>🎯 Analyse de la Rétention des Patients</h3>
+            <div class="chart-subtitle">Distribution des patients par nombre de visites</div>
+            <svg id="retention-analysis-chart"></svg>
+        </div>
+
+        <!-- Tableau détaillé de l'évolution -->
+        <div class="chart-card">
+            <h3>📋 Détail de l'Évolution Mensuelle</h3>
+            <table class="patients-table" id="monthly-table">
+                <thead>
+                    <tr>
+                        <th>Mois</th>
+                        <th>Total Patients</th>
+                        <th>Nouveaux Patients</th>
+                        <th>Patients Fidèles</th>
+                        <th>Total Visites</th>
+                        <th>Visites/Patient</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" class="loading">Chargement des données...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Utilisation des indicateurs existants -->
+        <div class="chart-card">
+            <h3>📈 Évolution des Patients avec au moins 2 Visites</h3>
+            <div class="chart-subtitle">Basé sur les données de rétention historiques</div>
+            <svg id="patient-visits-chart"></svg>
+        </div>
+
+        <!-- Section Flux Clients -->
+        <h2 class="page-title section-separator">📊 Analyse et Prévision des Flux Clients</h2>
+
+        <!-- Indicateurs clés flux clients -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>👥 Total Patients</h3>
+                <div class="metric-value" id="flow-total-patients">-</div>
+                <div class="metric-label">Patients uniques</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>📅 Visites / Jour</h3>
+                <div class="metric-value" id="avg-visits-per-day">-</div>
+                <div class="metric-label">Moyenne quotidienne</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>⏰ Heure de Pointe</h3>
+                <div class="metric-value" id="peak-hour">-</div>
+                <div class="metric-label">Période de forte affluence</div>
+            </div>
+
+            <div class="metric-card">
+                <h3>📈 Pic de Visites</h3>
+                <div class="metric-value" id="peak-day-visits">-</div>
+                <div class="metric-label">Maximum en une journée</div>
+            </div>
+        </div>
+
+        <!-- Heatmap: Périodes de forte affluence -->
+        <div class="chart-card">
+            <h3>🔥 Périodes de Forte Affluence</h3>
+            <div class="chart-subtitle">Distribution des visites par jour de la semaine et heure de la journée</div>
+            <svg id="peak-periods-heatmap"></svg>
+        </div>
+
+        <!-- Tableau: Capacité résiduelle par médecin -->
+        <div class="chart-card">
+            <h3>👨‍⚕️ Capacité Résiduelle par Médecin</h3>
+            <div class="chart-subtitle">Analyse de l'utilisation et des besoins en ressources humaines</div>
+            <table class="capacity-table" id="doctor-capacity-table">
+                <thead>
+                    <tr>
+                        <th>Médecin</th>
+                        <th>Consultations Totales</th>
+                        <th>Jours Travaillés</th>
+                        <th>Heures Totales</th>
+                        <th>Moy. Heures/Jour</th>
+                        <th>Moy. Consult./Jour</th>
+                        <th>Capacité Résiduelle (Consult./Jour)</th>
+                        <th>Statut d'Utilisation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="8" class="loading">Chargement des données...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section informative sur les prévisions futures -->
+        <div class="info-card">
+            <h3>🔮 Prévisions de Flux (À venir)</h3>
+            <p class="info-text">
+                Cette section affichera bientôt des prévisions basées sur l'historique des visites :
+            </p>
+            <ul class="info-list">
+                <li>Prévision du nombre de patients pour les prochains mois</li>
+                <li>Identification automatique des périodes de forte affluence attendues</li>
+                <li>Recommandations pour l'optimisation des ressources humaines</li>
+                <li>Alertes sur les besoins en personnel supplémentaire</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="w-full mx-auto max-w-screen-xl p-4">
+            <span>© 2025 <a href="#">MyDental BI</a>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="./patient/patientAnalysis.js"></script>
+    <script type="module" src="./patient/patient-flow.js"></script>
+    <script type="module" src="./utilities/utils.js"></script>
+</body>
+</html>
