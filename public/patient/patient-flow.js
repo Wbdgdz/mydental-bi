@@ -4,14 +4,22 @@ import { checkAuth } from "../utilities/utils.js";
 checkAuth();
 const token = localStorage.getItem('token');
 
-// Dates fixes: du 1er janvier 2015 à aujourd'hui
-const START_DATE = '2015-01-01';
+// Configuration des dates - peut être modifié selon les besoins
+const START_DATE = '2015-01-01'; // Date de début de l'historique de données
 const getEndDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
 };
 
-// Tooltip global unique pour tous les graphiques
+// Helper function pour convertir MySQL DAYOFWEEK (1-7, Dimanche-Samedi) 
+// vers l'index de notre array (0-6, Lundi-Dimanche)
+function getMySQLDayOfWeek(arrayIndex) {
+    // arrayIndex: 0=Lundi, 1=Mardi, ... 6=Dimanche
+    // MySQL DAYOFWEEK: 1=Dimanche, 2=Lundi, ... 7=Samedi
+    return arrayIndex === 6 ? 1 : arrayIndex + 2;
+}
+
+// Tooltip global unique pour tous les graphiques - avec gestion de nettoyage
 let globalTooltip = d3.select("body").select(".tooltip");
 if (globalTooltip.empty()) {
     globalTooltip = d3.select("body").append("div")
@@ -283,8 +291,8 @@ function createPeakPeriodsHeatmap(data) {
     // Créer les cellules
     days.forEach((day, dayIndex) => {
         hours.forEach((hour, hourIndex) => {
-            const dayOfWeek = dayIndex + 2; // Ajuster pour correspondre à MySQL DAYOFWEEK
-            const key = `${dayOfWeek > 7 ? 1 : dayOfWeek}-${hour}`;
+            const dayOfWeek = getMySQLDayOfWeek(dayIndex);
+            const key = `${dayOfWeek}-${hour}`;
             const cellData = dataMap.get(key);
             const value = cellData ? cellData.total_visits : 0;
 

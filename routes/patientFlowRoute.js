@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (connection) => {
+  // Constants for capacity calculation
+  const STANDARD_WORKING_HOURS = 8; // Standard working hours per day
+  const AVG_CONSULTATION_DURATION = 0.5; // Average consultation duration in hours (30 minutes)
+
   // Endpoint: Nombre de patients par mois
   router.get('/monthly-patient-count', (req, res) => {
     const { startDate, endDate } = req.query;
@@ -101,8 +105,8 @@ module.exports = (connection) => {
         ROUND(total_hours, 2) AS total_hours,
         avg_hours_per_day,
         ROUND(total_consultations / NULLIF(working_days, 0), 2) AS avg_consultations_per_day,
-        -- Capacité résiduelle estimée (basée sur 8 heures par jour et 30 min par consultation)
-        ROUND((8 - avg_hours_per_day) * 2, 0) AS estimated_daily_capacity,
+        -- Capacité résiduelle estimée (basée sur les constantes configurables)
+        ROUND((${STANDARD_WORKING_HOURS} - avg_hours_per_day) / ${AVG_CONSULTATION_DURATION}, 0) AS estimated_daily_capacity,
         CASE 
           WHEN avg_hours_per_day < 6 THEN 'Faible utilisation'
           WHEN avg_hours_per_day BETWEEN 6 AND 7.5 THEN 'Utilisation normale'
