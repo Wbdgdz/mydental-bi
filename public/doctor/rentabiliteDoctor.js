@@ -63,10 +63,12 @@ export function loadRentabiliteData(doctorId = null) {
     // Afficher les statistiques filtrées par médecin
     displayRentabiliteStats(doctorId);
 
-    // Créer les graphiques basés sur les données réelles (CA, visites)
-    createTopCAChart(doctorId);
-    createCADistributionChart(doctorId);
-    createTopVisitsChart(doctorId);
+    // Attendre que le DOM soit rendu avant de créer les graphiques
+    setTimeout(() => {
+        createTopCAChart(doctorId);
+        createCADistributionChart(doctorId);
+        createTopVisitsChart(doctorId);
+    }, 100);
 }
 
 // Afficher les statistiques de rentabilité (basées sur les données réelles uniquement)

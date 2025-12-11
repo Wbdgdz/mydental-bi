@@ -37,9 +37,11 @@ export function loadRentabiliteData() {
     // Afficher les statistiques globales
     displayRentabiliteStats();
 
-    // Créer les graphiques basés sur les données réelles (CA, visites)
-    createCADistributionChart();
-    createMargeDistributionChart(); // Répartition du CA par catégorie d'actes
+    // Attendre que le DOM soit rendu avant de créer les graphiques
+    setTimeout(() => {
+        createCADistributionChart();
+        createMargeDistributionChart();
+    }, 100);
 }
 
 // Afficher les statistiques de rentabilité (basées sur les données réelles uniquement)
@@ -77,9 +79,12 @@ function createCADistributionChart() {
         .slice(0, 10);
 
     const container = document.getElementById('rentabilite-ca-chart');
-    if (!container) return;
+    if (!container) {
+        console.error('Conteneur rentabilite-ca-chart non trouvé');
+        return;
+    }
 
-    const width = container.offsetWidth || 800;
+    const width = Math.max(container.offsetWidth, 800);
     const height = 400;
     const margin = { top: 20, right: 30, bottom: 100, left: 70 };
 
@@ -176,9 +181,12 @@ function createMargeDistributionChart() {
     }));
 
     const container = document.getElementById('rentabilite-marge-chart');
-    if (!container) return;
+    if (!container) {
+        console.error('Conteneur rentabilite-marge-chart non trouvé');
+        return;
+    }
 
-    const width = container.offsetWidth || 800;
+    const width = Math.max(container.offsetWidth, 800);
     const height = 400;
     const radius = Math.min(width, height) / 2 - 40;
 
