@@ -18,9 +18,11 @@ import { checkAuth } from "../utilities/utils.js";
         })
         .then(response => response.json())
         .then(data => {
-            const margin = { top: 50, right: 50, bottom: 100, left: 100 };
-            const width = 1200 - margin.left - margin.right;
-            const height = 600 - margin.top - margin.bottom;
+            const margin = { top: 50, right: 50, bottom: 100, left: 120 };
+            const fullWidth = 1400;
+            const fullHeight = 700;
+            const width = fullWidth - margin.left - margin.right;
+            const height = fullHeight - margin.top - margin.bottom;
 
             const hourRanges = [
                 '08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00',
@@ -48,8 +50,8 @@ import { checkAuth } from "../utilities/utils.js";
 
             const createHeatmap = (selector, valueKey, colorScale) => {
                 const svg = d3.select(selector)
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
+                    .attr("viewBox", `0 0 ${fullWidth} ${fullHeight}`)
+                    .attr("preserveAspectRatio", "xMidYMid meet")
                     .append("g")
                     .attr("transform", `translate(${margin.left},${margin.top})`);
 

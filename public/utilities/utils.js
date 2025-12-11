@@ -106,6 +106,66 @@ export function formatNumber(value) {
     }
 }
 
+// --- Gestion du Bouton Retour en Haut ---
+const backToTopButton = document.getElementById("back-to-top");
+
+if (backToTopButton) {
+    // Gestion du scroll
+    window.addEventListener('scroll', () => {
+        if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+            backToTopButton.style.display = "flex";
+        } else {
+            backToTopButton.style.display = "none";
+        }
+    });
+
+    // Gestion du clic
+    backToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+}
+
+
+/* --- Gestion du Menu Latéral (Overlay) --- */
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    // Création dynamique de l'overlay s'il n'existe pas
+    let overlay = document.getElementById('sidebar-overlay');
+    if (!overlay && sidebar) {
+        overlay = document.createElement('div');
+        overlay.id = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+    }
+
+    if (menuToggle && sidebar && overlay) {
+        // Ouvrir le menu
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); // Empêche de fermer immédiatement
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+        });
+
+        // Fermer le menu en cliquant sur l'overlay (partie sombre)
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+
+        // Fermer le menu en cliquant sur un lien du menu
+        const sidebarLinks = sidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+        });
+    }
+});
 // Fonction pour obtenir la plage de dates depuis les inputs
 export function getDateRange() {
     const startDateInput = document.getElementById('start-date')?.value;
@@ -121,3 +181,21 @@ export function getDateRange() {
     
     return { startDate: startDateInput, endDate: endDateInput };
 }
+
+    // Fonction pour gérer la déconnexion
+    export function setupLogoutButton() {
+        const logoutBtn = document.getElementById('logout-btn');
+    
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                // Supprimer le token du localStorage
+                localStorage.removeItem('token');
+            
+                // Rediriger vers la page de connexion
+                window.location.href = '/login.html';
+            });
+        }
+    }
+
+    // Appeler automatiquement setupLogoutButton au chargement du DOM
+    document.addEventListener('DOMContentLoaded', setupLogoutButton);

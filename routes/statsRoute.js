@@ -93,7 +93,7 @@ module.exports = (connection) => {
                   (SELECT SUM(amount) 
                    FROM payment 
                    WHERE payment.date BETWEEN ? AND ?) / 
-                  (SELECT SUM(TIMESTAMPDIFF(SECOND, v.startdate, v.enddate)) / 3600 
+                  (SELECT SUM(TIMESTAMPDIFF(SECOND, v.startDate, v.endDate)) / 3600 
                    FROM visit v 
                    WHERE v.currentLocalTimeAssignment BETWEEN ? AND ?)
               ) AS CA_Per_hour;
