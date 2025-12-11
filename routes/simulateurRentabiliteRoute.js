@@ -4,7 +4,7 @@ const router = express.Router();
 module.exports = (db) => {
   // Route pour calculer la rentabilité des actes
   router.get('/', (req, res) => {
-    const { start, end, remunerationMedecin, coutCentre } = req.query;
+    const { start, end, remunerationMedecin, coutCentre, doctorId } = req.query;
 
     // Validation des paramètres
     if (!start || !end) {
@@ -15,11 +15,16 @@ module.exports = (db) => {
     const remMed = parseFloat(remunerationMedecin) || 40; // 40% par défaut
     const coutCtr = parseFloat(coutCentre) || 25; // 25% par défaut
 
+    // Construire le filtre médecin si fourni
+    const doctorFilter = doctorId && doctorId !== 'all' ? 'AND v.user_activated_id = ?' : '';
+    const doctorParams = doctorId && doctorId !== 'all' ? [start, end, parseInt(doctorId)] : [start, end];
+
     // Requête SQL pour calculer la rentabilité par acte
     const query = `
       WITH actes_par_visit AS (
         SELECT 
             v.id AS visit_id,
+            v.user_activated_id AS doctor_id,
             u.description1 AS acte,
             u.id AS acte_id
         FROM dental_diagram_udc ddu
@@ -27,6 +32,7 @@ module.exports = (db) => {
         JOIN udc u ON u.id = ddu.udc_id
         JOIN visit v ON v.id = dd.consultation_id
         WHERE v.currentLocalTimeAssignment BETWEEN ? AND ?
+        ${doctorFilter}
       ),
       nombre_actes_par_visit AS (
         SELECT 
@@ -39,28 +45,31 @@ module.exports = (db) => {
         SELECT 
             apv.acte,
             apv.acte_id,
+            apv.doctor_id,
             SUM(p.amount / napv.nb_actes) AS totalRevenue,
             COUNT(DISTINCT apv.visit_id) AS nb_visites
         FROM actes_par_visit apv
         JOIN nombre_actes_par_visit napv ON apv.visit_id = napv.visit_id
         JOIN payment p ON p.consultation_id = apv.visit_id
-        GROUP BY apv.acte, apv.acte_id
+        GROUP BY apv.acte, apv.acte_id, apv.doctor_id
       ),
       statistiques_actes AS (
         SELECT 
             apv.acte,
             apv.acte_id,
+            apv.doctor_id,
             COUNT(DISTINCT v.id) AS total_visits,
             COUNT(DISTINCT v.patient_id) AS unique_patients,
             SUM(TIMESTAMPDIFF(MINUTE, v.startDate, v.endDate)) / 60.0 AS total_hours
         FROM actes_par_visit apv
         JOIN visit v ON v.id = apv.visit_id
         WHERE v.startDate IS NOT NULL AND v.endDate IS NOT NULL
-        GROUP BY apv.acte, apv.acte_id
+        GROUP BY apv.acte, apv.acte_id, apv.doctor_id
       )
       SELECT 
         sa.acte_id,
         sa.acte,
+        sa.doctor_id,
         sa.total_visits,
         sa.unique_patients AS uniq_patients,
         ROUND(COALESCE(sa.total_hours, 0), 2) AS total_hours,
@@ -81,22 +90,24 @@ module.exports = (db) => {
         ROUND(COALESCE(rpa.totalRevenue, 0) / NULLIF(sa.total_visits, 0), 2) AS prix_moyen_acte
         
       FROM statistiques_actes sa
-      LEFT JOIN revenus_par_acte rpa ON sa.acte = rpa.acte AND sa.acte_id = rpa.acte_id
+      LEFT JOIN revenus_par_acte rpa ON sa.acte = rpa.acte AND sa.acte_id = rpa.acte_id AND sa.doctor_id = rpa.doctor_id
       WHERE COALESCE(rpa.totalRevenue, 0) > 0
       ORDER BY CA DESC;
     `;
 
     // Exécution de la requête
     // Les paramètres sont répétés car utilisés plusieurs fois dans la requête
+    const queryParams = [
+      ...doctorParams,  // Pour le filtre de dates et docteur
+      remMed, coutCtr, // Pour remuneration_medecin et cout_centre
+      remMed, coutCtr, // Pour marge_brute
+      remMed, coutCtr, // Pour marge_brute_pct
+      remMed, coutCtr  // Pour marge_par_heure
+    ];
+
     db.query(
       query, 
-      [
-        start, end,  // Pour le filtre de dates
-        remMed, coutCtr, // Pour remuneration_medecin et cout_centre
-        remMed, coutCtr, // Pour marge_brute
-        remMed, coutCtr, // Pour marge_brute_pct
-        remMed, coutCtr  // Pour marge_par_heure
-      ], 
+      queryParams, 
       (err, results) => {
         if (err) {
           console.error('Erreur lors de l\'exécution de la requête:', err);
@@ -108,7 +119,8 @@ module.exports = (db) => {
           parametres: {
             remunerationMedecin: remMed,
             coutCentre: coutCtr,
-            margeCible: 100 - remMed - coutCtr
+            margeCible: 100 - remMed - coutCtr,
+            doctorId: doctorId || 'all'
           },
           actes: results
         });
@@ -118,7 +130,7 @@ module.exports = (db) => {
 
   // Route pour calculer les nouveaux tarifs suggérés
   router.get('/suggestion-tarifs', (req, res) => {
-    const { start, end, remunerationMedecin, coutCentre, margeCible } = req.query;
+    const { start, end, remunerationMedecin, coutCentre, margeCible, doctorId } = req.query;
 
     // Validation des paramètres
     if (!start || !end) {
@@ -129,10 +141,15 @@ module.exports = (db) => {
     const coutCtr = parseFloat(coutCentre) || 25;
     const targetMarge = parseFloat(margeCible) || 30;
 
+    // Construire le filtre médecin si fourni
+    const doctorFilter = doctorId && doctorId !== 'all' ? 'AND v.user_activated_id = ?' : '';
+    const doctorParams = doctorId && doctorId !== 'all' ? [start, end, parseInt(doctorId)] : [start, end];
+
     const query = `
       WITH actes_par_visit AS (
         SELECT 
             v.id AS visit_id,
+            v.user_activated_id AS doctor_id,
             u.description1 AS acte,
             u.id AS acte_id
         FROM dental_diagram_udc ddu
@@ -140,6 +157,7 @@ module.exports = (db) => {
         JOIN udc u ON u.id = ddu.udc_id
         JOIN visit v ON v.id = dd.consultation_id
         WHERE v.currentLocalTimeAssignment BETWEEN ? AND ?
+        ${doctorFilter}
       ),
       nombre_actes_par_visit AS (
         SELECT 
@@ -152,25 +170,28 @@ module.exports = (db) => {
         SELECT 
             apv.acte,
             apv.acte_id,
+            apv.doctor_id,
             SUM(p.amount / napv.nb_actes) AS totalRevenue,
             COUNT(DISTINCT apv.visit_id) AS nb_visites
         FROM actes_par_visit apv
         JOIN nombre_actes_par_visit napv ON apv.visit_id = napv.visit_id
         JOIN payment p ON p.consultation_id = apv.visit_id
-        GROUP BY apv.acte, apv.acte_id
+        GROUP BY apv.acte, apv.acte_id, apv.doctor_id
       ),
       statistiques_actes AS (
         SELECT 
             apv.acte,
             apv.acte_id,
+            apv.doctor_id,
             COUNT(DISTINCT v.id) AS total_visits
         FROM actes_par_visit apv
         JOIN visit v ON v.id = apv.visit_id
-        GROUP BY apv.acte, apv.acte_id
+        GROUP BY apv.acte, apv.acte_id, apv.doctor_id
       )
       SELECT 
         sa.acte_id,
         sa.acte,
+        sa.doctor_id,
         ROUND(COALESCE(rpa.totalRevenue, 0), 2) AS ca_actuel,
         ROUND(COALESCE(rpa.totalRevenue, 0) / NULLIF(sa.total_visits, 0), 2) AS prix_actuel,
         
@@ -203,7 +224,7 @@ module.exports = (db) => {
         ) AS variation_pct
         
       FROM statistiques_actes sa
-      LEFT JOIN revenus_par_acte rpa ON sa.acte = rpa.acte AND sa.acte_id = rpa.acte_id
+      LEFT JOIN revenus_par_acte rpa ON sa.acte = rpa.acte AND sa.acte_id = rpa.acte_id AND sa.doctor_id = rpa.doctor_id
       WHERE COALESCE(rpa.totalRevenue, 0) > 0
       ORDER BY ca_actuel DESC;
     `;
@@ -211,7 +232,7 @@ module.exports = (db) => {
     db.query(
       query,
       [
-        start, end,
+        ...doctorParams,
         targetMarge, remMed, coutCtr,  // Pour tarif_suggere
         remMed, coutCtr,               // Pour marge_actuelle_pct
         targetMarge,                    // Pour marge_cible_pct
@@ -228,7 +249,8 @@ module.exports = (db) => {
           parametres: {
             remunerationMedecin: remMed,
             coutCentre: coutCtr,
-            margeCible: targetMarge
+            margeCible: targetMarge,
+            doctorId: doctorId || 'all'
           },
           suggestions: results
         });
