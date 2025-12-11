@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="doctor-performance.css">
     <link rel="stylesheet" href="doctor-comparison.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Bibliothèques pour l'export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     
@@ -21,17 +24,19 @@
             <li><a href="/doctorPerformance.html" class="active">Performance Médecins</a></li>
             <li><a href="/simulateur-rentabilite.html">Simulateur de Rentabilité</a></li>
         </ul>
-            <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
+        <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
     </nav>
 
-    <h1 class="page-title">Analyse des Performances des Médecins</h1>
+    <h1 class="page-title">Analyse des performances des médecins</h1>
 
-    <!-- Bouton pour aller à la comparaison -->
-    <div style="text-align: center; margin: 20px 0;">
-        <a href="/doctorComparison.html" class="btn-navigate-comparison">
-            <span class="btn-icon">📊</span>
-            Comparer plusieurs médecins
-        </a>
+    <!-- Onglets de Navigation -->
+    <div class="mode-tabs-container">
+        <button class="mode-tab active" data-mode="individual">
+            Un seul médecin
+        </button>
+        <button class="mode-tab" data-mode="comparison">
+            Plusieurs médecins
+        </button>
     </div>
 
     <!-- Mode Performance Individuelle -->
@@ -173,6 +178,56 @@
         </div>
 
     </div>
+    </div>
+
+    <!-- Mode Comparaison -->
+    <div id="comparison-mode" class="mode-content" style="display: none;">
+        <!-- Section de sélection -->
+        <div class="comparison-selector">
+            <div class="doctor-selectors">
+                <div class="doctor-selector-group">
+                    <label for="doctor-select-1">Médecin 1 :</label>
+                    <select id="doctor-select-1" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+                <div class="doctor-selector-group">
+                    <label for="doctor-select-2">Médecin 2 :</label>
+                    <select id="doctor-select-2" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+                <div class="doctor-selector-group">
+                    <label for="doctor-select-3">Médecin 3 (optionnel) :</label>
+                    <select id="doctor-select-3" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="comparison-period">
+                <label for="comparison-start-date">Début :</label>
+                <input type="date" id="comparison-start-date" name="comparison-start-date">
+                
+                <label for="comparison-end-date">Fin :</label>
+                <input type="date" id="comparison-end-date" name="comparison-end-date">
+            </div>
+
+            <button id="compare-btn" class="btn-compare" disabled>
+                <span class="btn-icon">📊</span>
+                Comparer les médecins
+            </button>
+        </div>
+
+        <!-- Section des résultats -->
+        <div id="comparison-results" class="comparison-results">
+            <div class="empty-state">
+                <div class="empty-icon">📊</div>
+                <h3>Aucune comparaison en cours</h3>
+                <p>Sélectionnez au moins 2 médecins et une période pour commencer</p>
+            </div>
+        </div>
+    </div>
 
     <footer class="site-footer">
         <div class="w-full mx-auto">
@@ -181,6 +236,63 @@
     </footer>
 
     <button id="back-to-top" title="Retour en haut">↑</button>
+
+    <script type="module" src="./utilities/utils.js"></script>
+    <script type="module" src="./doctor/doctorPerformance.js"></script>
+    <script type="module" src="./doctor/doctorComparisonPage.js"></script>
+    <script type="module">
+        // Gestion des onglets
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.mode-tab');
+            const individualMode = document.getElementById('individual-mode');
+            const comparisonMode = document.getElementById('comparison-mode');
+            
+            // Fonction pour changer de mode
+            function switchMode(mode) {
+                // Retirer la classe active de tous les onglets
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Ajouter la classe active au bon onglet
+                const activeTab = document.querySelector(`[data-mode="${mode}"]`);
+                if (activeTab) {
+                    activeTab.classList.add('active');
+                }
+                
+                // Afficher le bon mode
+                if (mode === 'individual') {
+                    individualMode.style.display = 'block';
+                    comparisonMode.style.display = 'none';
+                } else {
+                    individualMode.style.display = 'none';
+                    comparisonMode.style.display = 'block';
+                }
+            }
+            
+            // Gérer le clic sur les onglets
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const mode = tab.dataset.mode;
+                    switchMode(mode);
+                    // Mettre à jour l'URL sans recharger la page
+                    window.location.hash = mode === 'comparison' ? 'comparison' : '';
+                });
+            });
+            
+            // Vérifier l'URL au chargement pour afficher le bon onglet
+            const hash = window.location.hash.substring(1);
+            if (hash === 'comparison') {
+                switchMode('comparison');
+            } else {
+                switchMode('individual');
+            }
+            
+            // Écouter les changements de hash
+            window.addEventListener('hashchange', () => {
+                const hash = window.location.hash.substring(1);
+                switchMode(hash === 'comparison' ? 'comparison' : 'individual');
+            });
+        });
+    </script>    <button id="back-to-top" title="Retour en haut">↑</button>
 
     <script type="module" src="./doctor/main.js"></script>
     <script type="module" src="./utilities/utils.js"></script>

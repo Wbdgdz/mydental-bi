@@ -179,8 +179,11 @@ function displayComparisonResults(data) {
     // Générer les badges
     const badgesHTML = generateBadges(data.doctors);
     
-    // Générer les cartes KPI avec classement
-    const kpiCardsHTML = generateKPICards(data.doctors);
+    // Générer les cartes KPI principales
+    const mainKPIsHTML = generateMainKPICards(data.doctors);
+    
+    // Générer le tableau comparatif détaillé
+    const comparisonTableHTML = generateComparisonTable(data.doctors);
     
     // Générer les suggestions intelligentes
     const suggestionsHTML = generateSuggestions(data.doctors);
@@ -191,28 +194,48 @@ function displayComparisonResults(data) {
             ${badgesHTML}
         </div>
         
-        <!-- KPI Cards avec classement -->
-        <div class="kpi-comparison-grid">
-            ${kpiCardsHTML}
+        <!-- Indicateurs Clés Principaux -->
+        <div class="main-kpis-section">
+            <h3 class="section-title">📊 Indicateurs Clés de Performance</h3>
+            <div class="main-kpis-grid">
+                ${mainKPIsHTML}
+            </div>
         </div>
         
         <!-- Graphiques de comparaison -->
-        <div class="comparison-charts">
-            <div class="chart-container">
-                <h3>Comparaison des Indicateurs Clés</h3>
-                <div id="comparison-bar-chart"></div>
+        <div class="charts-section">
+            <h3 class="section-title">📈 Visualisations Comparatives</h3>
+            
+            <div class="chart-row">
+                <div class="chart-container">
+                    <svg id="comparison-bar-chart"></svg>
+                </div>
             </div>
             
-            <div class="chart-container">
-                <h3>Profil de Performance (Radar)</h3>
-                <div id="comparison-radar-chart"></div>
+            <div class="chart-row chart-row-2cols">
+                <div class="chart-container">
+                    <svg id="comparison-radar-chart"></svg>
+                </div>
+                
+                <div class="chart-container">
+                    <h4>CA par Heure vs Temps Moyen</h4>
+                    <svg id="comparison-scatter-chart"></svg>
+                </div>
             </div>
         </div>
         
+        <!-- Tableau Comparatif Détaillé -->
+        <div class="table-section">
+            <h3 class="section-title">📋 Tableau Comparatif Détaillé</h3>
+            ${comparisonTableHTML}
+        </div>
+        
         <!-- Suggestions intelligentes -->
-        <div class="suggestions-container">
-            <h3>💡 Suggestions et Analyses</h3>
-            ${suggestionsHTML}
+        <div class="suggestions-section">
+            <h3 class="section-title">💡 Analyses et Recommandations</h3>
+            <div class="suggestions-grid">
+                ${suggestionsHTML}
+            </div>
         </div>
         
         <!-- Boutons d'export -->
@@ -229,6 +252,7 @@ function displayComparisonResults(data) {
     // Créer les graphiques D3
     createComparisonBarChart(data);
     createComparisonRadarChart(data);
+    createScatterChart(data);
 }
 
 // --- GÉNÉRATION DES BADGES ---
@@ -237,12 +261,14 @@ function generateBadges(doctors) {
     const topPerformer = doctors.reduce((max, doc) => doc.globalScore > max.globalScore ? doc : max);
     const topRevenue = doctors.reduce((max, doc) => doc.totalRevenue > max.totalRevenue ? doc : max);
     const topLoyalty = doctors.reduce((max, doc) => doc.loyaltyRate > max.loyaltyRate ? doc : max);
+    const topEfficiency = doctors.reduce((max, doc) => doc.revenuePerHour > max.revenuePerHour ? doc : max);
     
     return `
         <div class="badge-card badge-gold">
             <div class="badge-icon">🏆</div>
             <div class="badge-content">
-                <div class="badge-title">Top Performer</div>
+                <div class="badge-title">Top Performer Global</div>
+                <div class="badge-subtitle">Score basé sur CA/h, visites, patients, fidélisation</div>
                 <div class="badge-doctor">${topPerformer.name}</div>
                 <div class="badge-value">Score: ${topPerformer.globalScore.toFixed(1)}/100</div>
             </div>
@@ -251,16 +277,25 @@ function generateBadges(doctors) {
         <div class="badge-card badge-silver">
             <div class="badge-icon">💰</div>
             <div class="badge-content">
-                <div class="badge-title">Meilleur CA</div>
+                <div class="badge-title">Meilleur Chiffre d'Affaires</div>
                 <div class="badge-doctor">${topRevenue.name}</div>
                 <div class="badge-value">${topRevenue.totalRevenue.toLocaleString('fr-FR')} €</div>
             </div>
         </div>
         
         <div class="badge-card badge-bronze">
+            <div class="badge-icon">⚡</div>
+            <div class="badge-content">
+                <div class="badge-title">Meilleur Rendement Horaire</div>
+                <div class="badge-doctor">${topEfficiency.name}</div>
+                <div class="badge-value">${topEfficiency.revenuePerHour.toFixed(2)} €/h</div>
+            </div>
+        </div>
+        
+        <div class="badge-card badge-purple">
             <div class="badge-icon">❤️</div>
             <div class="badge-content">
-                <div class="badge-title">Meilleur Fidélisation</div>
+                <div class="badge-title">Meilleure Fidélisation</div>
                 <div class="badge-doctor">${topLoyalty.name}</div>
                 <div class="badge-value">${topLoyalty.loyaltyRate.toFixed(1)}%</div>
             </div>
@@ -268,45 +303,151 @@ function generateBadges(doctors) {
     `;
 }
 
-// --- GÉNÉRATION DES CARTES KPI ---
-function generateKPICards(doctors) {
-    // KPIs à comparer
+// --- GÉNÉRATION DES CARTES KPI PRINCIPALES ---
+function generateMainKPICards(doctors) {
+    // Indicateurs clés de la page Performance Médecins
     const kpis = [
-        { key: 'totalRevenue', label: 'Chiffre d\'Affaires', unit: '€', format: (v) => v.toLocaleString('fr-FR') },
-        { key: 'totalVisits', label: 'Nombre de Visites', unit: '', format: (v) => v },
-        { key: 'avgRevenuePerVisit', label: 'CA Moyen / Visite', unit: '€', format: (v) => v.toFixed(2) },
-        { key: 'loyaltyRate', label: 'Taux de Fidélisation', unit: '%', format: (v) => v.toFixed(1) }
+        { 
+            key: 'uniquePatients', 
+            label: 'Patients Uniques',
+            getIndicator: (value, avg) => value > avg * 1.1 ? '🟢' : value < avg * 0.9 ? '🔴' : '🟠'
+        },
+        { 
+            key: 'totalVisits', 
+            label: 'Nombre de Visites',
+            getIndicator: (value, avg) => value > avg * 1.1 ? '🟢' : value < avg * 0.9 ? '🔴' : '🟠'
+        },
+        { 
+            key: 'newPatients', 
+            label: 'Nouveaux Patients',
+            getIndicator: (value, avg) => value > avg * 1.1 ? '🟢' : value < avg * 0.9 ? '🔴' : '🟠'
+        },
+        { 
+            key: 'totalRevenue', 
+            label: 'Total des Revenus',
+            format: (v) => v.toLocaleString('fr-FR') + ' €',
+            getIndicator: (value, avg) => value > avg * 1.1 ? '🟢' : value < avg * 0.9 ? '🔴' : '🟠'
+        },
+        { 
+            key: 'revenuePerHour', 
+            label: 'CA par Heure',
+            format: (v) => v.toFixed(2) + ' €/h',
+            getIndicator: (value, avg) => value > avg * 1.1 ? '🟢' : value < avg * 0.9 ? '🔴' : '🟠'
+        },
+        { 
+            key: 'avgPatientTime', 
+            label: 'Temps Patient Moyen',
+            format: (v) => v + ' min',
+            getIndicator: (value, avg) => value < avg * 0.9 ? '🟢' : value > avg * 1.1 ? '🔴' : '🟠',
+            inverse: true
+        },
+        { 
+            key: 'avgWaitingTime', 
+            label: 'Temps d\'Attente Moyen',
+            format: (v) => v + ' min',
+            getIndicator: (value, avg) => value < avg * 0.9 ? '🟢' : value > avg * 1.1 ? '🔴' : '🟠',
+            inverse: true
+        },
+        { 
+            key: 'avgRevenuePerVisit', 
+            label: 'CA Moyen / Visite',
+            format: (v) => v.toFixed(2) + ' €',
+            getIndicator: (value, avg) => value > avg * 1.1 ? '🟢' : value < avg * 0.9 ? '🔴' : '🟠'
+        }
     ];
     
     return kpis.map(kpi => {
-        // Trier les médecins par ce KPI
-        const sorted = [...doctors].sort((a, b) => b[kpi.key] - a[kpi.key]);
+        const avg = doctors.reduce((sum, d) => sum + (d[kpi.key] || 0), 0) / doctors.length;
         
-        const rows = sorted.map((doctor, index) => {
-            const rank = index + 1;
-            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+        const doctorCards = doctors.map(doctor => {
+            const value = doctor[kpi.key] || 0;
+            const indicator = kpi.getIndicator(value, avg);
+            const formattedValue = kpi.format ? kpi.format(value) : value;
             
             return `
-                <div class="kpi-row">
-                    <div class="kpi-rank">${medal} ${rank}</div>
-                    <div class="kpi-doctor" style="border-left: 4px solid ${doctor.color};">
-                        ${doctor.name}
+                <div class="kpi-doctor-card" style="border-left: 4px solid ${doctor.color};">
+                    <div class="kpi-doctor-name">${doctor.name}</div>
+                    <div class="kpi-doctor-value">
+                        <span class="indicator">${indicator}</span>
+                        <span class="value">${formattedValue}</span>
                     </div>
-                    <div class="kpi-value">${kpi.format(doctor[kpi.key])} ${kpi.unit}</div>
                 </div>
             `;
         }).join('');
         
         return `
-            <div class="kpi-comparison-card">
-                <h4>${kpi.label}</h4>
-                ${rows}
+            <div class="main-kpi-card">
+                <div class="kpi-header">
+                    <h4>${kpi.label}</h4>
+                </div>
+                <div class="kpi-doctors">
+                    ${doctorCards}
+                </div>
             </div>
         `;
     }).join('');
 }
 
+// --- GÉNÉRATION DU TABLEAU COMPARATIF ---
+function generateComparisonTable(doctors) {
+    const metrics = [
+        { key: 'uniquePatients', label: 'Patients Uniques', format: (v) => v },
+        { key: 'totalVisits', label: 'Nombre de Visites', format: (v) => v },
+        { key: 'newPatients', label: 'Nouveaux Patients', format: (v) => v },
+        { key: 'totalRevenue', label: 'Revenus Totaux', format: (v) => v.toLocaleString('fr-FR') + ' €' },
+        { key: 'avgRevenuePerVisit', label: 'CA Moyen/Visite', format: (v) => v.toFixed(2) + ' €' },
+        { key: 'revenuePerHour', label: 'CA par Heure', format: (v) => v.toFixed(2) + ' €/h' },
+        { key: 'totalWorkingHours', label: 'Heures Travaillées', format: (v) => v.toFixed(1) + ' h' },
+        { key: 'avgPatientTime', label: 'Temps Patient Moy.', format: (v) => v + ' min' },
+        { key: 'avgWaitingTime', label: 'Temps Attente Moy.', format: (v) => v + ' min' },
+        { key: 'loyaltyRate', label: 'Taux de Fidélisation', format: (v) => v.toFixed(1) + ' %' },
+        { key: 'globalScore', label: 'Score Global', format: (v) => v.toFixed(1) + '/100' }
+    ];
+    
+    const headerCells = doctors.map(doctor => 
+        `<th style="background: ${doctor.color}; color: white;">${doctor.name}</th>`
+    ).join('');
+    
+    const rows = metrics.map(metric => {
+        const cells = doctors.map(doctor => {
+            const value = doctor[metric.key] || 0;
+            const avg = doctors.reduce((sum, d) => sum + (d[metric.key] || 0), 0) / doctors.length;
+            const isBest = value === Math.max(...doctors.map(d => d[metric.key] || 0));
+            const cssClass = isBest ? 'best-value' : '';
+            
+            return `<td class="${cssClass}">${metric.format(value)}</td>`;
+        }).join('');
+        
+        return `
+            <tr>
+                <td class="metric-label">${metric.label}</td>
+                ${cells}
+            </tr>
+        `;
+    }).join('');
+    
+    return `
+        <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Indicateur</th>
+                        ${headerCells}
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
 // --- GÉNÉRATION DES SUGGESTIONS ---
+// L'algorithme analyse chaque médecin et compare ses performances aux moyennes du groupe
+// Pour chaque indicateur clé, il identifie si le médecin est au-dessus ou en-dessous de la moyenne
+// Points forts: indicateurs > 120% de la moyenne
+// Axes d'amélioration: indicateurs < 80% de la moyenne
 function generateSuggestions(doctors) {
     const suggestions = [];
     
@@ -316,7 +457,12 @@ function generateSuggestions(doctors) {
         
         suggestions.push(`
             <div class="suggestion-card" style="border-left: 4px solid ${doctor.color};">
-                <h4>${doctor.name}</h4>
+                <div class="suggestion-header">
+                    <h4>${doctor.name}</h4>
+                    <div class="overall-score" style="background: ${getScoreColor(doctor.globalScore)};">
+                        Score: ${doctor.globalScore.toFixed(1)}/100
+                    </div>
+                </div>
                 <div class="suggestion-strengths">
                     <strong>✅ Points forts :</strong>
                     <ul>
@@ -329,6 +475,12 @@ function generateSuggestions(doctors) {
                         ${analysis.improvements.map(i => `<li>${i}</li>`).join('')}
                     </ul>
                 </div>
+                <div class="suggestion-actions">
+                    <strong>🎯 Actions recommandées :</strong>
+                    <ul>
+                        ${analysis.actions.map(a => `<li>${a}</li>`).join('')}
+                    </ul>
+                </div>
             </div>
         `);
     });
@@ -336,63 +488,300 @@ function generateSuggestions(doctors) {
     return suggestions.join('');
 }
 
+// Obtenir la couleur selon le score
+function getScoreColor(score) {
+    if (score >= 75) return '#10b981'; // Vert
+    if (score >= 50) return '#f59e0b'; // Orange
+    return '#ef4444'; // Rouge
+}
+
 function analyzeDoctor(doctor, allDoctors) {
     const strengths = [];
     const improvements = [];
+    const actions = [];
     
     // Calculer les moyennes
     const avgRevenue = allDoctors.reduce((sum, d) => sum + d.totalRevenue, 0) / allDoctors.length;
     const avgVisits = allDoctors.reduce((sum, d) => sum + d.totalVisits, 0) / allDoctors.length;
     const avgLoyalty = allDoctors.reduce((sum, d) => sum + d.loyaltyRate, 0) / allDoctors.length;
     const avgRevenuePerVisit = allDoctors.reduce((sum, d) => sum + d.avgRevenuePerVisit, 0) / allDoctors.length;
+    const avgRevenuePerHour = allDoctors.reduce((sum, d) => sum + d.revenuePerHour, 0) / allDoctors.length;
+    const avgWaitingTime = allDoctors.reduce((sum, d) => sum + d.avgWaitingTime, 0) / allDoctors.length;
+    const avgNewPatients = allDoctors.reduce((sum, d) => sum + d.newPatients, 0) / allDoctors.length;
     
     // Analyser le CA
     if (doctor.totalRevenue > avgRevenue * 1.2) {
-        strengths.push(`Excellent chiffre d'affaires (${((doctor.totalRevenue / avgRevenue - 1) * 100).toFixed(0)}% au-dessus de la moyenne)`);
+        strengths.push(`💰 Excellent chiffre d'affaires (${((doctor.totalRevenue / avgRevenue - 1) * 100).toFixed(0)}% au-dessus de la moyenne)`);
     } else if (doctor.totalRevenue < avgRevenue * 0.8) {
-        improvements.push(`Chiffre d'affaires à améliorer (${((1 - doctor.totalRevenue / avgRevenue) * 100).toFixed(0)}% en dessous de la moyenne)`);
+        improvements.push(`💰 Chiffre d'affaires à améliorer (${((1 - doctor.totalRevenue / avgRevenue) * 100).toFixed(0)}% en dessous de la moyenne)`);
+        actions.push('Augmenter le nombre de consultations ou optimiser les tarifs');
+    }
+    
+    // Analyser le CA par heure
+    if (doctor.revenuePerHour > avgRevenuePerHour * 1.2) {
+        strengths.push(`⚡ Excellent rendement horaire (${doctor.revenuePerHour.toFixed(2)}€/h)`);
+    } else if (doctor.revenuePerHour < avgRevenuePerHour * 0.8) {
+        improvements.push(`⚡ Rendement horaire à optimiser (${doctor.revenuePerHour.toFixed(2)}€/h)`);
+        actions.push('Réduire les temps morts entre consultations et optimiser le planning');
     }
     
     // Analyser les visites
     if (doctor.totalVisits > avgVisits * 1.15) {
-        strengths.push(`Volume d'activité élevé (${doctor.totalVisits} visites)`);
+        strengths.push(`📅 Volume d'activité élevé (${doctor.totalVisits} visites)`);
     } else if (doctor.totalVisits < avgVisits * 0.85) {
-        improvements.push(`Augmenter le nombre de consultations (actuellement ${doctor.totalVisits} visites)`);
+        improvements.push(`📅 Augmenter le nombre de consultations (actuellement ${doctor.totalVisits} visites)`);
+        actions.push('Optimiser les créneaux disponibles et réduire les annulations');
     }
     
     // Analyser la fidélisation
     if (doctor.loyaltyRate > avgLoyalty * 1.1) {
-        strengths.push(`Excellente fidélisation des patients (${doctor.loyaltyRate.toFixed(1)}%)`);
+        strengths.push(`❤️ Excellente fidélisation des patients (${doctor.loyaltyRate.toFixed(1)}%)`);
     } else if (doctor.loyaltyRate < avgLoyalty * 0.9) {
-        improvements.push(`Améliorer la rétention des patients (taux actuel: ${doctor.loyaltyRate.toFixed(1)}%)`);
+        improvements.push(`❤️ Améliorer la rétention des patients (taux actuel: ${doctor.loyaltyRate.toFixed(1)}%)`);
+        actions.push('Mettre en place un système de rappel et de suivi des patients');
     }
     
     // Analyser le CA moyen par visite
     if (doctor.avgRevenuePerVisit > avgRevenuePerVisit * 1.15) {
-        strengths.push(`Revenus par visite optimisés (${doctor.avgRevenuePerVisit.toFixed(2)}€)`);
+        strengths.push(`💵 Revenus par visite optimisés (${doctor.avgRevenuePerVisit.toFixed(2)}€)`);
     } else if (doctor.avgRevenuePerVisit < avgRevenuePerVisit * 0.85) {
-        improvements.push(`Optimiser le panier moyen par consultation`);
+        improvements.push(`💵 Optimiser le panier moyen par consultation (${doctor.avgRevenuePerVisit.toFixed(2)}€)`);
+        actions.push('Proposer des soins complémentaires et packages de traitement');
+    }
+    
+    // Analyser le temps d'attente
+    if (doctor.avgWaitingTime < avgWaitingTime * 0.85) {
+        strengths.push(`⏳ Temps d'attente excellent (${doctor.avgWaitingTime} min)`);
+    } else if (doctor.avgWaitingTime > avgWaitingTime * 1.15) {
+        improvements.push(`⏳ Temps d'attente à réduire (${doctor.avgWaitingTime} min)`);
+        actions.push('Améliorer la gestion du planning et anticiper les retards');
+    }
+    
+    // Analyser les nouveaux patients
+    if (doctor.newPatients > avgNewPatients * 1.2) {
+        strengths.push(`✨ Très bon taux d'acquisition de nouveaux patients (${doctor.newPatients})`);
+    } else if (doctor.newPatients < avgNewPatients * 0.8) {
+        improvements.push(`✨ Développer l'acquisition de nouveaux patients (${doctor.newPatients})`);
+        actions.push('Renforcer la visibilité et les recommandations de patients');
     }
     
     // Si pas assez de points forts/améliorations, ajouter des messages génériques
     if (strengths.length === 0) {
-        strengths.push('Performance globale dans la moyenne');
+        strengths.push('Performance globale dans la moyenne du groupe');
     }
     
     if (improvements.length === 0) {
-        improvements.push('Maintenir les bonnes pratiques actuelles');
+        improvements.push('Aucun axe d\'amélioration majeur identifié');
     }
     
-    return { strengths, improvements };
+    if (actions.length === 0) {
+        actions.push('Maintenir les bonnes pratiques actuelles et viser l\'excellence');
+    }
+    
+    return { strengths, improvements, actions };
 }
 
-// --- EXPORT ---
+// --- GRAPHIQUE SCATTER (NUAGE DE POINTS) ---
+function createScatterChart(data) {
+    const container = d3.select('#comparison-scatter-chart');
+    container.selectAll('*').remove();
+    
+    const fullWidth = 600;
+    const fullHeight = 500;
+    const margin = { top: 40, right: 120, bottom: 60, left: 70 };
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
+    
+    const svg = container
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .append('g')
+        .attr('transform', `translate(${margin.left},${margin.top})`);
+    
+    // Échelles
+    const xScale = d3.scaleLinear()
+        .domain([0, d3.max(data.doctors, d => d.revenuePerHour) * 1.1])
+        .range([0, width]);
+    
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(data.doctors, d => Math.max(d.avgPatientTime, d.avgWaitingTime)) * 1.1])
+        .range([height, 0]);
+    
+    // Axes
+    svg.append('g')
+        .attr('transform', `translate(0,${height})`)
+        .call(d3.axisBottom(xScale))
+        .append('text')
+        .attr('x', width / 2)
+        .attr('y', 45)
+        .attr('fill', '#333')
+        .attr('text-anchor', 'middle')
+        .text('CA par Heure (€/h)');
+    
+    svg.append('g')
+        .call(d3.axisLeft(yScale))
+        .append('text')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -height / 2)
+        .attr('y', -50)
+        .attr('fill', '#333')
+        .attr('text-anchor', 'middle')
+        .text('Temps (minutes)');
+    
+    // Tooltip
+    const tooltip = d3.select('body').append('div')
+        .attr('class', 'd3-tooltip')
+        .style('opacity', 0);
+    
+    // Points pour temps patient
+    svg.selectAll('.point-patient')
+        .data(data.doctors)
+        .enter()
+        .append('circle')
+        .attr('class', 'point-patient')
+        .attr('cx', d => xScale(d.revenuePerHour))
+        .attr('cy', d => yScale(d.avgPatientTime))
+        .attr('r', 8)
+        .attr('fill', d => d.color)
+        .attr('opacity', 0.7)
+        .on('mouseover', function(event, d) {
+            tooltip.transition().duration(200).style('opacity', .9);
+            tooltip.html(`<strong>${d.name}</strong><br/>CA/h: ${d.revenuePerHour.toFixed(2)}€<br/>Temps patient: ${d.avgPatientTime} min`)
+                .style('left', (event.pageX + 10) + 'px')
+                .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+            tooltip.transition().duration(500).style('opacity', 0);
+        });
+    
+    // Points pour temps d'attente
+    svg.selectAll('.point-waiting')
+        .data(data.doctors)
+        .enter()
+        .append('rect')
+        .attr('class', 'point-waiting')
+        .attr('x', d => xScale(d.revenuePerHour) - 6)
+        .attr('y', d => yScale(d.avgWaitingTime) - 6)
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('fill', d => d.color)
+        .attr('opacity', 0.7)
+        .on('mouseover', function(event, d) {
+            tooltip.transition().duration(200).style('opacity', .9);
+            tooltip.html(`<strong>${d.name}</strong><br/>CA/h: ${d.revenuePerHour.toFixed(2)}€<br/>Temps d'attente: ${d.avgWaitingTime} min`)
+                .style('left', (event.pageX + 10) + 'px')
+                .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+            tooltip.transition().duration(500).style('opacity', 0);
+        });
+    
+    // Légende
+    const legend = svg.append('g')
+        .attr('transform', `translate(${width + 10}, 0)`);
+    
+    // Légende médecins
+    data.doctors.forEach((doctor, i) => {
+        const legendRow = legend.append('g')
+            .attr('transform', `translate(0, ${i * 25})`);
+        
+        legendRow.append('circle')
+            .attr('r', 6)
+            .attr('fill', doctor.color);
+        
+        legendRow.append('text')
+            .attr('x', 12)
+            .attr('y', 5)
+            .attr('font-size', '11px')
+            .text(doctor.nom + ' ' + doctor.prenom.charAt(0) + '.');
+    });
+    
+    // Légende formes
+    const shapeLegend = legend.append('g')
+        .attr('transform', `translate(0, ${(data.doctors.length + 1) * 25})`);
+    
+    shapeLegend.append('circle')
+        .attr('r', 6)
+        .attr('fill', '#666');
+    
+    shapeLegend.append('text')
+        .attr('x', 12)
+        .attr('y', 5)
+        .attr('font-size', '10px')
+        .text('Temps patient');
+    
+    shapeLegend.append('rect')
+        .attr('x', -6)
+        .attr('y', 20)
+        .attr('width', 12)
+        .attr('height', 12)
+        .attr('fill', '#666');
+    
+    shapeLegend.append('text')
+        .attr('x', 12)
+        .attr('y', 31)
+        .attr('font-size', '10px')
+        .text('Temps d\'attente');
+}
+
+// --- EXPORT PDF ---
 function exportToPDF() {
-    alert('Export PDF - Fonctionnalité à implémenter');
+    // Vérifier si jsPDF est chargé
+    if (typeof window.jspdf === 'undefined') {
+        alert('La bibliothèque jsPDF n\'est pas chargée. Veuillez ajouter le script dans le HTML.');
+        return;
+    }
+    
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+    
+    // En-tête
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Comparaison des Médecins', 105, 20, { align: 'center' });
+    
+    // Période
+    const startDate = document.getElementById('comparison-start-date').value;
+    const endDate = document.getElementById('comparison-end-date').value;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Période: ${startDate} au ${endDate}`, 105, 28, { align: 'center' });
+    
+    // Message
+    doc.setFontSize(12);
+    doc.text('Export PDF en cours de développement...', 105, 50, { align: 'center' });
+    doc.text('Les graphiques et tableaux seront bientôt disponibles.', 105, 60, { align: 'center' });
+    
+    // Sauvegarder
+    doc.save(`comparaison-medecins-${new Date().toISOString().split('T')[0]}.pdf`);
 }
 
+// --- EXPORT EXCEL ---
 function exportToExcel() {
-    alert('Export Excel - Fonctionnalité à implémenter');
+    // Vérifier si SheetJS est chargé
+    if (typeof XLSX === 'undefined') {
+        alert('La bibliothèque SheetJS n\'est pas chargée. Veuillez ajouter le script dans le HTML.');
+        return;
+    }
+    
+    // Récupérer les données du tableau comparatif
+    const table = document.querySelector('.comparison-table');
+    if (!table) {
+        alert('Aucune donnée à exporter');
+        return;
+    }
+    
+    // Créer un workbook
+    const wb = XLSX.utils.book_new();
+    
+    // Convertir le tableau HTML en feuille
+    const ws = XLSX.utils.table_to_sheet(table);
+    
+    // Ajouter la feuille au workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Comparaison');
+    
+    // Sauvegarder le fichier
+    const fileName = `comparaison-medecins-${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
 }
 
 // Exposer les fonctions d'export globalement
