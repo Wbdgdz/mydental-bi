@@ -165,14 +165,49 @@
 
     </div>
 
-    <footer class="site-footer">
-        <div class="w-full mx-auto">
-            <span>© 2025 <a href="#">MyDental BI</a>. All Rights Reserved.</span>
+    <!-- Section Rentabilité des Actes (basée sur simulation sauvegardée) -->
+    <div id="rentabilite-section" class="chart-container" style="display: none;">
+        <h2>📊 Analyse de Rentabilité par Médecin</h2>
+        <p class="section-description">
+            Données issues de la dernière simulation du simulateur de rentabilité.
+            <a href="/simulateur-rentabilite.html" style="color: #667eea;">→ Aller au simulateur</a>
+        </p>
+        
+        <div id="rentabilite-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+            <strong>ℹ️ Simulation:</strong> <span id="simulation-info-text">Aucune simulation disponible</span>
         </div>
-    </footer>
 
-    <button id="back-to-top" title="Retour en haut">↑</button>
+        <div id="rentabilite-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <!-- Stats seront ajoutées dynamiquement -->
+        </div>
 
-    <script type="module" src="./doctor/main.js"></script>
-    <script type="module" src="./utilities/utils.js"></script> </body>
+        <!-- Graphiques spécifiques pour l'analyse par médecin -->
+        <div id="rentabilite-charts-container">
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Analyse Marge vs Chiffre d'Affaires</h3>
+                <p style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px;">
+                    Position des actes selon leur CA et leur marge. Plus les bulles sont grandes, plus il y a de visites.
+                </p>
+                <div id="rentabilite-scatter-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Top 10 des Actes les Plus Rentables</h3>
+                <div id="rentabilite-top-marge-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Potentiel d'Optimisation (Gain possible en atteignant la cible)</h3>
+                <p style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px;">
+                    Actes avec le plus fort potentiel d'amélioration de la marge.
+                </p>
+                <div id="rentabilite-potentiel-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include your JavaScript file -->
+    <script type="module" src="./doctor/main.js"></script><!-- New JS file for doctor performance -->
+    <script type="module" src="./utilities/utils.js"></script>
+</body>
 </html>

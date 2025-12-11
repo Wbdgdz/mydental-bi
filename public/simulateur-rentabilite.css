@@ -258,6 +258,38 @@
     transform: translateY(-1px);
 }
 
+.btn-save {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+    display: none;
+}
+
+.btn-save:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(250, 112, 154, 0.4);
+}
+
+/* Style pour le select de médecins */
+.period-selector select {
+    padding: 10px 15px;
+    border: 2px solid #dce0e3;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    min-width: 200px;
+}
+
+.period-selector select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.period-selector select:hover {
+    border-color: #667eea;
+}
+
 /* Statistiques globales */
 .global-stats,
 .suggestion-stats {

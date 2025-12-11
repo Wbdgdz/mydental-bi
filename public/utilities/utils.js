@@ -22,6 +22,23 @@ export function checkAuth() {
         }
     }
 }
+
+// Réexporter les fonctions de simulationStorage.js pour compatibilité
+export {
+    hasSimulationData,
+    getSimulationInfo,
+    getActesRentabilite,
+    getGlobalStats,
+    getActesBelowMargin,
+    getActesAboveMargin,
+    getSimulationParams,
+    getSimulationData,
+    getRentabiliteData,
+    getSuggestionsData,
+    getActeByName,
+    clearSimulationData
+} from './simulationStorage.js';
+
 // Fonction pour obtenir la plage de dates du mois précédent
 export function getLastMonthDateRange() {
     const today = new Date();

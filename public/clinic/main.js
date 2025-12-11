@@ -9,7 +9,8 @@ import {loadChartData} from '../clinic/patientVisits.js';
 import {loadHourlyRevenueHeatmap} from '../clinic/hourlyRevenueHeatmap.js';
 import {loadPatientsHeatmap} from '../clinic/heatmap.js';
 import {loadWaitingTimeHeatmap} from '../clinic/heatmap-waiting-time.js';
-import {loadStackedBarData} from '../clinic/rendezvous.js'
+import {loadStackedBarData} from '../clinic/rendezvous.js';
+import {loadRentabiliteData} from '../clinic/rentabiliteCharts.js';
 
 
 
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadWaitingTimes(startDate, endDate);
     loadWaitingTimeHeatmap(startDate, endDate);
     loadStackedBarData(startDate, endDate);
+    loadRentabiliteData(); // Charger les données de rentabilité si disponibles
 
     // Ajouter un écouteur pour le bouton "Appliquer"
     document.getElementById('apply-period').addEventListener('click', function () {
