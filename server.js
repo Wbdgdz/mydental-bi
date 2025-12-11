@@ -116,8 +116,8 @@ app.use('/api/doctor/monthly-stats', authenticateToken,require('./routes/doctor/
 // Nouvelle route pour l'analyse financière avancée (protégée)
 app.use('/api/financial-analysis', authenticateToken, require('./routes/financialAnalysisRoute')(connection));
 
-
-
+// Nouvelle route pour l'analyse des patients (protégée)
+app.use('/api/patient-analysis', authenticateToken, require('./routes/patientAnalysisRoute')(connection));
 
 // Démarrer le serveur
 app.listen(port, () => {
