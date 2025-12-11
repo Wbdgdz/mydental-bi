@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse des Patients - MYDental BI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="patient-analysis.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <!-- Navigation principale -->
+    <nav class="main-nav">
+        <a href="/" class="nav-brand">
+            <img src="logo3.png" alt="Logo" class="nav-logo">
+            MYDental BI
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Tableau de bord Clinique</a></li>
+            <li><a href="/doctorPerformance.html">Performance Médecins</a></li>
+            <li><a href="/simulateur-rentabilite.html">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html">Analyse Financière</a></li>
+            <li><a href="/patient-analysis.html" class="active">Analyse Patients</a></li>
+        </ul>
+        <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
+    </nav>
+
+    <!-- Titre de la page -->
+    <h1 class="page-title">👥 Analyse des Patients - Indicateurs de Performance</h1>
+
+    <div class="main-container">
+        <!-- Indicateurs clés -->
+        <div class="metrics-grid" id="metrics-grid">
+            <div class="metric-card">
+                <h3>👥 Total Patients</h3>
+                <div class="metric-value" id="total-patients">-</div>
+                <div class="metric-label">Patients uniques dans la période</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="new-patients">-</div>
+                        <div class="metric-secondary-label">Nouveaux</div>
+                    </div>
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="returning-patients">-</div>
+                        <div class="metric-secondary-label">Fidèles</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>📈 Taux de Rétention</h3>
+                <div class="metric-value" id="retention-rate">-</div>
+                <div class="metric-label">Nouveaux patients revenus</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="new-patients-returned">-</div>
+                        <div class="metric-secondary-label">Patients retenus</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>🔄 Visites Moyennes</h3>
+                <div class="metric-value" id="avg-visits-per-patient">-</div>
+                <div class="metric-label">Nombre moyen de visites par patient</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="single-visit-patients">-</div>
+                        <div class="metric-secondary-label">1 seule visite</div>
+                    </div>
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="multi-visit-patients">-</div>
+                        <div class="metric-secondary-label">Visites multiples</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graphique: Évolution mensuelle des patients -->
+        <div class="chart-card">
+            <h3>📊 Évolution Mensuelle des Patients</h3>
+            <div class="chart-subtitle">Comparaison des nouveaux patients et des patients fidèles</div>
+            <svg id="monthly-evolution-chart"></svg>
+        </div>
+
+        <!-- Graphique: Analyse de la rétention -->
+        <div class="chart-card">
+            <h3>🎯 Analyse de la Rétention des Patients</h3>
+            <div class="chart-subtitle">Distribution des patients par nombre de visites</div>
+            <svg id="retention-analysis-chart"></svg>
+        </div>
+
+        <!-- Tableau détaillé de l'évolution -->
+        <div class="chart-card">
+            <h3>📋 Détail de l'Évolution Mensuelle</h3>
+            <table class="patients-table" id="monthly-table">
+                <thead>
+                    <tr>
+                        <th>Mois</th>
+                        <th>Total Patients</th>
+                        <th>Nouveaux Patients</th>
+                        <th>Patients Fidèles</th>
+                        <th>Total Visites</th>
+                        <th>Visites/Patient</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="6" class="loading">Chargement des données...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Utilisation des indicateurs existants -->
+        <div class="chart-card">
+            <h3>📈 Évolution des Patients avec au moins 2 Visites</h3>
+            <div class="chart-subtitle">Basé sur les données de rétention historiques</div>
+            <svg id="patient-visits-chart"></svg>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="w-full mx-auto max-w-screen-xl p-4">
+            <span>© 2025 <a href="#">MyDental BI</a>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="./patient/patientAnalysis.js"></script>
+    <script type="module" src="./utilities/utils.js"></script>
+</body>
+</html>
