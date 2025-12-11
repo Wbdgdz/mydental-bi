@@ -4,12 +4,12 @@ import { checkAuth } from "../utilities/utils.js";
 checkAuth();
 const token = localStorage.getItem('token');
 
-// Dates par défaut
-const today = new Date();
-const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-
-document.getElementById('start-date').valueAsDate = oneYearAgo;
-document.getElementById('end-date').valueAsDate = today;
+// Dates fixes: du 1er janvier 2015 à aujourd'hui
+const START_DATE = '2015-01-01';
+const getEndDate = () => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+};
 
 // Tooltip global unique pour tous les graphiques
 let globalTooltip = d3.select("body").select(".tooltip");
@@ -446,13 +446,8 @@ function createPatientVisitsChart(data) {
 
 // Fonction pour charger toutes les données
 function loadAllData() {
-    const startDate = document.getElementById('start-date').value;
-    const endDate = document.getElementById('end-date').value;
-
-    if (!startDate || !endDate) {
-        alert('Veuillez sélectionner les dates de début et de fin');
-        return;
-    }
+    const startDate = START_DATE;
+    const endDate = getEndDate();
 
     loadGlobalIndicators(startDate, endDate);
     loadMonthlyEvolution(startDate, endDate);
@@ -461,8 +456,6 @@ function loadAllData() {
 }
 
 // Event listeners
-document.getElementById('apply-period').addEventListener('click', loadAllData);
-
 document.getElementById('logout-btn').addEventListener('click', () => {
     localStorage.removeItem('token');
     window.location.href = '/login.html';
