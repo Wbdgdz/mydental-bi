@@ -100,22 +100,33 @@ function getDoctorComparisonData(connection, doctorId, startDate, endDate) {
             } else {
                 const row = results[0];
                 
-                // Calculer le CA par heure
-                const revenuePerHour = row.totalWorkingHours > 0 
-                    ? row.totalRevenue / row.totalWorkingHours 
+                // Calculer le CA par heure et par visite
+                const totalRevenue = parseFloat(row.totalRevenue) || 0;
+                const totalWorkingHours = parseFloat(row.totalWorkingHours) || 0;
+                const totalVisits = row.totalVisits || 0;
+                
+                const revenuePerHour = totalWorkingHours > 0 
+                    ? totalRevenue / totalWorkingHours 
+                    : 0;
+                
+                const avgRevenuePerVisit = totalVisits > 0 
+                    ? totalRevenue / totalVisits 
                     : 0;
                 
                 resolve({
                     id: row.idMedecin,
+                    nom: row.nom,
+                    prenom: row.prenom,
                     name: `${row.nom} ${row.prenom}`,
                     uniquePatients: row.uniquePatients || 0,
-                    totalVisits: row.totalVisits || 0,
+                    totalVisits: totalVisits,
                     newPatients: row.newPatients || 0,
                     avgPatientTime: row.avgPatientTime || 0,
                     avgWaitingTime: row.avgWaitingTime || 0,
-                    totalRevenue: parseFloat(row.totalRevenue) || 0,
-                    totalWorkingHours: parseFloat(row.totalWorkingHours) || 0,
-                    avgRevenuePerVisit: row.totalVisits > 0 ? parseFloat(row.totalRevenue) / row.totalVisits : 0
+                    totalRevenue: totalRevenue,
+                    totalWorkingHours: totalWorkingHours,
+                    revenuePerHour: revenuePerHour,
+                    avgRevenuePerVisit: avgRevenuePerVisit
                 });
             }
         });

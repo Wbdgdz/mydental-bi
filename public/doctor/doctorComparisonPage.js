@@ -227,8 +227,8 @@ function displayComparisonResults(data) {
     `;
     
     // Créer les graphiques D3
-    createComparisonBarChart(data.doctors, '#comparison-bar-chart');
-    createComparisonRadarChart(data.doctors, '#comparison-radar-chart');
+    createComparisonBarChart(data);
+    createComparisonRadarChart(data);
 }
 
 // --- GÉNÉRATION DES BADGES ---
