@@ -35,7 +35,7 @@ async function loadGlobalIndicators(startDate, endDate) {
         });
         const data = await response.json();
 
-        document.getElementById('total-patients').textContent = data.total_patients || 0;
+        document.getElementById('flow-total-patients').textContent = data.total_patients || 0;
         document.getElementById('avg-visits-per-day').textContent = data.avg_visits_per_day || 0;
         document.getElementById('peak-hour').textContent = data.peak_hour ? `${data.peak_hour}h` : '-';
         document.getElementById('peak-day-visits').textContent = data.peak_day_visits || 0;
