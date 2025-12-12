@@ -206,8 +206,6 @@ function createMargeDistributionChart() {
         color: colors[i]
     }));
 
-    console.log('[RentabiliteCharts] Données pour camembert:', data);
-
     const container = document.getElementById('rentabilite-marge-chart');
     if (!container) {
         console.error('Conteneur rentabilite-marge-chart non trouvé');
@@ -230,14 +228,10 @@ function createMargeDistributionChart() {
         .append('svg')
         .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
         .attr('preserveAspectRatio', 'xMidYMid meet')
-        .classed('svg-content-responsive', true)
-        .style('background', '#f9f9f9'); // Debug: voir le SVG
+        .classed('svg-content-responsive', true);
 
     const g = svg.append('g')
         .attr('transform', `translate(${fullWidth / 2},${fullHeight / 2})`);
-
-    console.log('[RentabiliteCharts] Radius:', radius);
-    console.log('[RentabiliteCharts] Center:', fullWidth / 2, fullHeight / 2);
 
     // Créer le camembert
     const pie = d3.pie()
@@ -245,13 +239,10 @@ function createMargeDistributionChart() {
         .sort(null);
 
     const pieData = pie(data);
-    console.log('[RentabiliteCharts] Pie data:', pieData);
 
     const arc = d3.arc()
         .innerRadius(radius * 0.5)
         .outerRadius(radius);
-    
-    console.log('[RentabiliteCharts] Arc innerRadius:', radius * 0.5, 'outerRadius:', radius);
 
     const arcs = g.selectAll('.arc')
         .data(pieData)
@@ -261,10 +252,7 @@ function createMargeDistributionChart() {
 
     arcs.append('path')
         .attr('d', arc)
-        .attr('fill', d => {
-            console.log('[RentabiliteCharts] Couleur pour:', d.data.label, '=', d.data.color);
-            return d.data.color;
-        })
+        .attr('fill', d => d.data.color)
         .attr('stroke', 'white')
         .attr('stroke-width', 2)
         .attr('opacity', 0.8)
