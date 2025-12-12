@@ -278,18 +278,26 @@ module.exports = (connection) => {
         return res.status(500).json({ message: 'Fichier CSV invalide' });
       }
 
-      const headers = lines[0].split(',');
+      const headers = lines[0].split(',').map(h => h.trim());
+      const expectedHeaders = ['mois', 'patients_prevus', 'visites_prevues', 'type'];
+      
+      // Validate headers
+      if (!expectedHeaders.every((h, i) => headers[i] === h)) {
+        return res.status(500).json({ message: 'Structure du fichier CSV incorrecte' });
+      }
+
       const results = [];
 
       for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',');
+        const values = lines[i].split(',').map(v => v.trim());
         if (values.length !== headers.length) {
           console.warn(`Ligne ${i + 1} ignorée: nombre de colonnes incorrect`);
           continue;
         }
         const row = {};
         headers.forEach((header, index) => {
-          row[header] = values[index];
+          // Sanitize values to prevent injection
+          row[header] = values[index].replace(/[<>]/g, '');
         });
         results.push(row);
       }

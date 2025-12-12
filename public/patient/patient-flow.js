@@ -477,19 +477,23 @@ function createPredictionsChart(data) {
         .padding(0.5);
 
     const yLeft = d3.scaleLinear()
-        .domain([0, d3.max(data, d => Math.max(+d.patients_prevus, +d.visites_prevues))])
+        .domain([0, d3.max(data, d => {
+            const patients = parseInt(d.patients_prevus, 10) || 0;
+            const visits = parseInt(d.visites_prevues, 10) || 0;
+            return Math.max(patients, visits);
+        })])
         .nice()
         .range([height, 0]);
 
     // Ligne pour les patients historiques
     const linePatients = d3.line()
         .x(d => x(d.mois))
-        .y(d => yLeft(+d.patients_prevus));
+        .y(d => yLeft(parseInt(d.patients_prevus, 10) || 0));
 
     // Ligne pour les visites historiques
     const lineVisits = d3.line()
         .x(d => x(d.mois))
-        .y(d => yLeft(+d.visites_prevues));
+        .y(d => yLeft(parseInt(d.visites_prevues, 10) || 0));
 
     // Dessiner les lignes historiques
     svg.append("path")
@@ -533,7 +537,7 @@ function createPredictionsChart(data) {
         .enter().append("circle")
         .attr("class", "dot-patients")
         .attr("cx", d => x(d.mois))
-        .attr("cy", d => yLeft(+d.patients_prevus))
+        .attr("cy", d => yLeft(parseInt(d.patients_prevus, 10) || 0))
         .attr("r", 4)
         .attr("fill", d => d.type === 'historique' ? "#3498db" : "#85c1e9")
         .on("mouseover", function(event, d) {
@@ -552,7 +556,7 @@ function createPredictionsChart(data) {
         .enter().append("circle")
         .attr("class", "dot-visits")
         .attr("cx", d => x(d.mois))
-        .attr("cy", d => yLeft(+d.visites_prevues))
+        .attr("cy", d => yLeft(parseInt(d.visites_prevues, 10) || 0))
         .attr("r", 4)
         .attr("fill", d => d.type === 'historique' ? "#2ecc71" : "#82e0aa")
         .on("mouseover", function(event, d) {
