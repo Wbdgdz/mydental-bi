@@ -434,6 +434,224 @@ async function loadDoctorCapacity(startDate, endDate) {
     }
 }
 
+// Fonction pour charger et afficher les prévisions de flux
+async function loadPredictions() {
+    try {
+        const response = await fetch('/api/patient-flow/predictions', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
+        createPredictionsChart(data);
+    } catch (error) {
+        console.error('Erreur lors du chargement des prévisions:', error);
+    }
+}
+
+// Fonction pour créer le graphique de prévisions
+function createPredictionsChart(data) {
+    const margin = { top: 40, right: 100, bottom: 80, left: 80 };
+    const fullWidth = 1200;
+    const fullHeight = 500;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
+
+    // Supprimer l'ancien graphique
+    d3.select("#predictions-chart").selectAll("*").remove();
+
+    const svg = d3.select("#predictions-chart")
+        .attr("viewBox", `0 0 ${fullWidth} ${fullHeight}`)
+        .attr("preserveAspectRatio", "xMidYMid meet")
+        .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Séparer les données historiques et les prévisions
+    const historicalData = data.filter(d => d.type === 'historique');
+    const forecastData = data.filter(d => d.type === 'prevision');
+
+    // Échelles
+    const x = d3.scalePoint()
+        .domain(data.map(d => d.mois))
+        .range([0, width])
+        .padding(0.5);
+
+    const yLeft = d3.scaleLinear()
+        .domain([0, d3.max(data, d => Math.max(+d.patients_prevus, +d.visites_prevues))])
+        .nice()
+        .range([height, 0]);
+
+    // Ligne pour les patients historiques
+    const linePatients = d3.line()
+        .x(d => x(d.mois))
+        .y(d => yLeft(+d.patients_prevus));
+
+    // Ligne pour les visites historiques
+    const lineVisits = d3.line()
+        .x(d => x(d.mois))
+        .y(d => yLeft(+d.visites_prevues));
+
+    // Dessiner les lignes historiques
+    svg.append("path")
+        .datum(historicalData)
+        .attr("class", "line-historical-patients")
+        .attr("d", linePatients)
+        .attr("stroke", "#3498db")
+        .attr("stroke-width", 3)
+        .attr("fill", "none");
+
+    svg.append("path")
+        .datum(historicalData)
+        .attr("class", "line-historical-visits")
+        .attr("d", lineVisits)
+        .attr("stroke", "#2ecc71")
+        .attr("stroke-width", 3)
+        .attr("fill", "none");
+
+    // Dessiner les lignes de prévision (en pointillés)
+    svg.append("path")
+        .datum(forecastData)
+        .attr("class", "line-forecast-patients")
+        .attr("d", linePatients)
+        .attr("stroke", "#3498db")
+        .attr("stroke-width", 3)
+        .attr("stroke-dasharray", "5,5")
+        .attr("fill", "none");
+
+    svg.append("path")
+        .datum(forecastData)
+        .attr("class", "line-forecast-visits")
+        .attr("d", lineVisits)
+        .attr("stroke", "#2ecc71")
+        .attr("stroke-width", 3)
+        .attr("stroke-dasharray", "5,5")
+        .attr("fill", "none");
+
+    // Points pour les patients
+    svg.selectAll(".dot-patients")
+        .data(data)
+        .enter().append("circle")
+        .attr("class", "dot-patients")
+        .attr("cx", d => x(d.mois))
+        .attr("cy", d => yLeft(+d.patients_prevus))
+        .attr("r", 4)
+        .attr("fill", d => d.type === 'historique' ? "#3498db" : "#85c1e9")
+        .on("mouseover", function(event, d) {
+            globalTooltip.transition().duration(200).style("opacity", .9);
+            globalTooltip.html(`${d.mois}<br/>Patients: ${d.patients_prevus}<br/>Type: ${d.type === 'historique' ? 'Historique' : 'Prévision'}`)
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function() {
+            globalTooltip.transition().duration(500).style("opacity", 0);
+        });
+
+    // Points pour les visites
+    svg.selectAll(".dot-visits")
+        .data(data)
+        .enter().append("circle")
+        .attr("class", "dot-visits")
+        .attr("cx", d => x(d.mois))
+        .attr("cy", d => yLeft(+d.visites_prevues))
+        .attr("r", 4)
+        .attr("fill", d => d.type === 'historique' ? "#2ecc71" : "#82e0aa")
+        .on("mouseover", function(event, d) {
+            globalTooltip.transition().duration(200).style("opacity", .9);
+            globalTooltip.html(`${d.mois}<br/>Visites: ${d.visites_prevues}<br/>Type: ${d.type === 'historique' ? 'Historique' : 'Prévision'}`)
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function() {
+            globalTooltip.transition().duration(500).style("opacity", 0);
+        });
+
+    // Axes
+    svg.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .attr("transform", "rotate(-45)")
+        .style("text-anchor", "end")
+        .style("font-size", "10px")
+        .filter((d, i) => i % 3 !== 0)
+        .remove(); // Afficher seulement 1 label sur 3 pour éviter le chevauchement
+
+    svg.append("g")
+        .attr("class", "y-axis")
+        .call(d3.axisLeft(yLeft));
+
+    // Labels
+    svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 0 - margin.left + 20)
+        .attr("x", 0 - (height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Nombre de Patients / Visites");
+
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", height + margin.bottom - 10)
+        .style("text-anchor", "middle")
+        .text("Mois");
+
+    // Ligne verticale pour séparer historique et prévision
+    const lastHistoricalMonth = historicalData[historicalData.length - 1].mois;
+    svg.append("line")
+        .attr("x1", x(lastHistoricalMonth))
+        .attr("y1", 0)
+        .attr("x2", x(lastHistoricalMonth))
+        .attr("y2", height)
+        .attr("stroke", "#e74c3c")
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "3,3");
+
+    // Annotation pour la ligne de séparation
+    svg.append("text")
+        .attr("x", x(lastHistoricalMonth) + 10)
+        .attr("y", 20)
+        .style("font-size", "12px")
+        .style("fill", "#e74c3c")
+        .text("← Historique | Prévision →");
+
+    // Légende
+    const legend = svg.append("g")
+        .attr("transform", `translate(${width - 250}, 0)`);
+
+    const legendData = [
+        { label: "Patients (Historique)", color: "#3498db", dashed: false },
+        { label: "Visites (Historique)", color: "#2ecc71", dashed: false },
+        { label: "Patients (Prévision)", color: "#85c1e9", dashed: true },
+        { label: "Visites (Prévision)", color: "#82e0aa", dashed: true }
+    ];
+
+    legendData.forEach((item, i) => {
+        const legendRow = legend.append("g")
+            .attr("transform", `translate(0, ${i * 25})`);
+
+        legendRow.append("line")
+            .attr("x1", 0)
+            .attr("x2", 20)
+            .attr("y1", 10)
+            .attr("y2", 10)
+            .attr("stroke", item.color)
+            .attr("stroke-width", 3)
+            .attr("stroke-dasharray", item.dashed ? "5,5" : "0");
+
+        legendRow.append("circle")
+            .attr("cx", 10)
+            .attr("cy", 10)
+            .attr("r", 4)
+            .attr("fill", item.color);
+
+        legendRow.append("text")
+            .attr("x", 25)
+            .attr("y", 15)
+            .text(item.label)
+            .style("font-size", "12px");
+    });
+}
+
 // Fonction pour charger toutes les données
 function loadAllData() {
     const startDate = START_DATE;
@@ -443,6 +661,7 @@ function loadAllData() {
     loadMonthlyPatientCount(startDate, endDate);
     loadPeakPeriods(startDate, endDate);
     loadDoctorCapacity(startDate, endDate);
+    loadPredictions();
 }
 
 // Function to export CSV

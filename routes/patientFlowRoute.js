@@ -260,5 +260,35 @@ module.exports = (connection) => {
     });
   });
 
+  // Endpoint: Get prediction data from CSV
+  router.get('/predictions', (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    const csvPath = path.join(__dirname, '../public/data/previsions_flux_2024_2027.csv');
+
+    fs.readFile(csvPath, 'utf8', (error, data) => {
+      if (error) {
+        console.error('Erreur lors de la lecture du fichier CSV:', error);
+        return res.status(500).json({ message: 'Erreur lors de la lecture des prévisions' });
+      }
+
+      // Parse CSV
+      const lines = data.trim().split('\n');
+      const headers = lines[0].split(',');
+      const results = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',');
+        const row = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index];
+        });
+        results.push(row);
+      }
+
+      res.json(results);
+    });
+  });
+
   return router;
 };
