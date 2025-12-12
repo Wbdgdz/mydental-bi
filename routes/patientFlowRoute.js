@@ -264,7 +264,7 @@ module.exports = (connection) => {
 
   // Endpoint: Get prediction data from CSV
   router.get('/predictions', (req, res) => {
-    const csvPath = path.join(__dirname, '../public/data/previsions_flux_2024_2027.csv');
+    const csvPath = path.join(__dirname, '../prediction_flux/previsions_flux_2024_2027.csv');
 
     fs.readFile(csvPath, 'utf8', (error, data) => {
       if (error) {
@@ -278,28 +278,25 @@ module.exports = (connection) => {
         return res.status(500).json({ message: 'Fichier CSV invalide' });
       }
 
-      const headers = lines[0].split(',').map(h => h.trim());
-      const expectedHeaders = ['mois', 'patients_prevus', 'visites_prevues', 'type'];
-      
-      // Validate headers
-      if (!expectedHeaders.every((h, i) => headers[i] === h)) {
-        return res.status(500).json({ message: 'Structure du fichier CSV incorrecte' });
-      }
-
       const results = [];
 
+      // Skip header line (index 0) and parse data
       for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(',').map(v => v.trim());
-        if (values.length !== headers.length) {
+        if (values.length !== 2) {
           console.warn(`Ligne ${i + 1} ignorée: nombre de colonnes incorrect`);
           continue;
         }
-        const row = {};
-        headers.forEach((header, index) => {
-          // Sanitize values to prevent injection
-          row[header] = values[index].replace(/[<>]/g, '');
+        
+        // Sanitize values to prevent injection
+        const date = values[0].replace(/[<>]/g, '');
+        const visits = values[1].replace(/[<>]/g, '');
+        
+        // Format data for chart
+        results.push({
+          date: date,
+          visites_prevues: parseFloat(visits).toFixed(0)
         });
-        results.push(row);
       }
 
       res.json(results);
