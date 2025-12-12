@@ -37,9 +37,11 @@ export function loadRentabiliteData() {
     // Afficher les statistiques globales
     displayRentabiliteStats();
 
-    // Créer les graphiques basés sur les données réelles (CA, visites)
-    createCADistributionChart();
-    createMargeDistributionChart(); // Répartition du CA par catégorie d'actes
+    // Attendre que le DOM soit rendu avant de créer les graphiques
+    setTimeout(() => {
+        createCADistributionChart();
+        createMargeDistributionChart();
+    }, 100);
 }
 
 // Afficher les statistiques de rentabilité (basées sur les données réelles uniquement)
@@ -72,27 +74,45 @@ function displayRentabiliteStats() {
 // Créer le graphique de distribution du CA par acte (Top 10)
 function createCADistributionChart() {
     const actes = getActesRentabilite();
-    const topActes = actes
-        .sort((a, b) => (b.CA || 0) - (a.CA || 0))
+    
+    // Agréger par nom d'acte (somme des CA de tous les médecins)
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
+        .sort((a, b) => b.CA - a.CA)
         .slice(0, 10);
 
     const container = document.getElementById('rentabilite-ca-chart');
-    if (!container) return;
+    if (!container) {
+        console.error('Conteneur rentabilite-ca-chart non trouvé');
+        return;
+    }
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const margin = { top: 20, right: 30, bottom: 100, left: 70 };
+    const margin = { top: 40, right: 80, bottom: 100, left: 80 };
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
@@ -100,17 +120,17 @@ function createCADistributionChart() {
     // Échelles
     const x = d3.scaleBand()
         .domain(topActes.map(d => d.acte))
-        .range([0, chartWidth])
+        .range([0, width])
         .padding(0.2);
 
     const y = d3.scaleLinear()
         .domain([0, d3.max(topActes, d => d.CA)])
         .nice()
-        .range([chartHeight, 0]);
+        .range([height, 0]);
 
     // Axes
     g.append('g')
-        .attr('transform', `translate(0,${chartHeight})`)
+        .attr('transform', `translate(0,${height})`)
         .call(d3.axisBottom(x))
         .selectAll('text')
         .attr('transform', 'rotate(-45)')
@@ -129,7 +149,7 @@ function createCADistributionChart() {
         .attr('x', d => x(d.acte))
         .attr('y', d => y(d.CA))
         .attr('width', x.bandwidth())
-        .attr('height', d => chartHeight - y(d.CA))
+        .attr('height', d => height - y(d.CA))
         .attr('fill', '#667eea')
         .attr('opacity', 0.8)
         .on('mouseover', function(event, d) {
@@ -146,10 +166,21 @@ function createCADistributionChart() {
 function createMargeDistributionChart() {
     const actes = getActesRentabilite();
     
-    // Regrouper les actes par catégorie (basé sur les premiers mots du nom)
-    const categories = {};
-    
+    // D'abord agréger par nom d'acte
+    const actesAggregated = {};
     actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+    });
+    
+    // Ensuite regrouper par catégorie (basé sur les premiers mots du nom)
+    const categories = {};
+    Object.values(actesAggregated).forEach(acte => {
         // Extraire les 2-3 premiers mots comme catégorie
         const words = acte.acte.split(' ');
         const category = words.slice(0, Math.min(2, words.length)).join(' ');
@@ -158,7 +189,7 @@ function createMargeDistributionChart() {
             categories[category] = { count: 0, ca: 0 };
         }
         categories[category].count++;
-        categories[category].ca += acte.CA || 0;
+        categories[category].ca += acte.CA;
     });
 
     // Trier par CA et prendre le top 6
@@ -176,41 +207,54 @@ function createMargeDistributionChart() {
     }));
 
     const container = document.getElementById('rentabilite-marge-chart');
-    if (!container) return;
+    if (!container) {
+        console.error('Conteneur rentabilite-marge-chart non trouvé');
+        return;
+    }
+    
+    if (data.length === 0) {
+        console.warn('Aucune donnée pour le camembert');
+        return;
+    }
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const radius = Math.min(width, height) / 2 - 40;
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const radius = Math.min(fullWidth, fullHeight) / 2 - 100;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     const g = svg.append('g')
-        .attr('transform', `translate(${width / 2},${height / 2})`);
+        .attr('transform', `translate(${fullWidth / 2},${fullHeight / 2})`);
 
     // Créer le camembert
     const pie = d3.pie()
         .value(d => d.value)
         .sort(null);
 
+    const pieData = pie(data);
+
     const arc = d3.arc()
         .innerRadius(radius * 0.5)
         .outerRadius(radius);
 
     const arcs = g.selectAll('.arc')
-        .data(pie(data))
+        .data(pieData)
         .enter()
         .append('g')
         .attr('class', 'arc');
 
     arcs.append('path')
         .attr('d', arc)
-        .attr('fill', d => d.data.color)
+        .style('fill', d => d.data.color) // Utiliser style() au lieu de attr() pour surcharger le CSS
+        .attr('stroke', 'white')
+        .attr('stroke-width', 2)
         .attr('opacity', 0.8)
         .on('mouseover', function(event, d) {
             d3.select(this).attr('opacity', 1);
@@ -238,7 +282,7 @@ function createMargeDistributionChart() {
 
     // Légende
     const legend = svg.append('g')
-        .attr('transform', `translate(20, 20)`);
+        .attr('transform', `translate(${fullWidth - 280}, 50)`);
 
     data.forEach((d, i) => {
         const legendRow = legend.append('g')

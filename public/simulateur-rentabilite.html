@@ -28,14 +28,21 @@
     <h1 class="page-title">Simulateur de rentabilité des actes</h1>
 
     <!-- Sélecteur de période -->
-    <div class="period-selector">
-        <label for="start-date">Début :</label>
-        <input type="date" id="start-date" name="start-date">
-        
-        <label for="end-date">Fin :</label>
-        <input type="date" id="end-date" name="end-date">
-        
-        <button id="apply-period">Appliquer</button>
+    <div class="period-selector-container">
+        <div class="period-selector">
+            <label for="start-date">Période d'analyse - Début :</label>
+            <input type="date" id="start-date" name="start-date">
+            
+            <label for="end-date">Fin :</label>
+            <input type="date" id="end-date" name="end-date">
+            
+            <label for="doctor-select">Médecin :</label>
+            <select id="doctor-select" name="doctor-select">
+                <option value="all">Tous les médecins</option>
+            </select>
+            
+            <button id="apply-period" class="btn-apply">Appliquer</button>
+        </div>
     </div>
 
     <!-- Conteneur principal -->

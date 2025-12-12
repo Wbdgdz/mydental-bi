@@ -63,10 +63,12 @@ export function loadRentabiliteData(doctorId = null) {
     // Afficher les statistiques filtrées par médecin
     displayRentabiliteStats(doctorId);
 
-    // Créer les graphiques basés sur les données réelles (CA, visites)
-    createTopCAChart(doctorId);
-    createCADistributionChart(doctorId);
-    createTopVisitsChart(doctorId);
+    // Attendre que le DOM soit rendu avant de créer les graphiques
+    setTimeout(() => {
+        createTopCAChart(doctorId);
+        createCADistributionChart(doctorId);
+        createTopVisitsChart(doctorId);
+    }, 100);
 }
 
 // Afficher les statistiques de rentabilité (basées sur les données réelles uniquement)
@@ -99,37 +101,58 @@ function displayRentabiliteStats(doctorId = null) {
 // Créer le graphique Top 10 Actes par CA
 function createTopCAChart(doctorId = null) {
     const actes = getActesRentabilite(doctorId);
-    const topActes = actes
+    
+    // Agréger par nom d'acte (au cas où il y aurait des doublons)
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0,
+                prix_moyen: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    // Recalculer prix moyen après agrégation
+    Object.values(actesAggregated).forEach(acte => {
+        acte.prix_moyen = acte.total_visits > 0 ? acte.CA / acte.total_visits : 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
         .sort((a, b) => b.CA - a.CA)
         .slice(0, 10);
 
     const container = document.getElementById('rentabilite-scatter-chart');
     if (!container) return;
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const margin = { top: 40, right: 30, bottom: 60, left: 200 };
+    const margin = { top: 60, right: 80, bottom: 80, left: 250 };
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Titre
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', 20)
+        .attr('x', fullWidth / 2)
+        .attr('y', 30)
         .attr('text-anchor', 'middle')
-        .attr('font-size', '16px')
+        .attr('font-size', '18px')
         .attr('font-weight', 'bold')
         .attr('fill', '#2c3e50')
         .text('Top 10 Actes par Chiffre d\'Affaires');
@@ -137,22 +160,22 @@ function createTopCAChart(doctorId = null) {
     // Échelles
     const y = d3.scaleBand()
         .domain(topActes.map(d => d.acte))
-        .range([0, chartHeight])
+        .range([0, height])
         .padding(0.2);
 
     const x = d3.scaleLinear()
         .domain([0, d3.max(topActes, d => d.CA)])
         .nice()
-        .range([0, chartWidth]);
+        .range([0, width]);
 
     // Axes
     g.append('g')
         .call(d3.axisLeft(y))
         .selectAll('text')
-        .style('font-size', '11px');
+        .style('font-size', '12px');
 
     g.append('g')
-        .attr('transform', `translate(0,${chartHeight})`)
+        .attr('transform', `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d => formatNumber(d) + ' DA'));
 
     // Barres
@@ -193,37 +216,66 @@ function createTopCAChart(doctorId = null) {
 // Créer le graphique de distribution du CA par Acte (Pie Chart)
 function createCADistributionChart(doctorId = null) {
     const actes = getActesRentabilite(doctorId);
-    const topActes = actes
+    
+    // Agréger par nom d'acte
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
         .sort((a, b) => b.CA - a.CA)
         .slice(0, 8); // Top 8 pour meilleure lisibilité
 
-    const container = document.getElementById('rentabilite-top-marge-chart');
-    if (!container) return;
+    console.log('[RentabiliteDoctor] Données pour pie chart:', topActes);
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const radius = Math.min(width, height) / 2 - 40;
+    const container = document.getElementById('rentabilite-top-marge-chart');
+    if (!container) {
+        console.error('Conteneur rentabilite-top-marge-chart non trouvé');
+        return;
+    }
+    
+    if (topActes.length === 0) {
+        console.warn('Aucune donnée pour le pie chart');
+        return;
+    }
+
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const radius = Math.min(fullWidth, fullHeight) / 2 - 100;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     // Titre
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', 20)
+        .attr('x', fullWidth / 2)
+        .attr('y', 30)
         .attr('text-anchor', 'middle')
-        .attr('font-size', '16px')
+        .attr('font-size', '18px')
         .attr('font-weight', 'bold')
         .attr('fill', '#2c3e50')
         .text('Distribution du CA par Acte (Top 8)');
 
     const g = svg.append('g')
-        .attr('transform', `translate(${width / 2},${height / 2 + 20})`);
+        .attr('transform', `translate(${fullWidth / 2},${fullHeight / 2 + 20})`);
+
+    console.log('[RentabiliteDoctor] Radius:', radius);
+    console.log('[RentabiliteDoctor] Center:', fullWidth / 2, fullHeight / 2 + 20);
 
     // Couleurs
     const color = d3.scaleOrdinal()
@@ -235,9 +287,14 @@ function createCADistributionChart(doctorId = null) {
         .value(d => d.CA)
         .sort(null);
 
+    const pieData = pie(topActes);
+    console.log('[RentabiliteDoctor] Pie data:', pieData);
+
     const arc = d3.arc()
         .innerRadius(0)
         .outerRadius(radius);
+    
+    console.log('[RentabiliteDoctor] Arc innerRadius: 0, outerRadius:', radius);
 
     const arcHover = d3.arc()
         .innerRadius(0)
@@ -245,14 +302,16 @@ function createCADistributionChart(doctorId = null) {
 
     // Créer les tranches
     const arcs = g.selectAll('.arc')
-        .data(pie(topActes))
+        .data(pieData)
         .enter()
         .append('g')
         .attr('class', 'arc');
 
     arcs.append('path')
         .attr('d', arc)
-        .attr('fill', d => color(d.data.acte))
+        .style('fill', d => color(d.data.acte)) // Utiliser style() pour surcharger le CSS
+        .attr('stroke', 'white')
+        .attr('stroke-width', 2)
         .attr('opacity', 0.8)
         .on('mouseover', function(event, d) {
             d3.select(this)
@@ -284,7 +343,7 @@ function createCADistributionChart(doctorId = null) {
 
     // Légende
     const legend = svg.append('g')
-        .attr('transform', `translate(${width - 180}, 50)`);
+        .attr('transform', `translate(${fullWidth - 280}, 50)`);
 
     topActes.forEach((d, i) => {
         const legendRow = legend.append('g')
@@ -308,37 +367,58 @@ function createCADistributionChart(doctorId = null) {
 // Créer le graphique Top 10 Actes par Nombre de Visites
 function createTopVisitsChart(doctorId = null) {
     const actes = getActesRentabilite(doctorId);
-    const topActes = actes
+    
+    // Agréger par nom d'acte
+    const actesAggregated = {};
+    actes.forEach(acte => {
+        if (!actesAggregated[acte.acte]) {
+            actesAggregated[acte.acte] = {
+                acte: acte.acte,
+                CA: 0,
+                total_visits: 0,
+                prix_moyen: 0
+            };
+        }
+        actesAggregated[acte.acte].CA += acte.CA || 0;
+        actesAggregated[acte.acte].total_visits += acte.total_visits || 0;
+    });
+    
+    // Recalculer prix moyen après agrégation
+    Object.values(actesAggregated).forEach(acte => {
+        acte.prix_moyen = acte.total_visits > 0 ? acte.CA / acte.total_visits : 0;
+    });
+    
+    const topActes = Object.values(actesAggregated)
         .sort((a, b) => b.total_visits - a.total_visits)
         .slice(0, 10);
 
     const container = document.getElementById('rentabilite-potentiel-chart');
     if (!container) return;
 
-    const width = container.offsetWidth || 800;
-    const height = 400;
-    const margin = { top: 40, right: 30, bottom: 60, left: 200 };
+    const margin = { top: 60, right: 80, bottom: 80, left: 250 };
+    const fullWidth = 1200;
+    const fullHeight = 600;
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
 
     // Nettoyer le conteneur
     d3.select(container).selectAll('*').remove();
 
     const svg = d3.select(container)
         .append('svg')
-        .attr('width', width)
-        .attr('height', height);
-
-    const chartWidth = width - margin.left - margin.right;
-    const chartHeight = height - margin.top - margin.bottom;
+        .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .classed('svg-content-responsive', true);
 
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Titre
     svg.append('text')
-        .attr('x', width / 2)
-        .attr('y', 20)
+        .attr('x', fullWidth / 2)
+        .attr('y', 30)
         .attr('text-anchor', 'middle')
-        .attr('font-size', '16px')
+        .attr('font-size', '18px')
         .attr('font-weight', 'bold')
         .attr('fill', '#2c3e50')
         .text('Top 10 Actes les Plus Pratiqués');
@@ -346,22 +426,22 @@ function createTopVisitsChart(doctorId = null) {
     // Échelles
     const y = d3.scaleBand()
         .domain(topActes.map(d => d.acte))
-        .range([0, chartHeight])
+        .range([0, height])
         .padding(0.2);
 
     const x = d3.scaleLinear()
         .domain([0, d3.max(topActes, d => d.total_visits)])
         .nice()
-        .range([0, chartWidth]);
+        .range([0, width]);
 
     // Axes
     g.append('g')
         .call(d3.axisLeft(y))
         .selectAll('text')
-        .style('font-size', '11px');
+        .style('font-size', '12px');
 
     g.append('g')
-        .attr('transform', `translate(0,${chartHeight})`)
+        .attr('transform', `translate(0,${height})`)
         .call(d3.axisBottom(x).tickFormat(d => d));
 
     // Barres
