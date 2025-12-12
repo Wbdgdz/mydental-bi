@@ -55,6 +55,12 @@
             <input type="date" id="end-date" name="end-date">
             
             <button id="apply-period">Appliquer</button>
+            
+            <div style="margin-left: auto; display: flex; gap: 10px;">
+                <button id="export-individual-pdf-btn" class="btn-export" title="Exporter en PDF">
+                    📄 Exporter PDF
+                </button>
+            </div>
         </div>
 
     <div id="stats-card-container">
@@ -327,15 +333,18 @@
                 switchMode(hash === 'comparison' ? 'comparison' : 'individual');
             });
         });
-    </script>    <button id="back-to-top" title="Retour en haut">↑</button>
+    </script>
+
+    <footer class="site-footer">
+        <div class="w-full mx-auto max-w-screen-xl p-4">
+            <span>© 2025 <a href="#">MyDental BI</a>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <button id="back-to-top" title="Retour en haut">↑</button>
 
     <script type="module" src="./doctor/main.js"></script>
     <script type="module" src="./utilities/utils.js"></script>
     <script type="module" src="./doctor/comparisonMode.js"></script>
-</body>
-</html>
-    <!-- Include your JavaScript file -->
-    <script type="module" src="./doctor/main.js"></script><!-- New JS file for doctor performance -->
-    <script type="module" src="./utilities/utils.js"></script>
 </body>
 </html>
