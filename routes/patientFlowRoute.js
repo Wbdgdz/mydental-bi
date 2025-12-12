@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 
 module.exports = (connection) => {
@@ -257,6 +259,50 @@ module.exports = (connection) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename=patient-flow-data-${safeStartDate}-to-${safeEndDate}.csv`);
       res.send(csvContent);
+    });
+  });
+
+  // Endpoint: Get prediction data from CSV
+  router.get('/predictions', (req, res) => {
+    const csvPath = path.join(__dirname, '../public/data/previsions_flux_2024_2027.csv');
+
+    fs.readFile(csvPath, 'utf8', (error, data) => {
+      if (error) {
+        console.error('Erreur lors de la lecture du fichier CSV:', error);
+        return res.status(500).json({ message: 'Erreur lors de la lecture des prévisions' });
+      }
+
+      // Parse CSV with validation
+      const lines = data.trim().split('\n').filter(line => line.trim().length > 0);
+      if (lines.length < 2) {
+        return res.status(500).json({ message: 'Fichier CSV invalide' });
+      }
+
+      const headers = lines[0].split(',').map(h => h.trim());
+      const expectedHeaders = ['mois', 'patients_prevus', 'visites_prevues', 'type'];
+      
+      // Validate headers
+      if (!expectedHeaders.every((h, i) => headers[i] === h)) {
+        return res.status(500).json({ message: 'Structure du fichier CSV incorrecte' });
+      }
+
+      const results = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim());
+        if (values.length !== headers.length) {
+          console.warn(`Ligne ${i + 1} ignorée: nombre de colonnes incorrect`);
+          continue;
+        }
+        const row = {};
+        headers.forEach((header, index) => {
+          // Sanitize values to prevent injection
+          row[header] = values[index].replace(/[<>]/g, '');
+        });
+        results.push(row);
+      }
+
+      res.json(results);
     });
   });
 
