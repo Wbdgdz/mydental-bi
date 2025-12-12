@@ -2,16 +2,16 @@
 import { exportPageToPDF, exportMultipleTablestoExcel } from '../utilities/exportUtils.js';
 
 // Export PDF
-export function exportClinicDashboardToPDF() {
+export async function exportClinicDashboardToPDF() {
     // Récupérer les statistiques
     const statsCards = [
         { label: 'Nombre de patients', value: document.getElementById('total_patients')?.textContent || 'N/A' },
-        { label: 'Total des visites', value: document.getElementById('total_visits')?.textContent || 'N/A' },
-        { label: 'Total de revenus', value: document.getElementById('total_revenue')?.textContent || 'N/A' },
-        { label: 'Heures travaillées', value: document.getElementById('total_hours_worked')?.textContent || 'N/A' },
-        { label: 'CA par heure', value: document.getElementById('revenue_per_hour')?.textContent || 'N/A' },
-        { label: 'Temps patient moyen', value: document.getElementById('avg_patient_time')?.textContent || 'N/A' },
-        { label: 'Temps d\'attente moyen', value: document.getElementById('avg_waiting_time')?.textContent || 'N/A' }
+        { label: 'Nombre de visites', value: document.getElementById('total-visits')?.textContent || 'N/A' },
+        { label: 'Chiffre d\'affaires', value: document.getElementById('CA')?.textContent || 'N/A' },
+        { label: 'CA par Heure', value: document.getElementById('CA_Per_hour')?.textContent || 'N/A' },
+        { label: 'Nouveaux patients', value: document.getElementById('new-patients')?.textContent || 'N/A' },
+        { label: 'Patients fidèles', value: document.getElementById('loyal-patients')?.textContent || 'N/A' },
+        { label: 'Temps d\'attente moyen', value: document.getElementById('avg-waiting-time')?.textContent || 'N/A' }
     ];
     
     // Récupérer la période
@@ -22,20 +22,37 @@ export function exportClinicDashboardToPDF() {
     // Récupérer les tableaux
     const tables = [
         { 
-            title: 'Detail des Actes', 
+            title: 'Détail des Actes', 
             element: document.getElementById('actes-table')
         },
         { 
-            title: 'Performance des Medecins', 
+            title: 'Performance des Médecins', 
             element: document.getElementById('medecins-table')
         }
     ];
     
-    exportPageToPDF({
+    // Récupérer les graphiques principaux
+    const charts = [
+        {
+            title: 'Analyse Visites & Revenus par Mois',
+            svgId: 'visits-revenue-chart'
+        },
+        {
+            title: 'Évolution des Patients Fidèles',
+            svgId: 'patient-visits-chart'
+        },
+        {
+            title: 'Temps d\'Attente Moyen par Mois',
+            svgId: 'waiting-time-monthly-chart'
+        }
+    ];
+    
+    await exportPageToPDF({
         title: 'Tableau de Bord Clinique',
         subtitle: subtitle,
         statsCards: statsCards,
         tables: tables,
+        charts: charts,
         filename: `tableau-bord-clinique-${new Date().toISOString().split('T')[0]}`
     });
 }

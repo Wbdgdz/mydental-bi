@@ -242,7 +242,9 @@
         <h2>📊 Analyse de Rentabilité par Médecin</h2>
         <p class="section-description">
             Données issues de la dernière simulation du simulateur de rentabilité.
-            <a href="/simulateur-rentabilite.html" style="color: #667eea;">→ Aller au simulateur</a>
+            <a href="/simulateur-rentabilite.html" class="btn-simulateur" style="display: inline-block; background-color: var(--primary-color); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-left: 10px; transition: all 0.3s ease;">
+                📈 Aller au simulateur
+            </a>
         </p>
         
         <div id="rentabilite-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
@@ -303,9 +305,19 @@
                 if (mode === 'individual') {
                     individualMode.style.display = 'block';
                     comparisonMode.style.display = 'none';
+                    // Afficher la section rentabilité en mode individuel
+                    const rentabiliteSection = document.getElementById('rentabilite-section');
+                    if (rentabiliteSection) {
+                        rentabiliteSection.style.display = 'block';
+                    }
                 } else {
                     individualMode.style.display = 'none';
                     comparisonMode.style.display = 'block';
+                    // Masquer la section rentabilité en mode comparaison
+                    const rentabiliteSection = document.getElementById('rentabilite-section');
+                    if (rentabiliteSection) {
+                        rentabiliteSection.style.display = 'none';
+                    }
                 }
             }
             
