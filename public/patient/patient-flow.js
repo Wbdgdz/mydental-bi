@@ -445,11 +445,67 @@ function loadAllData() {
     loadDoctorCapacity(startDate, endDate);
 }
 
+// Function to export CSV
+async function exportPatientFlowCSV() {
+    const startDate = START_DATE;
+    const endDate = getEndDate();
+    const exportBtn = document.getElementById('export-csv-btn');
+    
+    try {
+        // Disable button during export
+        exportBtn.disabled = true;
+        exportBtn.textContent = '⏳ Export en cours...';
+        
+        const response = await fetch(`/api/patient-flow/export-csv?startDate=${startDate}&endDate=${endDate}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Erreur lors de l\'export');
+        }
+        
+        // Get the CSV content
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        
+        // Sanitize dates for filename
+        const safeStartDate = startDate.replace(/[^0-9-]/g, '');
+        const safeEndDate = endDate.replace(/[^0-9-]/g, '');
+        
+        // Create download link and trigger download
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `patient-flow-data-${safeStartDate}-to-${safeEndDate}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Cleanup
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        // Success feedback
+        exportBtn.textContent = '✅ Exporté avec succès !';
+        setTimeout(() => {
+            exportBtn.textContent = '📥 Exporter les Données (CSV)';
+            exportBtn.disabled = false;
+        }, 2000);
+    } catch (error) {
+        console.error('Erreur lors de l\'export CSV:', error);
+        exportBtn.textContent = '❌ Erreur lors de l\'export';
+        setTimeout(() => {
+            exportBtn.textContent = '📥 Exporter les Données (CSV)';
+            exportBtn.disabled = false;
+        }, 2000);
+    }
+}
+
 // Event listeners
 document.getElementById('logout-btn').addEventListener('click', () => {
     localStorage.removeItem('token');
     window.location.href = '/login.html';
 });
+
+document.getElementById('export-csv-btn').addEventListener('click', exportPatientFlowCSV);
 
 // Charger les données au chargement de la page
 loadAllData();
