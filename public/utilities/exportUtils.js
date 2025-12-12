@@ -1,15 +1,67 @@
 // Module utilitaire pour les exports PDF et Excel
 
 /**
+ * Convertit un élément SVG en image PNG en base64
+ * @param {SVGElement} svgElement - L'élément SVG à convertir
+ * @returns {Promise<string>} - L'image en base64
+ */
+async function svgToBase64(svgElement) {
+    return new Promise((resolve, reject) => {
+        try {
+            // Cloner le SVG pour ne pas modifier l'original
+            const clonedSvg = svgElement.cloneNode(true);
+            
+            // S'assurer que le SVG a des dimensions
+            const bbox = svgElement.getBoundingClientRect();
+            clonedSvg.setAttribute('width', bbox.width);
+            clonedSvg.setAttribute('height', bbox.height);
+            
+            // Convertir le SVG en string
+            const svgString = new XMLSerializer().serializeToString(clonedSvg);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            
+            // Créer une image
+            const img = new Image();
+            img.onload = function() {
+                // Créer un canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = bbox.width;
+                canvas.height = bbox.height;
+                const ctx = canvas.getContext('2d');
+                
+                // Dessiner l'image sur le canvas
+                ctx.drawImage(img, 0, 0);
+                
+                // Convertir en base64
+                const base64 = canvas.toDataURL('image/png');
+                URL.revokeObjectURL(url);
+                resolve(base64);
+            };
+            
+            img.onerror = function() {
+                URL.revokeObjectURL(url);
+                reject(new Error('Erreur lors de la conversion SVG'));
+            };
+            
+            img.src = url;
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+/**
  * Exporte les statistiques d'une page en PDF
  * @param {Object} config - Configuration de l'export
  * @param {string} config.title - Titre du document
  * @param {string} config.subtitle - Sous-titre (période, médecin, etc.)
  * @param {Array} config.statsCards - Cartes de statistiques [{label: string, value: string}]
  * @param {Array} config.tables - Tableaux à inclure [{title: string, element: HTMLElement}]
+ * @param {Array} config.charts - Graphiques SVG à inclure [{title: string, svgId: string}]
  * @param {string} config.filename - Nom du fichier (sans extension)
  */
-export function exportPageToPDF(config) {
+export async function exportPageToPDF(config) {
     // Vérifier si jsPDF est chargé
     if (typeof window.jspdf === 'undefined') {
         alert('La bibliothèque jsPDF n\'est pas chargée.');
@@ -155,6 +207,46 @@ export function exportPageToPDF(config) {
             
             yPosition += 10;
         });
+    }
+    
+    // Section: Graphiques
+    if (config.charts && config.charts.length > 0) {
+        for (const chartConfig of config.charts) {
+            if (yPosition > 200) {
+                doc.addPage();
+                yPosition = 20;
+            }
+            
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text(chartConfig.title, margin, yPosition);
+            yPosition += 8;
+            
+            const svgElement = document.getElementById(chartConfig.svgId);
+            if (svgElement && svgElement.tagName === 'svg') {
+                try {
+                    const base64Image = await svgToBase64(svgElement);
+                    const imgWidth = contentWidth;
+                    const imgHeight = 80; // Hauteur fixe pour les graphiques
+                    
+                    // Vérifier si on a assez d'espace
+                    if (yPosition + imgHeight > 270) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    doc.addImage(base64Image, 'PNG', margin, yPosition, imgWidth, imgHeight);
+                    yPosition += imgHeight + 10;
+                } catch (error) {
+                    console.error('Erreur lors de la conversion du graphique:', error);
+                    doc.setFontSize(10);
+                    doc.setTextColor(200, 0, 0);
+                    doc.text('Erreur lors de la capture du graphique', margin, yPosition);
+                    yPosition += 10;
+                }
+            }
+        }
     }
     
     // Pied de page sur toutes les pages

@@ -103,12 +103,13 @@ function setupDateListeners() {
 
 // --- INITIALISATION DES DATES ---
 function initializeComparisonDates() {
-    const today = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(today.getMonth() - 1);
-    
-    comparisonStartDate.value = oneMonthAgo.toISOString().split('T')[0];
-    comparisonEndDate.value = today.toISOString().split('T')[0];
+    // Définir les dates par défaut (2022-01-01 à 2024-12-31)
+    if (!comparisonStartDate.value) {
+        comparisonStartDate.value = '2022-01-01';
+    }
+    if (!comparisonEndDate.value) {
+        comparisonEndDate.value = '2024-12-31';
+    }
 }
 
 // --- LANCER LA COMPARAISON ---
@@ -721,7 +722,7 @@ function createScatterChart(data) {
 }
 
 // --- EXPORT PDF ---
-function exportToPDF() {
+async function exportToPDF() {
     // Vérifier si jsPDF est chargé
     if (typeof window.jspdf === 'undefined') {
         alert('La bibliothèque jsPDF n\'est pas chargée. Veuillez ajouter le script dans le HTML.');
@@ -879,6 +880,43 @@ function exportToPDF() {
         yPosition += 6;
     });
     
+    // Section: Graphiques
+    const chartConfigs = [
+        { id: 'comparison-bar-chart', title: 'Graphique Comparatif' },
+        { id: 'comparison-radar-chart', title: 'Radar de Performance' },
+        { id: 'comparison-scatter-chart', title: 'CA par Heure vs Temps Moyen' }
+    ];
+    
+    for (const chartConfig of chartConfigs) {
+        const svgElement = document.getElementById(chartConfig.id);
+        if (svgElement && svgElement.tagName === 'svg') {
+            // Nouvelle page pour chaque graphique
+            doc.addPage();
+            yPosition = 20;
+            
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text(chartConfig.title, margin, yPosition);
+            yPosition += 10;
+            
+            try {
+                // Convertir le SVG en image
+                const base64Image = await svgToBase64(svgElement);
+                const imgWidth = contentWidth;
+                const imgHeight = 100;
+                
+                doc.addImage(base64Image, 'PNG', margin, yPosition, imgWidth, imgHeight);
+                yPosition += imgHeight + 10;
+            } catch (error) {
+                console.error('Erreur lors de la conversion du graphique:', error);
+                doc.setFontSize(10);
+                doc.setTextColor(200, 0, 0);
+                doc.text('Erreur lors de la capture du graphique', margin, yPosition);
+            }
+        }
+    }
+    
     // Pied de page
     const totalPages = doc.internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
@@ -891,6 +929,43 @@ function exportToPDF() {
     
     // Sauvegarder
     doc.save(`comparaison-medecins-${new Date().toISOString().split('T')[0]}.pdf`);
+}
+
+// Fonction utilitaire pour convertir SVG en base64
+async function svgToBase64(svgElement) {
+    return new Promise((resolve, reject) => {
+        try {
+            const clonedSvg = svgElement.cloneNode(true);
+            const bbox = svgElement.getBoundingClientRect();
+            clonedSvg.setAttribute('width', bbox.width);
+            clonedSvg.setAttribute('height', bbox.height);
+            
+            const svgString = new XMLSerializer().serializeToString(clonedSvg);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = bbox.width;
+                canvas.height = bbox.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const base64 = canvas.toDataURL('image/png');
+                URL.revokeObjectURL(url);
+                resolve(base64);
+            };
+            
+            img.onerror = function() {
+                URL.revokeObjectURL(url);
+                reject(new Error('Erreur lors de la conversion SVG'));
+            };
+            
+            img.src = url;
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
 
 // --- EXPORT EXCEL ---

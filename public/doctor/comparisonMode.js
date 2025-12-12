@@ -503,6 +503,14 @@ window.addEventListener('DOMContentLoaded', () => {
     comparisonStartDate = document.getElementById('comparison-start-date');
     comparisonEndDate = document.getElementById('comparison-end-date');
     
+    // Définir les dates par défaut (2022-01-01 à 2024-12-31)
+    if (comparisonStartDate && !comparisonStartDate.value) {
+        comparisonStartDate.value = '2022-01-01';
+    }
+    if (comparisonEndDate && !comparisonEndDate.value) {
+        comparisonEndDate.value = '2024-12-31';
+    }
+    
     // Configurer les event listeners
     individualBtn.addEventListener('click', () => {
         switchMode('individual');

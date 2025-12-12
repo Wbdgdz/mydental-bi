@@ -2,9 +2,18 @@
 
 /* Conteneur principal */
 .main-container {
+    width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px 40px;
+}
+
+/* Conteneur pour le sélecteur de période */
+.period-selector-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
 }
 
 /* Sections spécifiques au simulateur */
@@ -13,10 +22,10 @@
     background: white;
     border-radius: var(--border-radius);
     padding: 30px;
-    margin: 0 auto 30px auto;
-    width: 92%;
+    margin-bottom: 30px;
     box-shadow: var(--card-shadow);
     border: 1px solid rgba(0,0,0,0.02);
+    width: 100%;
 }
 
 .simulator-section h2,
@@ -105,36 +114,6 @@
 .param-card small {
     color: var(--text-muted);
     font-size: 0.85rem;
-}
-}
-
-.input-group:focus-within {
-    border-color: #667eea;
-}
-
-.input-group input[type="number"] {
-    flex: 1;
-    padding: 12px 15px;
-    border: none;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #2c3e50;
-}
-
-.input-group input[type="number"]:focus {
-    outline: none;
-}
-
-.input-suffix {
-    padding: 0 15px;
-    font-weight: 700;
-    color: #667eea;
-    font-size: 1.2rem;
-}
-
-.param-card small {
-    color: #7f8c8d;
-    font-size: 0.9rem;
 }
 
 /* Résumé des paramètres */

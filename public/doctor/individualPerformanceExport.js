@@ -2,7 +2,7 @@
 import { exportPageToPDF, exportTableToExcel } from '../utilities/exportUtils.js';
 
 // Export PDF pour la performance individuelle
-export function exportIndividualPerformanceToPDF() {
+export async function exportIndividualPerformanceToPDF() {
     // Récupérer le médecin sélectionné
     const doctorSelect = document.getElementById('doctor-select');
     const doctorName = doctorSelect.options[doctorSelect.selectedIndex]?.text || 'Médecin';
@@ -32,16 +32,33 @@ export function exportIndividualPerformanceToPDF() {
     // Récupérer le tableau des actes
     const tables = [
         { 
-            title: 'Detail des Actes Effectues', 
+            title: 'Détail des Actes Effectués', 
             element: document.getElementById('actes-table')
         }
     ];
     
-    exportPageToPDF({
+    // Récupérer les graphiques principaux
+    const charts = [
+        {
+            title: 'Analyse Visites vs Revenus',
+            svgId: 'visits-revenue-chart'
+        },
+        {
+            title: 'Fidélité des Patients',
+            svgId: 'patients-chart'
+        },
+        {
+            title: 'Temps de Travail',
+            svgId: 'work-time-chart'
+        }
+    ];
+    
+    await exportPageToPDF({
         title: 'Performance Médecin',
         subtitle: subtitle,
         statsCards: statsCards,
         tables: tables,
+        charts: charts,
         filename: `performance-${doctorName.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}`
     });
 }
