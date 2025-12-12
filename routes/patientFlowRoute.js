@@ -190,5 +190,75 @@ module.exports = (connection) => {
     );
   });
 
+  // Endpoint: Export CSV for patient flow forecasting
+  router.get('/export-csv', (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ message: 'Les paramètres "startDate" et "endDate" sont requis.' });
+    }
+
+    // Validate date format to prevent injection (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(startDate) || !dateRegex.test(endDate)) {
+      return res.status(400).json({ message: 'Format de date invalide. Utilisez YYYY-MM-DD.' });
+    }
+
+    const query = `
+      SELECT 
+        DATE(v.currentLocalTimeAssignment) AS date,
+        DAYOFWEEK(v.currentLocalTimeAssignment) AS day_of_week,
+        CASE DAYOFWEEK(v.currentLocalTimeAssignment)
+          WHEN 1 THEN 'Dimanche'
+          WHEN 2 THEN 'Lundi'
+          WHEN 3 THEN 'Mardi'
+          WHEN 4 THEN 'Mercredi'
+          WHEN 5 THEN 'Jeudi'
+          WHEN 6 THEN 'Vendredi'
+          WHEN 7 THEN 'Samedi'
+        END AS day_name,
+        HOUR(v.currentLocalTimeAssignment) AS hour,
+        COUNT(v.id) AS total_visits,
+        COUNT(DISTINCT v.patient_id) AS unique_patients,
+        COUNT(DISTINCT v.user_activated_id) AS active_doctors
+      FROM visit v
+      WHERE v.currentLocalTimeAssignment BETWEEN ? AND ?
+      GROUP BY DATE(v.currentLocalTimeAssignment), HOUR(v.currentLocalTimeAssignment), day_of_week, day_name
+      ORDER BY date, hour;
+    `;
+
+    connection.query(query, [startDate, endDate], (error, results) => {
+      if (error) {
+        console.error('Erreur lors de l\'export CSV:', error);
+        return res.status(500).json({ message: 'Erreur serveur' });
+      }
+
+      // Generate CSV content
+      const csvHeaders = ['date', 'day_of_week', 'day_name', 'hour', 'total_visits', 'unique_patients', 'active_doctors'];
+      let csvContent = csvHeaders.join(',') + '\n';
+      
+      results.forEach(row => {
+        const csvRow = csvHeaders.map(header => {
+          const value = row[header];
+          // Handle values that might contain commas or quotes
+          if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+            return `"${value.replace(/"/g, '""')}"`;
+          }
+          return value;
+        });
+        csvContent += csvRow.join(',') + '\n';
+      });
+
+      // Sanitize dates for filename (already validated above, but extra safety)
+      const safeStartDate = startDate.replace(/[^0-9-]/g, '');
+      const safeEndDate = endDate.replace(/[^0-9-]/g, '');
+
+      // Set headers for CSV download
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename=patient-flow-data-${safeStartDate}-to-${safeEndDate}.csv`);
+      res.send(csvContent);
+    });
+  });
+
   return router;
 };
