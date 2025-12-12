@@ -243,9 +243,6 @@ function displayComparisonResults(data) {
             <button class="btn-export" onclick="exportToPDF()">
                 📄 Exporter en PDF
             </button>
-            <button class="btn-export" onclick="exportToExcel()">
-                📊 Exporter en Excel
-            </button>
         </div>
     `;
     
@@ -733,23 +730,164 @@ function exportToPDF() {
     
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'mm', 'a4');
+    let yPosition = 20;
+    const margin = 15;
+    const pageWidth = 210;
+    const contentWidth = pageWidth - (2 * margin);
     
     // En-tête
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('Comparaison des Médecins', 105, 20, { align: 'center' });
+    doc.setTextColor(15, 98, 254); // Couleur primaire
+    doc.text('Comparaison des Médecins', pageWidth / 2, yPosition, { align: 'center' });
+    
+    yPosition += 10;
     
     // Période
     const startDate = document.getElementById('comparison-start-date').value;
     const endDate = document.getElementById('comparison-end-date').value;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Période: ${startDate} au ${endDate}`, pageWidth / 2, yPosition, { align: 'center' });
+    
+    yPosition += 5;
+    doc.setLineWidth(0.5);
+    doc.setDrawColor(15, 98, 254);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 10;
+    
+    // Récupérer les données du tableau
+    const table = document.querySelector('.comparison-table');
+    if (!table) {
+        alert('Aucune donnée à exporter');
+        return;
+    }
+    
+    // Extraire les noms des médecins depuis les en-têtes
+    const headers = Array.from(table.querySelectorAll('thead th'));
+    const doctorNames = headers.slice(1).map(th => th.textContent.trim());
+    
+    // Section: Médecins comparés
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text('Medecins compares', margin, yPosition);
+    yPosition += 7;
+    
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Période: ${startDate} au ${endDate}`, 105, 28, { align: 'center' });
+    doctorNames.forEach((name, index) => {
+        const colors = [[15, 98, 254], [255, 131, 43], [67, 233, 123]];
+        const color = colors[index % colors.length];
+        doc.setFillColor(...color);
+        doc.circle(margin + 2, yPosition - 1, 1.5, 'F');
+        doc.setTextColor(0, 0, 0);
+        doc.text(name, margin + 6, yPosition);
+        yPosition += 6;
+    });
     
-    // Message
-    doc.setFontSize(12);
-    doc.text('Export PDF en cours de développement...', 105, 50, { align: 'center' });
-    doc.text('Les graphiques et tableaux seront bientôt disponibles.', 105, 60, { align: 'center' });
+    yPosition += 5;
+    
+    // Section: Indicateurs Clés
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Indicateurs Cles de Performance', margin, yPosition);
+    yPosition += 8;
+    
+    // Extraire les données des lignes du tableau
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+    const metricsData = rows.map(row => {
+        const cells = Array.from(row.querySelectorAll('td'));
+        return {
+            metric: cells[0].textContent.trim(),
+            values: cells.slice(1).map(cell => cell.textContent.trim())
+        };
+    });
+    
+    // Afficher les métriques importantes (première page)
+    const importantMetrics = metricsData.slice(0, 8);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    
+    importantMetrics.forEach((metric, index) => {
+        if (yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+        }
+        
+        // Nom de la métrique
+        doc.setFont('helvetica', 'bold');
+        doc.text(metric.metric, margin, yPosition);
+        yPosition += 5;
+        
+        // Valeurs pour chaque médecin
+        doc.setFont('helvetica', 'normal');
+        metric.values.forEach((value, i) => {
+            const colors = [[15, 98, 254], [255, 131, 43], [67, 233, 123]];
+            const color = colors[i % colors.length];
+            doc.setTextColor(...color);
+            doc.text(`${doctorNames[i]}: ${value}`, margin + 5, yPosition);
+            yPosition += 4.5;
+        });
+        
+        doc.setTextColor(0, 0, 0);
+        yPosition += 2;
+    });
+    
+    // Nouvelle page pour le tableau complet
+    doc.addPage();
+    yPosition = 20;
+    
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Tableau Comparatif Detaille', margin, yPosition);
+    yPosition += 10;
+    
+    // Créer un tableau structuré
+    doc.setFontSize(8);
+    const colWidth = contentWidth / (doctorNames.length + 1);
+    
+    // En-têtes
+    doc.setFont('helvetica', 'bold');
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margin, yPosition - 5, contentWidth, 7, 'F');
+    doc.text('Métrique', margin + 2, yPosition);
+    doctorNames.forEach((name, i) => {
+        doc.text(name.substring(0, 15), margin + colWidth * (i + 1) + 2, yPosition);
+    });
+    yPosition += 8;
+    
+    // Lignes de données
+    doc.setFont('helvetica', 'normal');
+    metricsData.forEach((metric, index) => {
+        if (yPosition > 270) {
+            doc.addPage();
+            yPosition = 20;
+        }
+        
+        // Alternance de couleur de fond
+        if (index % 2 === 0) {
+            doc.setFillColor(250, 250, 250);
+            doc.rect(margin, yPosition - 4, contentWidth, 6, 'F');
+        }
+        
+        doc.text(metric.metric.substring(0, 25), margin + 2, yPosition);
+        metric.values.forEach((value, i) => {
+            doc.text(value, margin + colWidth * (i + 1) + 2, yPosition);
+        });
+        yPosition += 6;
+    });
+    
+    // Pied de page
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text(`Page ${i} / ${totalPages}`, pageWidth / 2, 287, { align: 'center' });
+        doc.text(`MyDental BI - Généré le ${new Date().toLocaleDateString('fr-FR')}`, pageWidth / 2, 292, { align: 'center' });
+    }
     
     // Sauvegarder
     doc.save(`comparaison-medecins-${new Date().toISOString().split('T')[0]}.pdf`);
