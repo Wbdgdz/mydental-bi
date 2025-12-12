@@ -12,6 +12,10 @@
     font-size: 28px;
 }
 
+.section-separator {
+    margin-top: 60px;
+}
+
 .period-selector {
     display: flex;
     justify-content: center;

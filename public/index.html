@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="clinic-dashboard.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Bibliothèques pour l'export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <nav class="main-nav">
@@ -46,11 +49,17 @@
     <h1 class="page-title">Tableau de bord de la clinique</h1>
 
     <div class="period-selector">
-        <label for="start-date">Du :</label>
+        <label for="start-date">Début :</label>
         <input type="date" id="start-date">
-        <label for="end-date">Au :</label>
+        <label for="end-date">Fin :</label>
         <input type="date" id="end-date">
-        <button id="apply-period">Mettre à jour</button>
+        <button id="apply-period">Appliquer</button>
+        
+        <div style="margin-left: auto; display: flex; gap: 10px;">
+            <button id="export-pdf-btn" class="btn-export" title="Exporter en PDF">
+                📄 Exporter PDF
+            </button>
+        </div>
     </div>
 
     <!-- Section des indicateurs -->

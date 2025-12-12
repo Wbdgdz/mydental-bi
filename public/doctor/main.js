@@ -3,6 +3,7 @@
 import { setupEventListeners } from './eventHandlers.js';
 import {checkAuth,getLastMonthDateRange} from '../utilities/utils.js';
 import { loadRentabiliteData } from '../doctor/rentabiliteDoctor.js';
+import { initIndividualPerformanceExportButtons } from '../doctor/individualPerformanceExport.js';
 
 // Function to populate the doctor dropdown
 function populateDoctorDropdown() {
@@ -51,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     populateDoctorDropdown(); // Call the function to populate the doctor dropdown
     setupEventListeners(); // Setup the other event listeners
+    
+    // Initialiser les boutons d'export
+    initIndividualPerformanceExportButtons();
     
     // Charger les données de rentabilité au chargement initial
     loadRentabiliteData();
