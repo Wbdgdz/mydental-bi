@@ -230,22 +230,31 @@ function createMargeDistributionChart() {
         .append('svg')
         .attr('viewBox', `0 0 ${fullWidth} ${fullHeight}`)
         .attr('preserveAspectRatio', 'xMidYMid meet')
-        .classed('svg-content-responsive', true);
+        .classed('svg-content-responsive', true)
+        .style('background', '#f9f9f9'); // Debug: voir le SVG
 
     const g = svg.append('g')
         .attr('transform', `translate(${fullWidth / 2},${fullHeight / 2})`);
+
+    console.log('[RentabiliteCharts] Radius:', radius);
+    console.log('[RentabiliteCharts] Center:', fullWidth / 2, fullHeight / 2);
 
     // Créer le camembert
     const pie = d3.pie()
         .value(d => d.value)
         .sort(null);
 
+    const pieData = pie(data);
+    console.log('[RentabiliteCharts] Pie data:', pieData);
+
     const arc = d3.arc()
         .innerRadius(radius * 0.5)
         .outerRadius(radius);
+    
+    console.log('[RentabiliteCharts] Arc innerRadius:', radius * 0.5, 'outerRadius:', radius);
 
     const arcs = g.selectAll('.arc')
-        .data(pie(data))
+        .data(pieData)
         .enter()
         .append('g')
         .attr('class', 'arc');
@@ -253,6 +262,8 @@ function createMargeDistributionChart() {
     arcs.append('path')
         .attr('d', arc)
         .attr('fill', d => d.data.color)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 2)
         .attr('opacity', 0.8)
         .on('mouseover', function(event, d) {
             d3.select(this).attr('opacity', 1);

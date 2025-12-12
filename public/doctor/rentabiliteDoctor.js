@@ -274,6 +274,9 @@ function createCADistributionChart(doctorId = null) {
     const g = svg.append('g')
         .attr('transform', `translate(${fullWidth / 2},${fullHeight / 2 + 20})`);
 
+    console.log('[RentabiliteDoctor] Radius:', radius);
+    console.log('[RentabiliteDoctor] Center:', fullWidth / 2, fullHeight / 2 + 20);
+
     // Couleurs
     const color = d3.scaleOrdinal()
         .domain(topActes.map(d => d.acte))
@@ -284,9 +287,14 @@ function createCADistributionChart(doctorId = null) {
         .value(d => d.CA)
         .sort(null);
 
+    const pieData = pie(topActes);
+    console.log('[RentabiliteDoctor] Pie data:', pieData);
+
     const arc = d3.arc()
         .innerRadius(0)
         .outerRadius(radius);
+    
+    console.log('[RentabiliteDoctor] Arc innerRadius: 0, outerRadius:', radius);
 
     const arcHover = d3.arc()
         .innerRadius(0)
@@ -294,7 +302,7 @@ function createCADistributionChart(doctorId = null) {
 
     // Créer les tranches
     const arcs = g.selectAll('.arc')
-        .data(pie(topActes))
+        .data(pieData)
         .enter()
         .append('g')
         .attr('class', 'arc');
@@ -302,6 +310,8 @@ function createCADistributionChart(doctorId = null) {
     arcs.append('path')
         .attr('d', arc)
         .attr('fill', d => color(d.data.acte))
+        .attr('stroke', 'white')
+        .attr('stroke-width', 2)
         .attr('opacity', 0.8)
         .on('mouseover', function(event, d) {
             d3.select(this)
