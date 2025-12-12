@@ -261,7 +261,10 @@ function createMargeDistributionChart() {
 
     arcs.append('path')
         .attr('d', arc)
-        .attr('fill', d => d.data.color)
+        .attr('fill', d => {
+            console.log('[RentabiliteCharts] Couleur pour:', d.data.label, '=', d.data.color);
+            return d.data.color;
+        })
         .attr('stroke', 'white')
         .attr('stroke-width', 2)
         .attr('opacity', 0.8)
