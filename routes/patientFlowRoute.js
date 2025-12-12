@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 
 module.exports = (connection) => {
@@ -257,6 +259,47 @@ module.exports = (connection) => {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename=patient-flow-data-${safeStartDate}-to-${safeEndDate}.csv`);
       res.send(csvContent);
+    });
+  });
+
+  // Endpoint: Get prediction data from CSV
+  router.get('/predictions', (req, res) => {
+    const csvPath = path.join(__dirname, '../prediction_flux/previsions_flux_2024_2027.csv');
+
+    fs.readFile(csvPath, 'utf8', (error, data) => {
+      if (error) {
+        console.error('Erreur lors de la lecture du fichier CSV:', error);
+        return res.status(500).json({ message: 'Erreur lors de la lecture des prévisions' });
+      }
+
+      // Parse CSV with validation
+      const lines = data.trim().split('\n').filter(line => line.trim().length > 0);
+      if (lines.length < 2) {
+        return res.status(500).json({ message: 'Fichier CSV invalide' });
+      }
+
+      const results = [];
+
+      // Skip header line (index 0) and parse data
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim());
+        if (values.length !== 2) {
+          console.warn(`Ligne ${i + 1} ignorée: nombre de colonnes incorrect`);
+          continue;
+        }
+        
+        // Sanitize values to prevent injection
+        const date = values[0].replace(/[<>]/g, '');
+        const visits = values[1].replace(/[<>]/g, '');
+        
+        // Format data for chart
+        results.push({
+          date: date,
+          visites_prevues: parseFloat(visits).toFixed(0)
+        });
+      }
+
+      res.json(results);
     });
   });
 
