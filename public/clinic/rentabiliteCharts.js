@@ -252,7 +252,7 @@ function createMargeDistributionChart() {
 
     arcs.append('path')
         .attr('d', arc)
-        .attr('fill', d => d.data.color)
+        .style('fill', d => d.data.color) // Utiliser style() au lieu de attr() pour surcharger le CSS
         .attr('stroke', 'white')
         .attr('stroke-width', 2)
         .attr('opacity', 0.8)

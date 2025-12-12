@@ -234,10 +234,6 @@ button:hover {
 svg path {
     fill: none; 
 }
-/* EXCEPTION: Les paths des pie charts (camemberts) doivent avoir leur couleur */
-svg .arc path {
-    fill: unset !important; /* Permet l'application des couleurs inline */
-}
 /* Les barres par défaut utilisent la couleur primaire, mais les couleurs inline (définies en JS) sont prioritaires */
 svg rect:not([fill]), svg .bar:not([fill]) {
     fill: var(--primary-color);

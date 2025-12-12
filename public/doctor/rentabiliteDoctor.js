@@ -309,7 +309,7 @@ function createCADistributionChart(doctorId = null) {
 
     arcs.append('path')
         .attr('d', arc)
-        .attr('fill', d => color(d.data.acte))
+        .style('fill', d => color(d.data.acte)) // Utiliser style() pour surcharger le CSS
         .attr('stroke', 'white')
         .attr('stroke-width', 2)
         .attr('opacity', 0.8)
