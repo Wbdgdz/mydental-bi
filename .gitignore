@@ -9,3 +9,4 @@ BD_sqlite/venv/
 # Dependencies
 node_modules/
 package-lock.json
+prediction_flux/venv/
