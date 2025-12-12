@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
 
 module.exports = (connection) => {
@@ -262,8 +264,6 @@ module.exports = (connection) => {
 
   // Endpoint: Get prediction data from CSV
   router.get('/predictions', (req, res) => {
-    const fs = require('fs');
-    const path = require('path');
     const csvPath = path.join(__dirname, '../public/data/previsions_flux_2024_2027.csv');
 
     fs.readFile(csvPath, 'utf8', (error, data) => {
@@ -272,13 +272,21 @@ module.exports = (connection) => {
         return res.status(500).json({ message: 'Erreur lors de la lecture des prévisions' });
       }
 
-      // Parse CSV
-      const lines = data.trim().split('\n');
+      // Parse CSV with validation
+      const lines = data.trim().split('\n').filter(line => line.trim().length > 0);
+      if (lines.length < 2) {
+        return res.status(500).json({ message: 'Fichier CSV invalide' });
+      }
+
       const headers = lines[0].split(',');
       const results = [];
 
       for (let i = 1; i < lines.length; i++) {
         const values = lines[i].split(',');
+        if (values.length !== headers.length) {
+          console.warn(`Ligne ${i + 1} ignorée: nombre de colonnes incorrect`);
+          continue;
+        }
         const row = {};
         headers.forEach((header, index) => {
           row[header] = values[index];

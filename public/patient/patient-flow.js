@@ -6,6 +6,7 @@ const token = localStorage.getItem('token');
 
 // Configuration des dates - peut être modifié selon les besoins
 const START_DATE = '2015-01-01'; // Date de début de l'historique de données
+const LABEL_DISPLAY_INTERVAL = 3; // Afficher 1 label sur 3 pour éviter le chevauchement
 const getEndDate = () => {
     const today = new Date();
     return today.toISOString().split('T')[0];
@@ -573,8 +574,8 @@ function createPredictionsChart(data) {
         .attr("transform", "rotate(-45)")
         .style("text-anchor", "end")
         .style("font-size", "10px")
-        .filter((d, i) => i % 3 !== 0)
-        .remove(); // Afficher seulement 1 label sur 3 pour éviter le chevauchement
+        .filter((d, i) => i % LABEL_DISPLAY_INTERVAL !== 0)
+        .remove();
 
     svg.append("g")
         .attr("class", "y-axis")
