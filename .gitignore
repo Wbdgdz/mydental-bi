@@ -1,7 +1,6 @@
 db/sql/import.sql
 .DS_Store
-start-app.sh
-wait-for-it.sh
+
 BD_sqlite/import.sql
 BD_sqlite/dental_data.db
 #exclude virtual environment folder
