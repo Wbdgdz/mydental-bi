@@ -74,15 +74,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Gestion du menu latéral
-    const menuToggle = document.getElementById("menu-toggle");
-    const sidebar = document.getElementById("sidebar");
-    
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener("click", function() {
-            sidebar.style.width = sidebar.style.width === '250px' ? '0' : '250px';
-            document.body.classList.toggle("with-sidebar");
-            this.classList.toggle("open"); // Change l'icône de menu
-        });
-    }
+    // Menu burger géré par utils.js - on supprime le code dupliqué ici
 });
