@@ -1,0 +1,2974 @@
+🔍 ANALYSE APPROFONDIE DE LA BASE : dental_data.db
+
+📊 STATISTIQUES GÉNÉRALES
+================================================================================
+Nombre total de tables : 80
+
+
+================================================================================
+📦 TABLE : BI_users
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] username                  varchar(255)    NOT NULL                        
+  [2] password                  varchar(255)    NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 1
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     1
+    • username                  | NULL:     0 (  0.0%) | Distinct:     1
+    • password                  | NULL:     0 (  0.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  username                  : admin
+  password                  : $2b$10$e1TibLgMVqUdiTYYTQCHCu7OiO0CgGXn7uX693HsHEByZ.V475AVi
+
+================================================================================
+📦 TABLE : action
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] lot_id                    INTEGER         NOT NULL                        
+  [2] product_id                INTEGER         NULL       DEFAULT NULL         
+  [3] user_id                   INTEGER         NOT NULL                        
+  [4] doctor_id                 INTEGER         NULL       DEFAULT NULL         
+  [5] patient_id                INTEGER         NULL       DEFAULT NULL         
+  [6] type                      INTEGER         NULL       DEFAULT NULL         
+  [7] qte                       INTEGER         NULL       DEFAULT NULL         
+  [8] productPrice              REAL            NULL       DEFAULT NULL         
+  [9] cost                      REAL            NULL       DEFAULT NULL         
+  [10] amount                    REAL            NULL       DEFAULT NULL         
+  [11] remaining_amount          REAL            NULL       DEFAULT NULL         
+  [12] action_date               datetime        NULL       DEFAULT NULL         
+  [13] invoice_id                INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : autocomplete
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] code1                     varchar(155)    NULL       DEFAULT NULL         
+  [2] code2                     varchar(155)    NULL       DEFAULT NULL         
+  [3] value                     varchar(255)    NULL       DEFAULT NULL         
+  [4] description1              longtext        NULL       DEFAULT NULL         
+  [5] description2              longtext        NULL       DEFAULT NULL         
+  [6] description3              longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 636
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:   636
+    • code1                     | NULL:     0 (  0.0%) | Distinct:     4
+    • code2                     | NULL:    23 (  3.6%) | Distinct:    54
+    • value                     | NULL:     0 (  0.0%) | Distinct:   626
+    • description1              | NULL:     0 (  0.0%) | Distinct:     4
+    • description2              | NULL:   560 ( 88.1%) | Distinct:     2
+    • description3              | NULL:   560 ( 88.1%) | Distinct:     2
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  code1                     : 058
+  code2                     : 0
+  value                     : Abachi (poussière de bois)
+  description1              : Allergie
+  description2              : NULL
+  description3              : NULL
+
+================================================================================
+📦 TABLE : backup
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] chemin                    varchar(255)    NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : calendar
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] service_id                INTEGER         NULL       DEFAULT NULL         
+  [2] bgColor                   varchar(255)    NULL       DEFAULT NULL         
+  [3] type                      varchar(55)     NULL       DEFAULT NULL         
+  [4] schedulesChecking         tinyINTEGER     NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 27
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:    27
+    • service_id                | NULL:     1 (  3.7%) | Distinct:    26
+    • bgColor                   | NULL:     0 (  0.0%) | Distinct:     4
+    • type                      | NULL:     0 (  0.0%) | Distinct:     3
+    • schedulesChecking         | NULL:     0 (  0.0%) | Distinct:     2
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  service_id                : 1
+  bgColor                   : #D9534F
+  type                      : Personal
+  schedulesChecking         : 0
+
+================================================================================
+📦 TABLE : capture_vitale
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] consultation_id           INTEGER         NOT NULL                        
+  [2] height                    INTEGER         NULL       DEFAULT NULL         
+  [3] weight                    REAL            NULL       DEFAULT NULL         
+  [4] temperature               REAL            NULL       DEFAULT NULL         
+  [5] heartBeats                INTEGER         NULL       DEFAULT NULL         
+  [6] pressure                  REAL            NULL       DEFAULT NULL         
+  [7] bloodPressure             REAL            NULL       DEFAULT NULL         
+  [8] cvTime                    datetime        NULL       DEFAULT NULL         
+  [9] waistCircumference        REAL            NULL       DEFAULT NULL         
+  [10] hipCircumference          REAL            NULL       DEFAULT NULL         
+  [11] cranialPerimeter          REAL            NULL       DEFAULT NULL         
+  [12] saturation                REAL            NULL       DEFAULT NULL         
+  [13] glucose                   REAL            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : cardiology_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] dyslipidemia              longtext        NULL       DEFAULT NULL         
+  [2] obesity                   longtext        NULL       DEFAULT NULL         
+  [3] coronalHeredity           longtext        NULL       DEFAULT NULL         
+  [4] hyperuricemia             longtext        NULL       DEFAULT NULL         
+  [5] earlyMenopause            longtext        NULL       DEFAULT NULL         
+  [6] diabetes                  longtext        NULL       DEFAULT NULL         
+  [7] smooking                  longtext        NULL       DEFAULT NULL         
+  [8] hta                       longtext        NULL       DEFAULT NULL         
+  [9] ecvSg                     longtext        NULL       DEFAULT NULL         
+  [10] ecvSf                     longtext        NULL       DEFAULT NULL         
+  [11] ecvPag                    longtext        NULL       DEFAULT NULL         
+  [12] ecvPad                    longtext        NULL       DEFAULT NULL         
+  [13] ecvRythme                 longtext        NULL       DEFAULT NULL         
+  [14] ecvVascularBreath         longtext        NULL       DEFAULT NULL         
+  [15] ecvHeartBreath            longtext        NULL       DEFAULT NULL         
+  [16] ecvPulse                  longtext        NULL       DEFAULT NULL         
+  [17] ecvSounds                 longtext        NULL       DEFAULT NULL         
+  [18] ecvVenousBed              longtext        NULL       DEFAULT NULL         
+  [19] ecvEpp                    longtext        NULL       DEFAULT NULL         
+  [20] ecgPr                     longtext        NULL       DEFAULT NULL         
+  [21] ecgRythme                 longtext        NULL       DEFAULT NULL         
+  [22] ecgHvg                    longtext        NULL       DEFAULT NULL         
+  [23] ecgQrsAxis                longtext        NULL       DEFAULT NULL         
+  [24] ecgQrsAspects             longtext        NULL       DEFAULT NULL         
+  [25] ecgRepolarizationDisorder longtext        NULL       DEFAULT NULL         
+  [26] edVg                      longtext        NULL       DEFAULT NULL         
+  [27] edVgMass                  longtext        NULL       DEFAULT NULL         
+  [28] edVolumes                 longtext        NULL       DEFAULT NULL         
+  [29] edSog                     longtext        NULL       DEFAULT NULL         
+  [30] edSod                     longtext        NULL       DEFAULT NULL         
+  [31] edVci                     longtext        NULL       DEFAULT NULL         
+  [32] edPaps                    longtext        NULL       DEFAULT NULL         
+  [33] edPtdvg                   longtext        NULL       DEFAULT NULL         
+  [34] edPericarde               longtext        NULL       DEFAULT NULL         
+  [35] edEe                      longtext        NULL       DEFAULT NULL         
+  [36] edSivPp                   longtext        NULL       DEFAULT NULL         
+  [37] edVmaxIt                  longtext        NULL       DEFAULT NULL         
+  [38] edKinetic                 longtext        NULL       DEFAULT NULL         
+  [39] edFonctionVg              longtext        NULL       DEFAULT NULL         
+  [40] edVolumeOg                longtext        NULL       DEFAULT NULL         
+  [41] edCavitesDroites          longtext        NULL       DEFAULT NULL         
+  [42] edOndeMitrale             longtext        NULL       DEFAULT NULL         
+  [43] cat                       longtext        NULL       DEFAULT NULL         
+  [44] dyslipidemiaCheck         longtext        NULL       DEFAULT NULL         
+  [45] obesityCheck              longtext        NULL       DEFAULT NULL         
+  [46] coronalHeredityCheck      longtext        NULL       DEFAULT NULL         
+  [47] hyperuricemiaCheck        longtext        NULL       DEFAULT NULL         
+  [48] earlyMenopauseCheck       longtext        NULL       DEFAULT NULL         
+  [49] diabetesCheck             longtext        NULL       DEFAULT NULL         
+  [50] smookingCheck             longtext        NULL       DEFAULT NULL         
+  [51] htaCheck                  longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : category
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] name                      varchar(255)    NOT NULL                        
+  [2] description               longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 1
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     1
+    • name                      | NULL:     0 (  0.0%) | Distinct:     1
+    • description               | NULL:     1 (100.0%) | Distinct:     0
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 0
+  name                      : Tous
+  description               : NULL
+
+================================================================================
+📦 TABLE : checkup
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] consultation_id           INTEGER         NOT NULL                        
+  [2] checkup_1                 varchar(255)    NULL       DEFAULT NULL         
+  [3] checkup_2                 varchar(255)    NULL       DEFAULT NULL         
+  [4] checkup_3                 varchar(255)    NULL       DEFAULT NULL         
+  [5] checkup_4                 varchar(255)    NULL       DEFAULT NULL         
+  [6] checkup_5                 varchar(255)    NULL       DEFAULT NULL         
+  [7] checkup_6                 varchar(255)    NULL       DEFAULT NULL         
+  [8] checkup_7                 varchar(255)    NULL       DEFAULT NULL         
+  [9] checkup_8                 varchar(255)    NULL       DEFAULT NULL         
+  [10] checkup_9                 varchar(255)    NULL       DEFAULT NULL         
+  [11] checkup_10                varchar(255)    NULL       DEFAULT NULL         
+  [12] checkupName_1             varchar(255)    NULL       DEFAULT NULL         
+  [13] checkupName_2             varchar(255)    NULL       DEFAULT NULL         
+  [14] checkupName_3             varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] motive                    longtext        NULL       DEFAULT NULL         
+  [2] diagnostic                longtext        NULL       DEFAULT NULL         
+  [3] notifiableDiseases        longtext        NULL       DEFAULT NULL         
+  [4] note                      longtext        NULL       DEFAULT NULL         
+  [5] user_list_id              INTEGER         NOT NULL                        
+  [6] behavior                  longtext        NULL       DEFAULT NULL         
+  [7] todayTest                 longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 32486
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 32486
+    • motive                    | NULL: 32390 ( 99.7%) | Distinct:    33
+    • diagnostic                | NULL: 32486 (100.0%) | Distinct:     0
+    • notifiableDiseases        | NULL: 32486 (100.0%) | Distinct:     0
+    • note                      | NULL: 32486 (100.0%) | Distinct:     0
+    • user_list_id              | NULL:     0 (  0.0%) | Distinct:    19
+    • behavior                  | NULL: 32486 (100.0%) | Distinct:     0
+    • todayTest                 | NULL: 32486 (100.0%) | Distinct:     0
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 2
+  motive                    : NULL
+  diagnostic                : NULL
+  notifiableDiseases        : NULL
+  note                      : NULL
+  user_list_id              : 24
+  behavior                  : NULL
+  todayTest                 : NULL
+
+================================================================================
+📦 TABLE : convention
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] name                      varchar(255)    NOT NULL                        
+  [2] start_date                datetime        NULL       DEFAULT NULL         
+  [3] end_date                  datetime        NULL       DEFAULT NULL         
+  [4] percentage                REAL            NULL       DEFAULT NULL         
+  [5] address                   varchar(255)    NULL       DEFAULT NULL         
+  [6] phone                     varchar(55)     NULL       DEFAULT NULL         
+  [7] fax                       varchar(55)     NULL       DEFAULT NULL         
+  [8] email                     varchar(255)    NULL       DEFAULT NULL         
+  [9] trade_register            varchar(255)    NULL       DEFAULT NULL         
+  [10] tax_registration          varchar(55)     NULL       DEFAULT NULL         
+  [11] article_taxation          varchar(55)     NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : dental_diagram
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] patient_id                INTEGER         NOT NULL                        
+  [2] date                      date            NULL       DEFAULT NULL         
+  [3] tooth_number              longtext        NULL       DEFAULT NULL         
+  [4] tooth_state               varchar(50)     NULL       DEFAULT NULL         
+  [5] type                      varchar(50)     NULL       DEFAULT NULL         
+  [6] consultation_id           INTEGER         NULL       DEFAULT NULL         
+  [7] current_acts              longtext        NULL       DEFAULT NULL         
+  [8] next_acts                 longtext        NULL       DEFAULT NULL         
+  [9] visible                   INTEGER         NULL       DEFAULT NULL         
+  [10] reason                    varchar(50)     NULL       DEFAULT NULL         
+  [11] document_id               INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 28014
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 28014
+    • patient_id                | NULL:     0 (  0.0%) | Distinct: 10185
+    • date                      | NULL:     0 (  0.0%) | Distinct:   642
+    • tooth_number              | NULL:     0 (  0.0%) | Distinct:   106
+    • tooth_state               | NULL:     0 (  0.0%) | Distinct:     1
+    • type                      | NULL:     0 (  0.0%) | Distinct:     9
+    • consultation_id           | NULL:     1 (  0.0%) | Distinct: 20789
+    • current_acts              | NULL: 28014 (100.0%) | Distinct:     0
+    • next_acts                 | NULL: 28014 (100.0%) | Distinct:     0
+    • visible                   | NULL:     0 (  0.0%) | Distinct:     2
+    • reason                    | NULL: 23208 ( 82.8%) | Distinct:     2
+    • document_id               | NULL: 27552 ( 98.4%) | Distinct:   259
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 4
+  patient_id                : 2
+  date                      : 2023-02-03
+  tooth_number              : s:2:"36";
+  tooth_state               : -
+  type                      : 1
+  consultation_id           : 2
+  current_acts              : NULL
+  next_acts                 : NULL
+  visible                   : 1
+  reason                    : NULL
+  document_id               : NULL
+
+================================================================================
+📦 TABLE : dental_diagram_udc
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] dental_diagram_id         INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] udc_id                    INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📇 INDEX :
+--------------------------------------------------------------------------------
+  sqlite_autoindex_dental_diagram_udc_1    (UNIQUE)
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 28945
+
+  Analyse par colonne :
+    • dental_diagram_id         | NULL:     0 (  0.0%) | Distinct: 27993
+    • udc_id                    | NULL:     0 (  0.0%) | Distinct:    47
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  dental_diagram_id         : 4
+  udc_id                    : 1079
+
+================================================================================
+📦 TABLE : doctor
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] title                     varchar(95)     NULL       DEFAULT NULL         
+  [2] company                   varchar(195)    NULL       DEFAULT NULL         
+  [3] personOpeningAccount      varchar(195)    NOT NULL                        
+  [4] dateOpened                date            NOT NULL                        
+  [5] taxRateArea               varchar(255)    NULL       DEFAULT NULL         
+  [6] licenceNumber             varchar(255)    NULL       DEFAULT NULL         
+  [7] numProf                   INTEGER         NULL       DEFAULT NULL         
+  [8] bgColor                   varchar(255)    NULL       DEFAULT NULL         
+  [9] consult_percent           REAL            NULL       DEFAULT NULL         
+  [10] care_percent              REAL            NULL       DEFAULT NULL         
+  [11] prosthesis_percent        REAL            NULL       DEFAULT NULL         
+  [12] surgery_percent           REAL            NULL       DEFAULT NULL         
+  [13] periodontics_percent      REAL            NULL       DEFAULT NULL         
+  [14] implant_percent           REAL            NULL       DEFAULT NULL         
+  [15] orthodontics_percent      REAL            NULL       DEFAULT NULL         
+  [16] expendable_percent        REAL            NULL       DEFAULT NULL         
+  [17] implant_exp_percent       REAL            NULL       DEFAULT NULL         
+  [18] orthodontics_exp_percent  REAL            NULL       DEFAULT NULL         
+  [19] prosthesis_exp_percent    REAL            NULL       DEFAULT NULL         
+  [20] invisalign_exp_percent    REAL            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 21
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:    21
+    • title                     | NULL:     0 (  0.0%) | Distinct:     3
+    • company                   | NULL:    21 (100.0%) | Distinct:     0
+    • personOpeningAccount      | NULL:     0 (  0.0%) | Distinct:     2
+    • dateOpened                | NULL:     0 (  0.0%) | Distinct:    12
+    • taxRateArea               | NULL:    21 (100.0%) | Distinct:     0
+    • licenceNumber             | NULL:    21 (100.0%) | Distinct:     0
+    • numProf                   | NULL:    21 (100.0%) | Distinct:     0
+    • bgColor                   | NULL:     1 (  4.8%) | Distinct:    16
+    • consult_percent           | NULL:     1 (  4.8%) | Distinct:     1
+    • care_percent              | NULL:     1 (  4.8%) | Distinct:     1
+    • prosthesis_percent        | NULL:     1 (  4.8%) | Distinct:     1
+    • surgery_percent           | NULL:     1 (  4.8%) | Distinct:     1
+    • periodontics_percent      | NULL:     1 (  4.8%) | Distinct:     1
+    • implant_percent           | NULL:     1 (  4.8%) | Distinct:     1
+    • orthodontics_percent      | NULL:     1 (  4.8%) | Distinct:     1
+    • expendable_percent        | NULL:     1 (  4.8%) | Distinct:     1
+    • implant_exp_percent       | NULL:     2 (  9.5%) | Distinct:     1
+    • orthodontics_exp_percent  | NULL:     2 (  9.5%) | Distinct:     1
+    • prosthesis_exp_percent    | NULL:     2 (  9.5%) | Distinct:     1
+    • invisalign_exp_percent    | NULL:     2 (  9.5%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 21
+  title                     : Omnipraticien
+  company                   : NULL
+  personOpeningAccount      : kbmadmin
+  dateOpened                : 2021-02-24
+  taxRateArea               : NULL
+  licenceNumber             : NULL
+  numProf                   : NULL
+  bgColor                   : 45F84A
+  consult_percent           : 0.0
+  care_percent              : 0.0
+  prosthesis_percent        : 0.0
+  surgery_percent           : 0.0
+  periodontics_percent      : 0.0
+  implant_percent           : 0.0
+  orthodontics_percent      : 0.0
+  expendable_percent        : 0.0
+  implant_exp_percent       : NULL
+  orthodontics_exp_percent  : NULL
+  prosthesis_exp_percent    : NULL
+  invisalign_exp_percent    : NULL
+
+================================================================================
+📦 TABLE : document
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] consultation_id           INTEGER         NULL       DEFAULT NULL         
+  [2] body                      longtext        NULL       DEFAULT NULL         
+  [3] date                      date            NULL       DEFAULT NULL         
+  [4] type                      varchar(255)    NULL       DEFAULT NULL         
+  [5] persist                   varchar(255)    NULL       DEFAULT NULL         
+  [6] note                      longtext        NULL       DEFAULT NULL         
+  [7] convention_id             INTEGER         NULL       DEFAULT NULL         
+  [8] duration                  date            NULL       DEFAULT NULL         
+  [9] number                    varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 27457
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 27457
+    • consultation_id           | NULL:     1 (  0.0%) | Distinct: 26818
+    • body                      | NULL:     2 (  0.0%) | Distinct: 26363
+    • date                      | NULL:     0 (  0.0%) | Distinct:   642
+    • type                      | NULL:     0 (  0.0%) | Distinct:     8
+    • persist                   | NULL: 26915 ( 98.0%) | Distinct:     1
+    • note                      | NULL: 27179 ( 99.0%) | Distinct:     4
+    • convention_id             | NULL: 27457 (100.0%) | Distinct:     0
+    • duration                  | NULL: 27456 (100.0%) | Distinct:     1
+    • number                    | NULL: 27456 (100.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 2
+  consultation_id           : 2
+  body                      : <table border="0" cellpadding="0" cellspacing="0" style="...
+  date                      : 2023-02-03
+  type                      : Invoice
+  persist                   : NULL
+  note                      : NULL
+  convention_id             : NULL
+  duration                  : NULL
+  number                    : NULL
+
+================================================================================
+📦 TABLE : document_scan
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] visit_id                  INTEGER         NOT NULL                        
+  [2] name                      varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 26316
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 26316
+    • visit_id                  | NULL:     0 (  0.0%) | Distinct: 26310
+    • name                      | NULL: 26313 (100.0%) | Distinct:     3
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 237
+  visit_id                  : 2
+  name                      : NULL
+
+================================================================================
+📦 TABLE : document_sent
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] object                    varchar(255)    NULL       DEFAULT NULL         
+  [2] body                      longtext        NULL       DEFAULT NULL         
+  [3] documentType              varchar(255)    NULL       DEFAULT NULL         
+  [4] idDocument                varchar(255)    NULL       DEFAULT NULL         
+  [5] mailRecipient             varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : document_type
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] service_id                INTEGER         NOT NULL                        
+  [2] user_created_id           INTEGER         NULL       DEFAULT NULL         
+  [3] name                      varchar(255)    NULL       DEFAULT NULL         
+  [4] body                      longtext        NULL       DEFAULT NULL         
+  [5] date                      date            NULL       DEFAULT NULL         
+  [6] type                      varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 5
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     5
+    • service_id                | NULL:     0 (  0.0%) | Distinct:     1
+    • user_created_id           | NULL:     0 (  0.0%) | Distinct:     3
+    • name                      | NULL:     0 (  0.0%) | Distinct:     5
+    • body                      | NULL:     0 (  0.0%) | Distinct:     5
+    • date                      | NULL:     0 (  0.0%) | Distinct:     5
+    • type                      | NULL:     0 (  0.0%) | Distinct:     2
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  service_id                : 12
+  user_created_id           : 24
+  name                      : test
+  body                      : iuiuyik;ufuot;:gfu;ro<br />\r\n&nbsp;
+  date                      : 2023-02-06
+  type                      : Certificate
+
+================================================================================
+📦 TABLE : drug
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] denomination              varchar(255)    NULL       DEFAULT NULL         
+  [2] brand                     varchar(255)    NULL       DEFAULT NULL         
+  [3] form                      varchar(255)    NULL       DEFAULT NULL         
+  [4] Type                      varchar(255)    NULL       DEFAULT NULL         
+  [5] dosage                    varchar(255)    NULL       DEFAULT NULL         
+  [6] category_id               INTEGER         NULL       DEFAULT NULL         
+  [7] posology                  longtext        NULL       DEFAULT NULL         
+  [8] quantity                  longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 4588
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:  4588
+    • denomination              | NULL:    19 (  0.4%) | Distinct:  1463
+    • brand                     | NULL:     0 (  0.0%) | Distinct:  3251
+    • form                      | NULL:    19 (  0.4%) | Distinct:    25
+    • Type                      | NULL:    21 (  0.5%) | Distinct:    39
+    • dosage                    | NULL:    19 (  0.4%) | Distinct:  1256
+    • category_id               | NULL:  4586 (100.0%) | Distinct:     1
+    • posology                  | NULL:  4567 ( 99.5%) | Distinct:    14
+    • quantity                  | NULL:  4567 ( 99.5%) | Distinct:    15
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  denomination              : CETICHATENETARLIE VILAINLORHYDRATE
+  brand                     : ALBUISINE
+  form                      : Comprimé(s)
+  Type                      : Boite(s)
+  dosage                    : 10MG
+  category_id               : NULL
+  posology                  : NULL
+  quantity                  : NULL
+
+================================================================================
+📦 TABLE : endocrinology_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] last_menstruation         date            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : evenement
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] title                     varchar(255)    NULL       DEFAULT NULL         
+  [2] startDatetime             datetime        NOT NULL                        
+  [3] endDatetime               datetime        NULL       DEFAULT NULL         
+  [4] url                       varchar(255)    NOT NULL                        
+  [5] allDay                    varchar(255)    NULL       DEFAULT NULL         
+  [6] bgColor                   varchar(255)    NULL       DEFAULT NULL         
+  [7] fgColor                   varchar(255)    NULL       DEFAULT NULL         
+  [8] cssClass                  varchar(255)    NULL       DEFAULT NULL         
+  [9] calendar_id               INTEGER         NOT NULL                        
+  [10] discr                     varchar(255)    NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 14507
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 14507
+    • title                     | NULL:     0 (  0.0%) | Distinct:  7458
+    • startDatetime             | NULL:     0 (  0.0%) | Distinct:  9092
+    • endDatetime               | NULL:     0 (  0.0%) | Distinct:  9782
+    • url                       | NULL:     0 (  0.0%) | Distinct:     2
+    • allDay                    | NULL: 14507 (100.0%) | Distinct:     0
+    • bgColor                   | NULL:     2 (  0.0%) | Distinct:     5
+    • fgColor                   | NULL:     0 (  0.0%) | Distinct:     2
+    • cssClass                  | NULL: 14507 (100.0%) | Distinct:     0
+    • calendar_id               | NULL:     0 (  0.0%) | Distinct:     1
+    • discr                     | NULL:     0 (  0.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  title                     : 10 - DURAND JACQUELDIANA - 0660395947. consultation
+  startDatetime             : 2023-02-04 10:00:00
+  endDatetime               : 2023-02-04 10:15:00
+  url                       : /web/fullcalendar/fc-add-events
+  allDay                    : NULL
+  bgColor                   : #E15055
+  fgColor                   : #FFFFFF
+  cssClass                  : NULL
+  calendar_id               : 20
+  discr                     : PatientUserEvent
+
+================================================================================
+📦 TABLE : expense
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] title                     varchar(255)    NOT NULL                        
+  [2] cost                      REAL            NULL       DEFAULT NULL         
+  [3] date                      date            NULL       DEFAULT NULL         
+  [4] dateEntry                 date            NULL       DEFAULT NULL         
+  [5] doctor_id                 INTEGER         NULL       DEFAULT NULL         
+  [6] note                      varchar(255)    NULL       DEFAULT NULL         
+  [7] type                      varchar(255)    NULL       DEFAULT NULL         
+  [8] date_expiration           date            NULL       DEFAULT NULL         
+  [9] description               varchar(255)    NULL       DEFAULT NULL         
+  [10] brand                     varchar(255)    NULL       DEFAULT NULL         
+  [11] quantity                  varchar(255)    NULL       DEFAULT NULL         
+  [12] entered_by_id             INTEGER         NULL       DEFAULT NULL         
+  [13] amount                    REAL            NULL       DEFAULT NULL         
+  [14] remaining_amount          REAL            NULL       DEFAULT NULL         
+  [15] provider_id               INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 2
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     2
+    • title                     | NULL:     0 (  0.0%) | Distinct:     2
+    • cost                      | NULL:     0 (  0.0%) | Distinct:     2
+    • date                      | NULL:     0 (  0.0%) | Distinct:     1
+    • dateEntry                 | NULL:     0 (  0.0%) | Distinct:     1
+    • doctor_id                 | NULL:     0 (  0.0%) | Distinct:     1
+    • note                      | NULL:     2 (100.0%) | Distinct:     0
+    • type                      | NULL:     0 (  0.0%) | Distinct:     1
+    • date_expiration           | NULL:     2 (100.0%) | Distinct:     0
+    • description               | NULL:     2 (100.0%) | Distinct:     0
+    • brand                     | NULL:     2 (100.0%) | Distinct:     0
+    • quantity                  | NULL:     0 (  0.0%) | Distinct:     2
+    • entered_by_id             | NULL:     0 (  0.0%) | Distinct:     1
+    • amount                    | NULL:     0 (  0.0%) | Distinct:     2
+    • remaining_amount          | NULL:     0 (  0.0%) | Distinct:     2
+    • provider_id               | NULL:     2 (100.0%) | Distinct:     0
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  title                     : Compresses
+  cost                      : 1000.0
+  date                      : 2023-03-11
+  dateEntry                 : 2023-03-11
+  doctor_id                 : 26
+  note                      : NULL
+  type                      : Materiel
+  date_expiration           : NULL
+  description               : NULL
+  brand                     : NULL
+  quantity                  : 03
+  entered_by_id             : 26
+  amount                    : 1000.0
+  remaining_amount          : 0.0
+  provider_id               : NULL
+
+================================================================================
+📦 TABLE : file
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] document_id               INTEGER         NULL       DEFAULT NULL         
+  [2] picturePath               varchar(255)    NULL       DEFAULT NULL         
+  [3] pictureName               varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : general_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : graphic_tooth
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] picturePath               varchar(255)    NULL       DEFAULT NULL         
+  [2] pictureName               varchar(255)    NULL       DEFAULT NULL         
+  [3] acte_liste_udc            longtext        NULL       DEFAULT NULL         
+  [4] tooth_number              varchar(50)     NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 1130
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:  1130
+    • picturePath               | NULL:     0 (  0.0%) | Distinct:     1
+    • pictureName               | NULL:     0 (  0.0%) | Distinct:  1113
+    • acte_liste_udc            | NULL:     0 (  0.0%) | Distinct:    49
+    • tooth_number              | NULL:     0 (  0.0%) | Distinct:    35
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  picturePath               : uploads/Dent
+  pictureName               : 32124d89dcf67786d24d6071b4ee46ed.png
+  acte_liste_udc            : a:1:{i:0;i:218;}
+  tooth_number              : 11
+
+================================================================================
+📦 TABLE : gynecology_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] last_menstruation         date            NULL       DEFAULT NULL         
+  [2] obs_t1                    longtext        NULL       DEFAULT NULL         
+  [3] obs_t2                    longtext        NULL       DEFAULT NULL         
+  [4] obs_t3                    longtext        NULL       DEFAULT NULL         
+  [5] husbandObs                longtext        NULL       DEFAULT NULL         
+  [6] husbandHabit              longtext        NULL       DEFAULT NULL         
+  [7] husbandMedicalHistory     longtext        NULL       DEFAULT NULL         
+  [8] attemptFrequency          longtext        NULL       DEFAULT NULL         
+  [9] attemptDuration           longtext        NULL       DEFAULT NULL         
+  [10] neck                      longtext        NULL       DEFAULT NULL         
+  [11] breast                    longtext        NULL       DEFAULT NULL         
+  [12] vaginaCollar              longtext        NULL       DEFAULT NULL         
+  [13] speculum                  longtext        NULL       DEFAULT NULL         
+  [14] femur                     longtext        NULL       DEFAULT NULL         
+  [15] abdominalPerimeter        longtext        NULL       DEFAULT NULL         
+  [16] biparietalDiameter        longtext        NULL       DEFAULT NULL         
+  [17] cephalicPerimeter         longtext        NULL       DEFAULT NULL         
+  [18] husbandOccupation         longtext        NULL       DEFAULT NULL         
+  [19] fertilityDegree           longtext        NULL       DEFAULT NULL         
+  [20] pregnancyAttemptNumber    longtext        NULL       DEFAULT NULL         
+  [21] pregnancyAttemptMethod    longtext        NULL       DEFAULT NULL         
+  [22] coupleObs                 longtext        NULL       DEFAULT NULL         
+  [23] patientObs                longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : historique_test
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_created_id           INTEGER         NOT NULL                        
+  [2] test_id                   INTEGER         NOT NULL                        
+  [3] code                      varchar(55)     NOT NULL                        
+  [4] price                     REAL            NULL       DEFAULT NULL         
+  [5] createdDate               date            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : hospital_center
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_created_id           INTEGER         NOT NULL                        
+  [2] name                      varchar(255)    NOT NULL                        
+  [3] address                   varchar(255)    NULL       DEFAULT NULL         
+  [4] type                      varchar(255)    NULL       DEFAULT NULL         
+  [5] phone                     varchar(255)    NULL       DEFAULT NULL         
+  [6] wilaya                    varchar(255)    NULL       DEFAULT NULL         
+  [7] town                      varchar(255)    NULL       DEFAULT NULL         
+  [8] updateDate                date            NULL       DEFAULT NULL         
+  [9] fax                       varchar(255)    NULL       DEFAULT NULL         
+  [10] webSite                   varchar(255)    NULL       DEFAULT NULL         
+  [11] validation_sms            longtext        NULL       DEFAULT NULL         
+  [12] cancellation_sms          longtext        NULL       DEFAULT NULL         
+  [13] update_sms                longtext        NULL       DEFAULT NULL         
+  [14] reminder_sms              longtext        NULL       DEFAULT NULL         
+  [15] creationDate              date            NULL       DEFAULT NULL         
+  [16] expirationDate            date            NULL       DEFAULT NULL         
+  [17] alert_before_expiration   longtext        NULL       DEFAULT NULL         
+  [18] alert_after_expiration    longtext        NULL       DEFAULT NULL         
+  [19] delay_before_alert        INTEGER         NULL       DEFAULT NULL         
+  [20] deny_acces                INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 1
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     1
+    • user_created_id           | NULL:     0 (  0.0%) | Distinct:     1
+    • name                      | NULL:     0 (  0.0%) | Distinct:     1
+    • address                   | NULL:     0 (  0.0%) | Distinct:     1
+    • type                      | NULL:     0 (  0.0%) | Distinct:     1
+    • phone                     | NULL:     1 (100.0%) | Distinct:     0
+    • wilaya                    | NULL:     0 (  0.0%) | Distinct:     1
+    • town                      | NULL:     0 (  0.0%) | Distinct:     1
+    • updateDate                | NULL:     0 (  0.0%) | Distinct:     1
+    • fax                       | NULL:     1 (100.0%) | Distinct:     0
+    • webSite                   | NULL:     1 (100.0%) | Distinct:     0
+    • validation_sms            | NULL:     0 (  0.0%) | Distinct:     1
+    • cancellation_sms          | NULL:     0 (  0.0%) | Distinct:     1
+    • update_sms                | NULL:     0 (  0.0%) | Distinct:     1
+    • reminder_sms              | NULL:     0 (  0.0%) | Distinct:     1
+    • creationDate              | NULL:     0 (  0.0%) | Distinct:     1
+    • expirationDate            | NULL:     0 (  0.0%) | Distinct:     1
+    • alert_before_expiration   | NULL:     0 (  0.0%) | Distinct:     1
+    • alert_after_expiration    | NULL:     1 (100.0%) | Distinct:     0
+    • delay_before_alert        | NULL:     0 (  0.0%) | Distinct:     1
+    • deny_acces                | NULL:     0 (  0.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  user_created_id           : 22
+  name                      : My Dental Clinic
+  address                   : New City
+  type                      : Clinique
+  phone                     : NULL
+  wilaya                    : New City
+  town                      : New City
+  updateDate                : 2016-05-23
+  fax                       : NULL
+  webSite                   : NULL
+  validation_sms            : Bonjour _prenom _nom ! Votre prochain RDV chez .... est l...
+  cancellation_sms          : Bonjour _prenom _nom ! Votre RDV chez ..... le _date @ _h...
+  update_sms                : Bonjour _prenom _nom ! Votre prochain RDV chez .. est le ...
+  reminder_sms              : Bonjour, ceci est pour confirmer le rendez-vous de _preno...
+  creationDate              : 2024-02-04
+  expirationDate            : 2025-02-04
+  alert_before_expiration   : Votre compte sera bientôt en souffrance. \nDate d'expirat...
+  alert_after_expiration    : NULL
+  delay_before_alert        : 30
+  deny_acces                : 0
+
+================================================================================
+📦 TABLE : importbd
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] link                      varchar(255)    NOT NULL                        
+  [2] importDate                date            NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 2
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     2
+    • link                      | NULL:     0 (  0.0%) | Distinct:     2
+    • importDate                | NULL:     0 (  0.0%) | Distinct:     2
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  link                      : /var/www/html/mydental.clinic.mydentalcloud.com/public_ht...
+  importDate                : 2023-02-07
+
+================================================================================
+📦 TABLE : invoice
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+  [2] invoice_number            longtext        NULL       DEFAULT NULL         
+  [3] entred_date               datetime        NULL       DEFAULT NULL         
+  [4] cost                      REAL            NULL       DEFAULT NULL         
+  [5] amount                    REAL            NULL       DEFAULT NULL         
+  [6] remaining_amount          REAL            NULL       DEFAULT NULL         
+  [7] date                      datetime        NULL       DEFAULT NULL         
+  [8] state                     INTEGER         NULL       DEFAULT NULL         
+  [9] supplier_id               INTEGER         NULL       DEFAULT NULL         
+  [10] total_amount              REAL            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : invoice_prothese
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+  [2] dental_prosthesis_user_id INTEGER         NULL       DEFAULT NULL         
+  [3] invoice_number            longtext        NULL       DEFAULT NULL         
+  [4] entred_date               datetime        NULL       DEFAULT NULL         
+  [5] date                      datetime        NULL       DEFAULT NULL         
+  [6] cost                      REAL            NULL       DEFAULT NULL         
+  [7] amount                    REAL            NULL       DEFAULT NULL         
+  [8] total_amount              REAL            NULL       DEFAULT NULL         
+  [9] remaining_amount          REAL            NULL       DEFAULT NULL         
+  [10] state                     INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : laboratoire_test
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] measurementUnit           varchar(55)     NULL       DEFAULT NULL         
+  [2] name                      varchar(255)    NULL       DEFAULT NULL         
+  [3] calculated                tinyINTEGER     NULL       DEFAULT NULL         
+  [4] bilan                     varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 96
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:    96
+    • measurementUnit           | NULL:    44 ( 45.8%) | Distinct:    21
+    • name                      | NULL:    18 ( 18.8%) | Distinct:    75
+    • calculated                | NULL:     0 (  0.0%) | Distinct:     2
+    • bilan                     | NULL:    79 ( 82.3%) | Distinct:     4
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 119
+  measurementUnit           : %
+  name                      : GB
+  calculated                : 0
+  bilan                     : NULL
+
+================================================================================
+📦 TABLE : login_history
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] action_time               datetime        NULL       DEFAULT NULL         
+  [2] action                    varchar(255)    NULL       DEFAULT NULL         
+  [3] user_id                   INTEGER         NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 30259
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 30259
+    • action_time               | NULL:     0 (  0.0%) | Distinct: 30030
+    • action                    | NULL:     0 (  0.0%) | Distinct:     2
+    • user_id                   | NULL:     0 (  0.0%) | Distinct:    23
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  action_time               : 2023-01-31 13:30:20
+  action                    : Connexion
+  user_id                   : 22
+
+================================================================================
+📦 TABLE : lot
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] product_id                INTEGER         NULL       DEFAULT NULL         
+  [2] lot_number                varchar(255)    NULL       DEFAULT NULL         
+  [3] expiration_date           datetime        NULL       DEFAULT NULL         
+  [4] visible                   INTEGER         NULL       DEFAULT NULL         
+  [5] stockQte                  INTEGER         NULL       DEFAULT NULL         
+  [6] brand                     varchar(255)    NULL       DEFAULT NULL         
+  [7] picturePath               varchar(255)    NULL       DEFAULT NULL         
+  [8] pictureName               varchar(255)    NULL       DEFAULT NULL         
+  [9] supplier_id               INTEGER         NULL       DEFAULT NULL         
+  [10] cost                      REAL            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : medical_personal_history
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] allergy                   longtext        NULL       DEFAULT NULL         
+  [2] medicalHistories          longtext        NULL       DEFAULT NULL         
+  [3] surgicalHistories         longtext        NULL       DEFAULT NULL         
+  [4] familysurgical            longtext        NULL       DEFAULT NULL         
+  [5] familymedical             longtext        NULL       DEFAULT NULL         
+  [6] summary                   longtext        NULL       DEFAULT NULL         
+  [7] menarche                  longtext        NULL       DEFAULT NULL         
+  [8] menopause                 longtext        NULL       DEFAULT NULL         
+  [9] parity                    longtext        NULL       DEFAULT NULL         
+  [10] gravidity                 longtext        NULL       DEFAULT NULL         
+  [11] cycle                     longtext        NULL       DEFAULT NULL         
+  [12] dysmenorrhea              longtext        NULL       DEFAULT NULL         
+  [13] dyspareunia               longtext        NULL       DEFAULT NULL         
+  [14] other                     longtext        NULL       DEFAULT NULL         
+  [15] traumatic_histories       longtext        NULL       DEFAULT NULL         
+  [16] obstetrical_histories     longtext        NULL       DEFAULT NULL         
+  [17] initialWeight             longtext        NULL       DEFAULT NULL         
+  [18] psychiatric               longtext        NULL       DEFAULT NULL         
+  [19] toxic                     longtext        NULL       DEFAULT NULL         
+  [20] prison                    longtext        NULL       DEFAULT NULL         
+  [21] trauma                    longtext        NULL       DEFAULT NULL         
+  [22] psychomotor_development   longtext        NULL       DEFAULT NULL         
+  [23] abundance                 longtext        NULL       DEFAULT NULL         
+  [24] menstruationDuration      longtext        NULL       DEFAULT NULL         
+  [25] cesarean                  longtext        NULL       DEFAULT NULL         
+  [26] abortion                  longtext        NULL       DEFAULT NULL         
+  [27] contraceptionType         longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 11021
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 11021
+    • allergy                   | NULL: 11001 ( 99.8%) | Distinct:     1
+    • medicalHistories          | NULL: 11001 ( 99.8%) | Distinct:     1
+    • surgicalHistories         | NULL: 11001 ( 99.8%) | Distinct:     1
+    • familysurgical            | NULL: 11001 ( 99.8%) | Distinct:     1
+    • familymedical             | NULL: 11001 ( 99.8%) | Distinct:     1
+    • summary                   | NULL: 11001 ( 99.8%) | Distinct:     1
+    • menarche                  | NULL: 11001 ( 99.8%) | Distinct:     1
+    • menopause                 | NULL: 11001 ( 99.8%) | Distinct:     1
+    • parity                    | NULL: 11001 ( 99.8%) | Distinct:     1
+    • gravidity                 | NULL: 11001 ( 99.8%) | Distinct:     1
+    • cycle                     | NULL: 11001 ( 99.8%) | Distinct:     1
+    • dysmenorrhea              | NULL: 11001 ( 99.8%) | Distinct:     1
+    • dyspareunia               | NULL: 11001 ( 99.8%) | Distinct:     1
+    • other                     | NULL: 11001 ( 99.8%) | Distinct:     1
+    • traumatic_histories       | NULL: 11001 ( 99.8%) | Distinct:     1
+    • obstetrical_histories     | NULL: 11001 ( 99.8%) | Distinct:     1
+    • initialWeight             | NULL: 11001 ( 99.8%) | Distinct:     1
+    • psychiatric               | NULL: 11001 ( 99.8%) | Distinct:     1
+    • toxic                     | NULL: 11001 ( 99.8%) | Distinct:     1
+    • prison                    | NULL: 11001 ( 99.8%) | Distinct:     1
+    • trauma                    | NULL: 11021 (100.0%) | Distinct:     0
+    • psychomotor_development   | NULL: 11021 (100.0%) | Distinct:     0
+    • abundance                 | NULL: 11021 (100.0%) | Distinct:     0
+    • menstruationDuration      | NULL: 11021 (100.0%) | Distinct:     0
+    • cesarean                  | NULL: 11021 (100.0%) | Distinct:     0
+    • abortion                  | NULL: 11021 (100.0%) | Distinct:     0
+    • contraceptionType         | NULL: 11021 (100.0%) | Distinct:     0
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 2
+  allergy                   : NULL
+  medicalHistories          : NULL
+  surgicalHistories         : NULL
+  familysurgical            : NULL
+  familymedical             : NULL
+  summary                   : NULL
+  menarche                  : NULL
+  menopause                 : NULL
+  parity                    : NULL
+  gravidity                 : NULL
+  cycle                     : NULL
+  dysmenorrhea              : NULL
+  dyspareunia               : NULL
+  other                     : NULL
+  traumatic_histories       : NULL
+  obstetrical_histories     : NULL
+  initialWeight             : NULL
+  psychiatric               : NULL
+  toxic                     : NULL
+  prison                    : NULL
+  trauma                    : NULL
+  psychomotor_development   : NULL
+  abundance                 : NULL
+  menstruationDuration      : NULL
+  cesarean                  : NULL
+  abortion                  : NULL
+  contraceptionType         : NULL
+
+================================================================================
+📦 TABLE : message
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] thread_id                 INTEGER         NULL       DEFAULT NULL         
+  [2] sender_id                 INTEGER         NULL       DEFAULT NULL         
+  [3] body                      longtext        NOT NULL                        
+  [4] created_at                datetime        NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : message_metadata
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] message_id                INTEGER         NULL       DEFAULT NULL         
+  [2] participant_id            INTEGER         NULL       DEFAULT NULL         
+  [3] is_read                   tinyINTEGER     NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : normal_value
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] laboratoire_test_id       INTEGER         NULL       DEFAULT NULL         
+  [2] upperBound                REAL            NULL       DEFAULT NULL         
+  [3] lowerBound                REAL            NULL       DEFAULT NULL         
+  [4] characteristics           varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : ophthalmology_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] left_distance_visual_acuity_axis varchar(255)    NULL       DEFAULT NULL         
+  [2] right_distance_visual_acuity_axis varchar(255)    NULL       DEFAULT NULL         
+  [3] left_distance_visual_acuity_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [4] right_distance_visual_acuity_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [5] left_distance_visual_acuity_sphere varchar(255)    NULL       DEFAULT NULL         
+  [6] right_distance_visual_acuity_sphere varchar(255)    NULL       DEFAULT NULL         
+  [7] left_near_visual_acuity_axis varchar(255)    NULL       DEFAULT NULL         
+  [8] right_near_visual_acuity_axis varchar(255)    NULL       DEFAULT NULL         
+  [9] left_near_visual_acuity_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [10] right_near_visual_acuity_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [11] left_near_visual_acuity_sphere varchar(255)    NULL       DEFAULT NULL         
+  [12] right_near_visual_acuity_sphere varchar(255)    NULL       DEFAULT NULL         
+  [13] left_distance_correction_axis varchar(255)    NULL       DEFAULT NULL         
+  [14] right_distance_correction_axis varchar(255)    NULL       DEFAULT NULL         
+  [15] left_distance_correction_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [16] right_distance_correction_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [17] left_distance_correction_sphere varchar(255)    NULL       DEFAULT NULL         
+  [18] right_distance_correction_sphere varchar(255)    NULL       DEFAULT NULL         
+  [19] left_near_correction_axis varchar(255)    NULL       DEFAULT NULL         
+  [20] right_near_correction_axis varchar(255)    NULL       DEFAULT NULL         
+  [21] left_near_correction_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [22] right_near_correction_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [23] left_near_correction_sphere varchar(255)    NULL       DEFAULT NULL         
+  [24] right_near_correction_sphere varchar(255)    NULL       DEFAULT NULL         
+  [25] left_lens_correction_axis varchar(255)    NULL       DEFAULT NULL         
+  [26] right_lens_correction_axis varchar(255)    NULL       DEFAULT NULL         
+  [27] left_lens_correction_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [28] right_lens_correction_cylinder varchar(255)    NULL       DEFAULT NULL         
+  [29] left_lens_correction_sphere varchar(255)    NULL       DEFAULT NULL         
+  [30] right_lens_correction_sphere varchar(255)    NULL       DEFAULT NULL         
+  [31] left_lens_correction_ro   varchar(255)    NULL       DEFAULT NULL         
+  [32] right_lens_correction_ro  varchar(255)    NULL       DEFAULT NULL         
+  [33] left_lens_correction_diam varchar(255)    NULL       DEFAULT NULL         
+  [34] right_lens_correction_diam varchar(255)    NULL       DEFAULT NULL         
+  [35] left_laf                  varchar(255)    NULL       DEFAULT NULL         
+  [36] right_laf                 varchar(255)    NULL       DEFAULT NULL         
+  [37] left_to                   varchar(255)    NULL       DEFAULT NULL         
+  [38] right_to                  varchar(255)    NULL       DEFAULT NULL         
+  [39] pupillary_Distance        varchar(255)    NULL       DEFAULT NULL         
+  [40] glass_type                varchar(255)    NULL       DEFAULT NULL         
+  [41] lens_type                 varchar(255)    NULL       DEFAULT NULL         
+  [42] left_papille              varchar(255)    NULL       DEFAULT NULL         
+  [43] right_papille             varchar(255)    NULL       DEFAULT NULL         
+  [44] left_macula               varchar(255)    NULL       DEFAULT NULL         
+  [45] right_macula              varchar(255)    NULL       DEFAULT NULL         
+  [46] left_periphery            varchar(255)    NULL       DEFAULT NULL         
+  [47] right_periphery           varchar(255)    NULL       DEFAULT NULL         
+  [48] left_distance_visual_acuity varchar(255)    NULL       DEFAULT NULL         
+  [49] right_distance_visual_acuity varchar(255)    NULL       DEFAULT NULL         
+  [50] left_distance_visual_acuityAC varchar(255)    NULL       DEFAULT NULL         
+  [51] right_distance_visual_acuityAC varchar(255)    NULL       DEFAULT NULL         
+  [52] cycloplegic               varchar(255)    NULL       DEFAULT NULL         
+  [53] addition                  varchar(255)    NULL       DEFAULT NULL         
+  [54] left_kerato1              varchar(255)    NULL       DEFAULT NULL         
+  [55] right_kerato1             varchar(255)    NULL       DEFAULT NULL         
+  [56] left_kerato2              varchar(255)    NULL       DEFAULT NULL         
+  [57] right_kerato2             varchar(255)    NULL       DEFAULT NULL         
+  [58] left_radius0              varchar(255)    NULL       DEFAULT NULL         
+  [59] right_radius0             varchar(255)    NULL       DEFAULT NULL         
+  [60] left_radius1              varchar(255)    NULL       DEFAULT NULL         
+  [61] right_radius1             varchar(255)    NULL       DEFAULT NULL         
+  [62] left_radius2              varchar(255)    NULL       DEFAULT NULL         
+  [63] right_radius2             varchar(255)    NULL       DEFAULT NULL         
+  [64] right_pachy               varchar(255)    NULL       DEFAULT NULL         
+  [65] left_pachy                varchar(255)    NULL       DEFAULT NULL         
+  [66] right_toc                 varchar(255)    NULL       DEFAULT NULL         
+  [67] left_toc                  varchar(255)    NULL       DEFAULT NULL         
+  [68] left_near_vision          varchar(255)    NULL       DEFAULT NULL         
+  [69] right_near_vision         varchar(255)    NULL       DEFAULT NULL         
+  [70] left_distance_vision      varchar(255)    NULL       DEFAULT NULL         
+  [71] right_distance_vision     varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : orl_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] disease_history           longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : orthodontic_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] phase                     varchar(50)     NULL       DEFAULT NULL         
+  [2] maxillary                 varchar(50)     NULL       DEFAULT NULL         
+  [3] ring_type_top             varchar(50)     NULL       DEFAULT NULL         
+  [4] ring_type_bottom          varchar(50)     NULL       DEFAULT NULL         
+  [5] tim                       varchar(50)     NULL       DEFAULT NULL         
+  [6] turbo_bites               varchar(50)     NULL       DEFAULT NULL         
+  [7] bracket_top               varchar(50)     NULL       DEFAULT NULL         
+  [8] bracket_bottom            varchar(50)     NULL       DEFAULT NULL         
+  [9] extractions_treatment_plan longtext        NULL       DEFAULT NULL         
+  [10] stripping                 tinyINTEGER     NULL       DEFAULT NULL         
+  [11] other_treatment_plan      longtext        NULL       DEFAULT NULL         
+  [12] a_p_sens                  varchar(50)     NULL       DEFAULT NULL         
+  [13] vertical_sens             longtext        NULL       DEFAULT NULL         
+  [14] transversal_sens          longtext        NULL       DEFAULT NULL         
+  [15] d_a_m                     longtext        NULL       DEFAULT NULL         
+  [16] problem                   longtext        NULL       DEFAULT NULL         
+  [17] extractions_diag          longtext        NULL       DEFAULT NULL         
+  [18] current_acts              longtext        NULL       DEFAULT NULL         
+  [19] next_acts                 longtext        NULL       DEFAULT NULL         
+  [20] device_type               longtext        NULL       DEFAULT NULL         
+  [21] device_type_invisalign    longtext        NULL       DEFAULT NULL         
+  [22] other_device_invisalign   longtext        NULL       DEFAULT NULL         
+  [23] maxillary_invisalign      varchar(50)     NULL       DEFAULT NULL         
+  [24] extractions_invisalign    longtext        NULL       DEFAULT NULL         
+  [25] other_invisalign          longtext        NULL       DEFAULT NULL         
+  [26] type_ortho                varchar(50)     NULL       DEFAULT NULL         
+  [27] tooth_number              varchar(50)     NULL       DEFAULT NULL         
+  [28] dental_care_note          longtext        NULL       DEFAULT NULL         
+  [29] dental_prosthesis_tooth_number varchar(50)     NULL       DEFAULT NULL         
+  [30] dental_prosthesis_note    longtext        NULL       DEFAULT NULL         
+  [31] dental_surgery_tooth_number varchar(50)     NULL       DEFAULT NULL         
+  [32] dental_surgery_note       longtext        NULL       DEFAULT NULL         
+  [33] dental_implant_note       longtext        NULL       DEFAULT NULL         
+  [34] dental_implant_tooth_number varchar(50)     NULL       DEFAULT NULL         
+  [35] dental_implant_diameter   varchar(50)     NULL       DEFAULT NULL         
+  [36] dental_implant_length     varchar(50)     NULL       DEFAULT NULL         
+  [37] dental_implant_correction varchar(50)     NULL       DEFAULT NULL         
+  [38] dental_prosthesis_type    varchar(150)    NULL       DEFAULT NULL         
+  [39] dental_prosthesis_lab_price varchar(50)     NULL       DEFAULT NULL         
+  [40] dental_implant_brand      varchar(150)    NULL       DEFAULT NULL         
+  [41] dental_implant_model      varchar(150)    NULL       DEFAULT NULL         
+  [42] dental_implant_lab_price  varchar(50)     NULL       DEFAULT NULL         
+  [43] treatment_plan            longtext        NULL       DEFAULT NULL         
+  [44] diagnosis                 longtext        NULL       DEFAULT NULL         
+  [45] note_consult              longtext        NULL       DEFAULT NULL         
+  [46] dental_care_diag          longtext        NULL       DEFAULT NULL         
+  [47] dental_prosthesis_diag    longtext        NULL       DEFAULT NULL         
+  [48] dental_surgery_diag       longtext        NULL       DEFAULT NULL         
+  [49] dental_implant_diag       longtext        NULL       DEFAULT NULL         
+  [50] dental_paro_note          longtext        NULL       DEFAULT NULL         
+  [51] dental_paro_diag          longtext        NULL       DEFAULT NULL         
+  [52] dental_prosthesis_user_id INTEGER         NULL       DEFAULT NULL         
+  [53] prosthesis_note           longtext        NULL       DEFAULT NULL         
+  [54] dental_implant_impression_type varchar(150)    NULL       DEFAULT NULL         
+  [55] dental_prosthesis_clinical_stage_id INTEGER         NULL       DEFAULT NULL         
+  [56] dental_prosthesis_lab_state_id INTEGER         NULL       DEFAULT NULL         
+  [57] dental_prosthesis_end_date datetime        NULL       DEFAULT NULL         
+  [58] dental_implant_type       varchar(150)    NULL       DEFAULT NULL         
+  [59] dental_implant_clinical_stage_id INTEGER         NULL       DEFAULT NULL         
+  [60] dental_implant_lab_state_id INTEGER         NULL       DEFAULT NULL         
+  [61] dental_prosthesis_status  tinyINTEGER     NULL       DEFAULT NULL         
+  [62] dental_prosthesis_lab_status varchar(50)     NULL       DEFAULT NULL         
+  [63] dental_prosthesis_start_date datetime        NULL       DEFAULT NULL         
+  [64] dental_ortho_lab_state_id INTEGER         NULL       DEFAULT NULL         
+  [65] dental_ortho_lab_price    varchar(50)     NULL       DEFAULT NULL         
+  [66] dental_prosthesis_ortho_user_id INTEGER         NULL       DEFAULT NULL         
+  [67] dental_prosthesis_implant_user_id INTEGER         NULL       DEFAULT NULL         
+  [68] dental_ortho_impression_type varchar(150)    NULL       DEFAULT NULL         
+  [69] dental_prosthesis_impression_type varchar(150)    NULL       DEFAULT NULL         
+  [70] dental_ortho_prosthesis_status tinyINTEGER     NULL       DEFAULT NULL         
+  [71] dental_implant_prosthesis_status tinyINTEGER     NULL       DEFAULT NULL         
+  [72] prosthesis_note_ortho     longtext        NULL       DEFAULT NULL         
+  [73] prosthesis_note_implant   longtext        NULL       DEFAULT NULL         
+  [74] note_radio                longtext        NULL       DEFAULT NULL         
+  [75] invoice_prothese_id       INTEGER         NULL       DEFAULT NULL         
+  [76] doc_note_proth_for_prosthesis longtext        NULL       DEFAULT NULL         
+  [77] doc_note_ortho_for_prosthesis longtext        NULL       DEFAULT NULL         
+  [78] doc_note_implant_for_prosthesis longtext        NULL       DEFAULT NULL         
+  [79] new_doc_proth_note        tinyINTEGER     NULL       DEFAULT NULL         
+  [80] new_doc_ortho_note        tinyINTEGER     NULL       DEFAULT NULL         
+  [81] new_doc_implant_note      tinyINTEGER     NULL       DEFAULT NULL         
+  [82] doc_proth_note_checked    tinyINTEGER     NULL       DEFAULT NULL         
+  [83] doc_ortho_note_checked    tinyINTEGER     NULL       DEFAULT NULL         
+  [84] doc_implant_note_checked  tinyINTEGER     NULL       DEFAULT NULL         
+  [85] note_checked              tinyINTEGER     NULL       DEFAULT NULL         
+  [86] new_prosthesis_note       tinyINTEGER     NULL       DEFAULT NULL         
+  [87] dental_aesthetic_tooth_number varchar(50)     NULL       DEFAULT NULL         
+  [88] dental_Aesthetic_note     longtext        NULL       DEFAULT NULL         
+  [89] dental_Aesthetic_diag     longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 32486
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 32486
+    • phase                     | NULL: 32153 ( 99.0%) | Distinct:     2
+    • maxillary                 | NULL: 32153 ( 99.0%) | Distinct:     1
+    • ring_type_top             | NULL: 32159 ( 99.0%) | Distinct:     1
+    • ring_type_bottom          | NULL: 32154 ( 99.0%) | Distinct:     2
+    • tim                       | NULL: 32166 ( 99.0%) | Distinct:     3
+    • turbo_bites               | NULL: 32170 ( 99.0%) | Distinct:     2
+    • bracket_top               | NULL: 32159 ( 99.0%) | Distinct:     2
+    • bracket_bottom            | NULL: 32159 ( 99.0%) | Distinct:     2
+    • extractions_treatment_plan | NULL: 32474 (100.0%) | Distinct:     2
+    • stripping                 | NULL:  2340 (  7.2%) | Distinct:     2
+    • other_treatment_plan      | NULL: 32486 (100.0%) | Distinct:     0
+    • a_p_sens                  | NULL: 32216 ( 99.2%) | Distinct:     3
+    • vertical_sens             | NULL:     0 (  0.0%) | Distinct:     5
+    • transversal_sens          | NULL:     0 (  0.0%) | Distinct:     7
+    • d_a_m                     | NULL:     0 (  0.0%) | Distinct:     6
+    • problem                   | NULL: 32356 ( 99.6%) | Distinct:    18
+    • extractions_diag          | NULL: 32476 (100.0%) | Distinct:     3
+    • current_acts              | NULL: 32486 (100.0%) | Distinct:     0
+    • next_acts                 | NULL: 32486 (100.0%) | Distinct:     0
+    • device_type               | NULL:     0 (  0.0%) | Distinct:     2
+    • device_type_invisalign    | NULL:     0 (  0.0%) | Distinct:     2
+    • other_device_invisalign   | NULL:     0 (  0.0%) | Distinct:     2
+    • maxillary_invisalign      | NULL: 32486 (100.0%) | Distinct:     0
+    • extractions_invisalign    | NULL: 32486 (100.0%) | Distinct:     0
+    • other_invisalign          | NULL: 32486 (100.0%) | Distinct:     0
+    • type_ortho                | NULL:  5813 ( 17.9%) | Distinct:     1
+    • tooth_number              | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_care_note          | NULL: 32074 ( 98.7%) | Distinct:   130
+    • dental_prosthesis_tooth_number | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_prosthesis_note    | NULL: 32476 (100.0%) | Distinct:     3
+    • dental_surgery_tooth_number | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_surgery_note       | NULL: 32468 ( 99.9%) | Distinct:     6
+    • dental_implant_note       | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_tooth_number | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_diameter   | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_length     | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_correction | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_prosthesis_type    | NULL:  2805 (  8.6%) | Distinct:     3
+    • dental_prosthesis_lab_price | NULL:     0 (  0.0%) | Distinct:     1
+    • dental_implant_brand      | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_model      | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_lab_price  | NULL:     5 (  0.0%) | Distinct:     1
+    • treatment_plan            | NULL: 30034 ( 92.5%) | Distinct:   505
+    • diagnosis                 | NULL: 32473 (100.0%) | Distinct:     8
+    • note_consult              | NULL: 32373 ( 99.7%) | Distinct:    37
+    • dental_care_diag          | NULL: 32461 ( 99.9%) | Distinct:    13
+    • dental_prosthesis_diag    | NULL: 32485 (100.0%) | Distinct:     1
+    • dental_surgery_diag       | NULL: 32482 (100.0%) | Distinct:     2
+    • dental_implant_diag       | NULL: 32485 (100.0%) | Distinct:     1
+    • dental_paro_note          | NULL: 32484 (100.0%) | Distinct:     2
+    • dental_paro_diag          | NULL: 32485 (100.0%) | Distinct:     1
+    • dental_prosthesis_user_id | NULL: 32486 (100.0%) | Distinct:     0
+    • prosthesis_note           | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_impression_type | NULL:  2807 (  8.6%) | Distinct:     1
+    • dental_prosthesis_clinical_stage_id | NULL: 32462 ( 99.9%) | Distinct:     3
+    • dental_prosthesis_lab_state_id | NULL: 32484 (100.0%) | Distinct:     1
+    • dental_prosthesis_end_date | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_type       | NULL:  2807 (  8.6%) | Distinct:     1
+    • dental_implant_clinical_stage_id | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_implant_lab_state_id | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_prosthesis_status  | NULL:  2805 (  8.6%) | Distinct:     1
+    • dental_prosthesis_lab_status | NULL:     0 (  0.0%) | Distinct:     1
+    • dental_prosthesis_start_date | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_ortho_lab_state_id | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_ortho_lab_price    | NULL:  1168 (  3.6%) | Distinct:     1
+    • dental_prosthesis_ortho_user_id | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_prosthesis_implant_user_id | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_ortho_impression_type | NULL:  2781 (  8.6%) | Distinct:     1
+    • dental_prosthesis_impression_type | NULL:  2805 (  8.6%) | Distinct:     3
+    • dental_ortho_prosthesis_status | NULL:  2781 (  8.6%) | Distinct:     1
+    • dental_implant_prosthesis_status | NULL:  2807 (  8.6%) | Distinct:     1
+    • prosthesis_note_ortho     | NULL: 32486 (100.0%) | Distinct:     0
+    • prosthesis_note_implant   | NULL: 32486 (100.0%) | Distinct:     0
+    • note_radio                | NULL: 32485 (100.0%) | Distinct:     1
+    • invoice_prothese_id       | NULL: 32486 (100.0%) | Distinct:     0
+    • doc_note_proth_for_prosthesis | NULL: 32486 (100.0%) | Distinct:     0
+    • doc_note_ortho_for_prosthesis | NULL: 32486 (100.0%) | Distinct:     0
+    • doc_note_implant_for_prosthesis | NULL: 32486 (100.0%) | Distinct:     0
+    • new_doc_proth_note        | NULL:     0 (  0.0%) | Distinct:     1
+    • new_doc_ortho_note        | NULL:     0 (  0.0%) | Distinct:     1
+    • new_doc_implant_note      | NULL:     0 (  0.0%) | Distinct:     1
+    • doc_proth_note_checked    | NULL:     0 (  0.0%) | Distinct:     1
+    • doc_ortho_note_checked    | NULL:     0 (  0.0%) | Distinct:     1
+    • doc_implant_note_checked  | NULL:     0 (  0.0%) | Distinct:     1
+    • note_checked              | NULL:     0 (  0.0%) | Distinct:     1
+    • new_prosthesis_note       | NULL:     0 (  0.0%) | Distinct:     1
+    • dental_aesthetic_tooth_number | NULL: 32486 (100.0%) | Distinct:     0
+    • dental_Aesthetic_note     | NULL: 32484 (100.0%) | Distinct:     2
+    • dental_Aesthetic_diag     | NULL: 32486 (100.0%) | Distinct:     0
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 2
+  phase                     : NULL
+  maxillary                 : NULL
+  ring_type_top             : NULL
+  ring_type_bottom          : NULL
+  tim                       : NULL
+  turbo_bites               : NULL
+  bracket_top               : NULL
+  bracket_bottom            : NULL
+  extractions_treatment_plan : NULL
+  stripping                 : 0
+  other_treatment_plan      : NULL
+  a_p_sens                  : NULL
+  vertical_sens             : a:0:{}
+  transversal_sens          : a:0:{}
+  d_a_m                     : a:0:{}
+  problem                   : NULL
+  extractions_diag          : NULL
+  current_acts              : NULL
+  next_acts                 : NULL
+  device_type               : a:0:{}
+  device_type_invisalign    : a:0:{}
+  other_device_invisalign   : a:0:{}
+  maxillary_invisalign      : NULL
+  extractions_invisalign    : NULL
+  other_invisalign          : NULL
+  type_ortho                : Ortho
+  tooth_number              : NULL
+  dental_care_note          : NULL
+  dental_prosthesis_tooth_number : NULL
+  dental_prosthesis_note    : NULL
+  dental_surgery_tooth_number : NULL
+  dental_surgery_note       : NULL
+  dental_implant_note       : NULL
+  dental_implant_tooth_number : NULL
+  dental_implant_diameter   : NULL
+  dental_implant_length     : NULL
+  dental_implant_correction : NULL
+  dental_prosthesis_type    : 
+  dental_prosthesis_lab_price : 0
+  dental_implant_brand      : NULL
+  dental_implant_model      : NULL
+  dental_implant_lab_price  : 0
+  treatment_plan            : NULL
+  diagnosis                 : NULL
+  note_consult              : NULL
+  dental_care_diag          : NULL
+  dental_prosthesis_diag    : NULL
+  dental_surgery_diag       : NULL
+  dental_implant_diag       : NULL
+  dental_paro_note          : NULL
+  dental_paro_diag          : NULL
+  dental_prosthesis_user_id : NULL
+  prosthesis_note           : NULL
+  dental_implant_impression_type : 
+  dental_prosthesis_clinical_stage_id : NULL
+  dental_prosthesis_lab_state_id : NULL
+  dental_prosthesis_end_date : NULL
+  dental_implant_type       : 
+  dental_implant_clinical_stage_id : NULL
+  dental_implant_lab_state_id : NULL
+  dental_prosthesis_status  : 0
+  dental_prosthesis_lab_status : Non réglé
+  dental_prosthesis_start_date : NULL
+  dental_ortho_lab_state_id : NULL
+  dental_ortho_lab_price    : 0
+  dental_prosthesis_ortho_user_id : NULL
+  dental_prosthesis_implant_user_id : NULL
+  dental_ortho_impression_type : 
+  dental_prosthesis_impression_type : 
+  dental_ortho_prosthesis_status : 0
+  dental_implant_prosthesis_status : 0
+  prosthesis_note_ortho     : NULL
+  prosthesis_note_implant   : NULL
+  note_radio                : NULL
+  invoice_prothese_id       : NULL
+  doc_note_proth_for_prosthesis : NULL
+  doc_note_ortho_for_prosthesis : NULL
+  doc_note_implant_for_prosthesis : NULL
+  new_doc_proth_note        : 0
+  new_doc_ortho_note        : 0
+  new_doc_implant_note      : 0
+  doc_proth_note_checked    : 0
+  doc_ortho_note_checked    : 0
+  doc_implant_note_checked  : 0
+  note_checked              : 0
+  new_prosthesis_note       : 0
+  dental_aesthetic_tooth_number : NULL
+  dental_Aesthetic_note     : NULL
+  dental_Aesthetic_diag     : NULL
+
+================================================================================
+📦 TABLE : orthodontic_consultation_dentalAesthetic
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] orthodontic_consultation_id INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] udc_id                    INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📇 INDEX :
+--------------------------------------------------------------------------------
+  sqlite_autoindex_orthodontic_consultation_dentalAesthetic_1 (UNIQUE)
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : orthodontic_consultation_dentalcare
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] orthodontic_consultation_id INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] udc_id                    INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📇 INDEX :
+--------------------------------------------------------------------------------
+  sqlite_autoindex_orthodontic_consultation_dentalcare_1 (UNIQUE)
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : orthodontic_consultation_implant
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] orthodontic_consultation_id INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] udc_id                    INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📇 INDEX :
+--------------------------------------------------------------------------------
+  sqlite_autoindex_orthodontic_consultation_implant_1 (UNIQUE)
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : orthodontic_consultation_prosthesis
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] orthodontic_consultation_id INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] udc_id                    INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📇 INDEX :
+--------------------------------------------------------------------------------
+  sqlite_autoindex_orthodontic_consultation_prosthesis_1 (UNIQUE)
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : orthodontic_consultation_surgery
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] orthodontic_consultation_id INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] udc_id                    INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📇 INDEX :
+--------------------------------------------------------------------------------
+  sqlite_autoindex_orthodontic_consultation_surgery_1 (UNIQUE)
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : patient
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] medical_personal_history_id INTEGER         NULL       DEFAULT NULL         
+  [2] lastName                  varchar(150)    NOT NULL                        
+  [3] firstName                 varchar(150)    NOT NULL                        
+  [4] birthDate                 date            NOT NULL                        
+  [5] birthPlace                varchar(155)    NULL       DEFAULT NULL         
+  [6] address                   varchar(255)    NULL       DEFAULT NULL         
+  [7] gender                    varchar(70)     NULL       DEFAULT NULL         
+  [8] phone                     varchar(55)     NULL       DEFAULT NULL         
+  [9] numCartechifae            varchar(20)     NULL       DEFAULT NULL         
+  [10] familyStatus              varchar(25)     NULL       DEFAULT NULL         
+  [11] EmergencyPhone            varchar(55)     NULL       DEFAULT NULL         
+  [12] traitingDoctor            varchar(255)    NULL       DEFAULT NULL         
+  [13] bloodGroup                varchar(25)     NULL       DEFAULT NULL         
+  [14] profession                varchar(50)     NULL       DEFAULT NULL         
+  [15] origin                    varchar(255)    NULL       DEFAULT NULL         
+  [16] NbPrintCard               INTEGER         NULL       DEFAULT NULL         
+  [17] referencedBy              varchar(155)    NULL       DEFAULT NULL         
+  [18] husbandsName              varchar(150)    NULL       DEFAULT NULL         
+  [19] characteristics           varchar(255)    NULL       DEFAULT NULL         
+  [20] cat1                      varchar(255)    NULL       DEFAULT NULL         
+  [21] cat2                      varchar(255)    NULL       DEFAULT NULL         
+  [22] cat3                      varchar(255)    NULL       DEFAULT NULL         
+  [23] cat4                      varchar(255)    NULL       DEFAULT NULL         
+  [24] cat5                      varchar(255)    NULL       DEFAULT NULL         
+  [25] fax                       varchar(55)     NULL       DEFAULT NULL         
+  [26] email                     varchar(255)    NULL       DEFAULT NULL         
+  [27] picturePath               varchar(255)    NULL       DEFAULT NULL         
+  [28] pictureName               varchar(255)    NULL       DEFAULT NULL         
+  [29] doctor_id                 INTEGER         NULL       DEFAULT NULL         
+  [30] smsConfirmation           INTEGER         NULL       DEFAULT NULL         
+  [31] emailConfirmation         INTEGER         NULL       DEFAULT NULL         
+  [32] user_created_id           INTEGER         NULL       DEFAULT NULL         
+  [33] arabic_last_name          varchar(250)    NULL       DEFAULT NULL         
+  [34] arabic_first_name         varchar(250)    NULL       DEFAULT NULL         
+  [35] converted                 tinyINTEGER     NULL       DEFAULT NULL         
+  [36] convertedDate             date            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 11750
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 11750
+    • medical_personal_history_id | NULL:   729 (  6.2%) | Distinct: 11021
+    • lastName                  | NULL:     0 (  0.0%) | Distinct:  4965
+    • firstName                 | NULL:     0 (  0.0%) | Distinct:  2161
+    • birthDate                 | NULL:     0 (  0.0%) | Distinct:  8149
+    • birthPlace                | NULL: 11750 (100.0%) | Distinct:     0
+    • address                   | NULL:     0 (  0.0%) | Distinct:     1
+    • gender                    | NULL:    31 (  0.3%) | Distinct:     2
+    • phone                     | NULL:   170 (  1.4%) | Distinct: 10627
+    • numCartechifae            | NULL: 11750 (100.0%) | Distinct:     0
+    • familyStatus              | NULL: 11668 ( 99.3%) | Distinct:     3
+    • EmergencyPhone            | NULL: 11592 ( 98.7%) | Distinct:   157
+    • traitingDoctor            | NULL: 11750 (100.0%) | Distinct:     0
+    • bloodGroup                | NULL: 11748 (100.0%) | Distinct:     1
+    • profession                | NULL: 11749 (100.0%) | Distinct:     1
+    • origin                    | NULL: 11750 (100.0%) | Distinct:     0
+    • NbPrintCard               | NULL: 11748 (100.0%) | Distinct:     1
+    • referencedBy              | NULL: 11684 ( 99.4%) | Distinct:     5
+    • husbandsName              | NULL: 11659 ( 99.2%) | Distinct:    87
+    • characteristics           | NULL:  8407 ( 71.5%) | Distinct:  1461
+    • cat1                      | NULL: 11750 (100.0%) | Distinct:     0
+    • cat2                      | NULL: 11750 (100.0%) | Distinct:     0
+    • cat3                      | NULL: 11750 (100.0%) | Distinct:     0
+    • cat4                      | NULL: 11750 (100.0%) | Distinct:     0
+    • cat5                      | NULL: 11750 (100.0%) | Distinct:     0
+    • fax                       | NULL: 11750 (100.0%) | Distinct:     0
+    • email                     | NULL: 11750 (100.0%) | Distinct:     0
+    • picturePath               | NULL: 11750 (100.0%) | Distinct:     0
+    • pictureName               | NULL: 11750 (100.0%) | Distinct:     0
+    • doctor_id                 | NULL:  8870 ( 75.5%) | Distinct:    14
+    • smsConfirmation           | NULL:     0 (  0.0%) | Distinct:     1
+    • emailConfirmation         | NULL:     0 (  0.0%) | Distinct:     1
+    • user_created_id           | NULL:     0 (  0.0%) | Distinct:    17
+    • arabic_last_name          | NULL:     0 (  0.0%) | Distinct:     1
+    • arabic_first_name         | NULL:     0 (  0.0%) | Distinct:     1
+    • converted                 | NULL:    31 (  0.3%) | Distinct:     2
+    • convertedDate             | NULL: 11749 (100.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 2
+  medical_personal_history_id : 2
+  lastName                  : MARTIN
+  firstName                 : MARIE
+  birthDate                 : 1900-01-01
+  birthPlace                : NULL
+  address                   : New City
+  gender                    : Feminin
+  phone                     : 0797156996
+  numCartechifae            : NULL
+  familyStatus              : NULL
+  EmergencyPhone            : NULL
+  traitingDoctor            : NULL
+  bloodGroup                : NULL
+  profession                : NULL
+  origin                    : NULL
+  NbPrintCard               : NULL
+  referencedBy              : NULL
+  husbandsName              : NULL
+  characteristics           : traitement d urgence 36 sr
+  cat1                      : NULL
+  cat2                      : NULL
+  cat3                      : NULL
+  cat4                      : NULL
+  cat5                      : NULL
+  fax                       : NULL
+  email                     : NULL
+  picturePath               : NULL
+  pictureName               : NULL
+  doctor_id                 : 24
+  smsConfirmation           : 1
+  emailConfirmation         : 1
+  user_created_id           : 24
+  arabic_last_name          : 
+  arabic_first_name         : 
+  converted                 : 0
+  convertedDate             : NULL
+
+================================================================================
+📦 TABLE : patient_service_event
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] patient_id                INTEGER         NOT NULL                        
+  [2] basic_visit_id            varchar(255)    NULL       DEFAULT NULL         
+  [3] note                      varchar(255)    NULL       DEFAULT NULL         
+  [4] validation                varchar(55)     NULL       DEFAULT NULL         
+  [5] user_taking_id            INTEGER         NULL       DEFAULT NULL         
+  [6] user_modifying_id         INTEGER         NULL       DEFAULT NULL         
+  [7] dateTaking                datetime        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 14507
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 14507
+    • patient_id                | NULL:     0 (  0.0%) | Distinct:  4252
+    • basic_visit_id            | NULL:     0 (  0.0%) | Distinct:  1576
+    • note                      | NULL:     3 (  0.0%) | Distinct:   133
+    • validation                | NULL:  2097 ( 14.5%) | Distinct:     7
+    • user_taking_id            | NULL:     0 (  0.0%) | Distinct:    12
+    • user_modifying_id         | NULL:  2097 ( 14.5%) | Distinct:     9
+    • dateTaking                | NULL:     0 (  0.0%) | Distinct: 14506
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  patient_id                : 10
+  basic_visit_id            : 0
+  note                      : 489_consultation
+  validation                : NULL
+  user_taking_id            : 29
+  user_modifying_id         : NULL
+  dateTaking                : 2023-02-04 09:58:25
+
+================================================================================
+📦 TABLE : patient_user_event
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+  [2] sms_id                    INTEGER         NULL       DEFAULT NULL         
+  [3] smsSent                   INTEGER         NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 14507
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 14507
+    • user_id                   | NULL:     0 (  0.0%) | Distinct:    17
+    • sms_id                    | NULL: 14507 (100.0%) | Distinct:     0
+    • smsSent                   | NULL:     0 (  0.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  user_id                   : 25
+  sms_id                    : NULL
+  smsSent                   : 0
+
+================================================================================
+📦 TABLE : payment
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] consultation_id           INTEGER         NULL       DEFAULT NULL         
+  [2] starting_price            REAL            NULL       DEFAULT NULL         
+  [3] price                     REAL            NULL       DEFAULT NULL         
+  [4] discount                  REAL            NULL       DEFAULT NULL         
+  [5] amount                    REAL            NULL       DEFAULT NULL         
+  [6] type                      varchar(50)     NULL       DEFAULT NULL         
+  [7] remaining_amount          REAL            NULL       DEFAULT NULL         
+  [8] convention_id             INTEGER         NULL       DEFAULT NULL         
+  [9] payment_type              varchar(80)     NULL       DEFAULT NULL         
+  [10] discount_reason           varchar(255)    NULL       DEFAULT NULL         
+  [11] discount_percent          REAL            NULL       DEFAULT NULL         
+  [12] date                      datetime        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 217172
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 217172
+    • consultation_id           | NULL:     0 (  0.0%) | Distinct: 28609
+    • starting_price            | NULL:    39 (  0.0%) | Distinct:    94
+    • price                     | NULL:    38 (  0.0%) | Distinct:   279
+    • discount                  | NULL:    29 (  0.0%) | Distinct:    21
+    • amount                    | NULL:   142 (  0.1%) | Distinct:   117
+    • type                      | NULL:     0 (  0.0%) | Distinct:     9
+    • remaining_amount          | NULL:    48 (  0.0%) | Distinct:   277
+    • convention_id             | NULL: 217172 (100.0%) | Distinct:     0
+    • payment_type              | NULL:     7 (  0.0%) | Distinct:     2
+    • discount_reason           | NULL:   624 (  0.3%) | Distinct:    18
+    • discount_percent          | NULL:    18 (  0.0%) | Distinct:    47
+    • date                      | NULL:     0 (  0.0%) | Distinct: 35336
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 9
+  consultation_id           : 2
+  starting_price            : 40.0
+  price                     : 40.0
+  discount                  : 0.0
+  amount                    : 40.0
+  type                      : 1
+  remaining_amount          : 0.0
+  convention_id             : NULL
+  payment_type              : Espèces
+  discount_reason           : /
+  discount_percent          : 0.0
+  date                      : 2023-02-03 23:35:39
+
+================================================================================
+📦 TABLE : payment_history
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] visit_id                  INTEGER         NOT NULL                        
+  [2] idudc                     INTEGER         NULL       DEFAULT NULL         
+  [3] description1              longtext        NULL       DEFAULT NULL         
+  [4] value                     longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 18493
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 18493
+    • visit_id                  | NULL:     0 (  0.0%) | Distinct: 17084
+    • idudc                     | NULL:     0 (  0.0%) | Distinct:    46
+    • description1              | NULL:     0 (  0.0%) | Distinct:    47
+    • value                     | NULL:     0 (  0.0%) | Distinct:    23
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 3
+  visit_id                  : 2
+  idudc                     : 485
+  description1              : Traitement endo sur pluri
+  value                     : 240
+
+================================================================================
+📦 TABLE : payment_invoice
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+  [2] invoice_id                INTEGER         NULL       DEFAULT NULL         
+  [3] entred_date               datetime        NULL       DEFAULT NULL         
+  [4] amount                    REAL            NULL       DEFAULT NULL         
+  [5] payment_date              date            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : payment_invoice_prothese
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+  [2] invoice_prothese_id       INTEGER         NULL       DEFAULT NULL         
+  [3] entred_date               datetime        NULL       DEFAULT NULL         
+  [4] amount                    REAL            NULL       DEFAULT NULL         
+  [5] payment_date              date            NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : physiotherapy_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] precaution                longtext        NULL       DEFAULT NULL         
+  [2] type_visit                varchar(150)    NULL       DEFAULT NULL         
+  [3] cryotherapie              tinyINTEGER     NULL       DEFAULT NULL         
+  [4] cryotherapie_duree        time            NULL       DEFAULT NULL         
+  [5] cryotherapie_note         longtext        NULL       DEFAULT NULL         
+  [6] infrarouge                tinyINTEGER     NULL       DEFAULT NULL         
+  [7] infrarouge_duree          time            NULL       DEFAULT NULL         
+  [8] infrarouge_note           longtext        NULL       DEFAULT NULL         
+  [9] compresse_chaude          tinyINTEGER     NULL       DEFAULT NULL         
+  [10] compresse_chaude_duree    time            NULL       DEFAULT NULL         
+  [11] compresse_chaude_note     longtext        NULL       DEFAULT NULL         
+  [12] electrotherapie_antalgique tinyINTEGER     NULL       DEFAULT NULL         
+  [13] electrotherapie_antalgique_duree time            NULL       DEFAULT NULL         
+  [14] electrotherapie_antalgique_note longtext        NULL       DEFAULT NULL         
+  [15] electro_stimulation       tinyINTEGER     NULL       DEFAULT NULL         
+  [16] electro_stimulation_duree time            NULL       DEFAULT NULL         
+  [17] electro_stimulation_note  longtext        NULL       DEFAULT NULL         
+  [18] ultrason                  tinyINTEGER     NULL       DEFAULT NULL         
+  [19] ultrason_duree            time            NULL       DEFAULT NULL         
+  [20] ultrason_note             longtext        NULL       DEFAULT NULL         
+  [21] mobilisation_active       tinyINTEGER     NULL       DEFAULT NULL         
+  [22] mobilisation_active_duree time            NULL       DEFAULT NULL         
+  [23] mobilisation_active_note  longtext        NULL       DEFAULT NULL         
+  [24] mobilisation_passive      tinyINTEGER     NULL       DEFAULT NULL         
+  [25] mobilisation_passive_duree time            NULL       DEFAULT NULL         
+  [26] mobilisation_passive_note longtext        NULL       DEFAULT NULL         
+  [27] posture                   tinyINTEGER     NULL       DEFAULT NULL         
+  [28] posture_duree             time            NULL       DEFAULT NULL         
+  [29] posture_note              longtext        NULL       DEFAULT NULL         
+  [30] manual_therapy            tinyINTEGER     NULL       DEFAULT NULL         
+  [31] manual_therapy_duree      time            NULL       DEFAULT NULL         
+  [32] manual_therapy_note       longtext        NULL       DEFAULT NULL         
+  [33] ergotherapy               tinyINTEGER     NULL       DEFAULT NULL         
+  [34] ergotherapy_duree         time            NULL       DEFAULT NULL         
+  [35] ergotherapy_note          longtext        NULL       DEFAULT NULL         
+  [36] perineal_rehabilitation   tinyINTEGER     NULL       DEFAULT NULL         
+  [37] perineal_rehabilitation_duree time            NULL       DEFAULT NULL         
+  [38] perineal_rehabilitation_note longtext        NULL       DEFAULT NULL         
+  [39] perineal_electro_stimulation tinyINTEGER     NULL       DEFAULT NULL         
+  [40] perineal_electro_stimulation_duree time            NULL       DEFAULT NULL         
+  [41] perineal_electro_stimulation_note longtext        NULL       DEFAULT NULL         
+  [42] biofeedback               tinyINTEGER     NULL       DEFAULT NULL         
+  [43] biofeedback_duree         time            NULL       DEFAULT NULL         
+  [44] biofeedback_note          longtext        NULL       DEFAULT NULL         
+  [45] podiatry                  tinyINTEGER     NULL       DEFAULT NULL         
+  [46] podiatry_duree            time            NULL       DEFAULT NULL         
+  [47] podiatry_note             longtext        NULL       DEFAULT NULL         
+  [48] kinesio_taping            tinyINTEGER     NULL       DEFAULT NULL         
+  [49] kinesio_taping_duree      time            NULL       DEFAULT NULL         
+  [50] kinesio_taping_note       longtext        NULL       DEFAULT NULL         
+  [51] pressotherapie_accessoire tinyINTEGER     NULL       DEFAULT NULL         
+  [52] pressotherapie_accessoire_choice varchar(255)    NULL       DEFAULT NULL         
+  [53] pressotherapie_accessoire_note longtext        NULL       DEFAULT NULL         
+  [54] pression                  tinyINTEGER     NULL       DEFAULT NULL         
+  [55] pression_duree            time            NULL       DEFAULT NULL         
+  [56] pression_note             longtext        NULL       DEFAULT NULL         
+  [57] decompression             tinyINTEGER     NULL       DEFAULT NULL         
+  [58] decompression_duree       time            NULL       DEFAULT NULL         
+  [59] decompression_note        longtext        NULL       DEFAULT NULL         
+  [60] observation               longtext        NULL       DEFAULT NULL         
+  [61] compression               tinyINTEGER     NULL       DEFAULT NULL         
+  [62] compression_duree         time            NULL       DEFAULT NULL         
+  [63] physiotherapie            tinyINTEGER     NULL       DEFAULT NULL         
+  [64] physiotherapie_duree      time            NULL       DEFAULT NULL         
+  [65] physiotherapie_note       longtext        NULL       DEFAULT NULL         
+  [66] kinesitherapie            tinyINTEGER     NULL       DEFAULT NULL         
+  [67] kinesitherapie_duree      time            NULL       DEFAULT NULL         
+  [68] kinesitherapie_note       longtext        NULL       DEFAULT NULL         
+  [69] therapiemanuelle          tinyINTEGER     NULL       DEFAULT NULL         
+  [70] therapiemanuelle_duree    time            NULL       DEFAULT NULL         
+  [71] therapiemanuelle_note     longtext        NULL       DEFAULT NULL         
+  [72] ergotherapie              tinyINTEGER     NULL       DEFAULT NULL         
+  [73] ergotherapie_duree        time            NULL       DEFAULT NULL         
+  [74] ergotherapie_note         longtext        NULL       DEFAULT NULL         
+  [75] pressotherapie            tinyINTEGER     NULL       DEFAULT NULL         
+  [76] pressotherapie_duree      time            NULL       DEFAULT NULL         
+  [77] pressotherapie_note       longtext        NULL       DEFAULT NULL         
+  [78] reeducationperineale      tinyINTEGER     NULL       DEFAULT NULL         
+  [79] reeducationperineale_duree time            NULL       DEFAULT NULL         
+  [80] reeducationperineale_note longtext        NULL       DEFAULT NULL         
+  [81] kinerespiratoire          tinyINTEGER     NULL       DEFAULT NULL         
+  [82] kinerespiratoire_duree    time            NULL       DEFAULT NULL         
+  [83] kinerespiratoire_note     longtext        NULL       DEFAULT NULL         
+  [84] kinesiotaping             tinyINTEGER     NULL       DEFAULT NULL         
+  [85] kinesiotaping_duree       time            NULL       DEFAULT NULL         
+  [86] kinesiotaping_note        longtext        NULL       DEFAULT NULL         
+  [87] cupping_therapy           longtext        NULL       DEFAULT NULL         
+  [88] acupuncture               longtext        NULL       DEFAULT NULL         
+  [89] auriculotherapy           longtext        NULL       DEFAULT NULL         
+  [90] evaluation                longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : pregnancy
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] medical_personal_history_id INTEGER         NOT NULL                        
+  [2] date                      date            NULL       DEFAULT NULL         
+  [3] delivery                  varchar(255)    NULL       DEFAULT NULL         
+  [4] sex                       varchar(90)     NULL       DEFAULT NULL         
+  [5] weight                    varchar(255)    NULL       DEFAULT NULL         
+  [6] obs                       longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : prescription
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] doctor_id                 INTEGER         NOT NULL                        
+  [2] discr                     varchar(255)    NOT NULL                        
+  [3] drug_id                   INTEGER         NULL       DEFAULT NULL         
+  [4] prescription_date         datetime        NOT NULL                        
+  [5] body                      longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : prescription_type
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] prescription_type_name    varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 16
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:    16
+    • prescription_type_name    | NULL:     0 (  0.0%) | Distinct:    16
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 83
+  prescription_type_name    : 001
+
+================================================================================
+📦 TABLE : product
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] title                     varchar(255)    NULL       DEFAULT NULL         
+  [2] denomination              varchar(255)    NULL       DEFAULT NULL         
+  [3] form                      varchar(255)    NULL       DEFAULT NULL         
+  [4] type                      varchar(255)    NULL       DEFAULT NULL         
+  [5] affectation               varchar(255)    NULL       DEFAULT NULL         
+  [6] stock_threshold           varchar(255)    NULL       DEFAULT NULL         
+  [7] category                  varchar(255)    NULL       DEFAULT NULL         
+  [8] stockQte                  INTEGER         NULL       DEFAULT NULL         
+  [9] ref                       varchar(255)    NULL       DEFAULT NULL         
+  [10] expirationDaysFlag        INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : product_log
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+  [2] doctor_id                 INTEGER         NULL       DEFAULT NULL         
+  [3] patient_id                INTEGER         NULL       DEFAULT NULL         
+  [4] product_id                INTEGER         NULL       DEFAULT NULL         
+  [5] action_date               datetime        NULL       DEFAULT NULL         
+  [6] action_time               datetime        NULL       DEFAULT NULL         
+  [7] action                    varchar(255)    NULL       DEFAULT NULL         
+  [8] denomination              varchar(255)    NULL       DEFAULT NULL         
+  [9] stockQte                  INTEGER         NULL       DEFAULT NULL         
+  [10] stockQteOld               INTEGER         NULL       DEFAULT NULL         
+  [11] productPrice              REAL            NULL       DEFAULT NULL         
+  [12] brand                     varchar(255)    NULL       DEFAULT NULL         
+  [13] note                      longtext        NULL       DEFAULT NULL         
+  [14] expiration_date           datetime        NULL       DEFAULT NULL         
+  [15] cost                      REAL            NULL       DEFAULT NULL         
+  [16] amount                    REAL            NULL       DEFAULT NULL         
+  [17] remaining_amount          REAL            NULL       DEFAULT NULL         
+  [18] batch_number              varchar(100)    NULL       DEFAULT NULL         
+  [19] remaining_batch_number    INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : radio_test
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] name                      varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 4
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     4
+    • name                      | NULL:     0 (  0.0%) | Distinct:     4
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 230
+  name                      : Panoramique dentaire
+
+================================================================================
+📦 TABLE : receptionniste
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] title                     varchar(95)     NULL       DEFAULT NULL         
+  [2] company                   varchar(195)    NULL       DEFAULT NULL         
+  [3] personOpeningAccount      varchar(195)    NOT NULL                        
+  [4] dateOpened                date            NOT NULL                        
+  [5] taxRateArea               varchar(255)    NULL       DEFAULT NULL         
+  [6] numProf                   INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 2
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     2
+    • title                     | NULL:     2 (100.0%) | Distinct:     0
+    • company                   | NULL:     2 (100.0%) | Distinct:     0
+    • personOpeningAccount      | NULL:     0 (  0.0%) | Distinct:     2
+    • dateOpened                | NULL:     0 (  0.0%) | Distinct:     2
+    • taxRateArea               | NULL:     2 (100.0%) | Distinct:     0
+    • numProf                   | NULL:     2 (100.0%) | Distinct:     0
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 29
+  title                     : NULL
+  company                   : NULL
+  personOpeningAccount      : admin
+  dateOpened                : 2023-02-04
+  taxRateArea               : NULL
+  numProf                   : NULL
+
+================================================================================
+📦 TABLE : registered_prescription
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] consultation_id           INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : reminding_event
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+  [2] body                      longtext        NULL       DEFAULT NULL         
+  [3] state                     varchar(100)    NOT NULL                        
+  [4] patient_id                INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : result_test
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] picturePath               varchar(255)    NULL       DEFAULT NULL         
+  [2] pictureName               varchar(255)    NULL       DEFAULT NULL         
+  [3] visit_test_id             INTEGER         NOT NULL                        
+  [4] note                      varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : sample
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] dailyId                   INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : service
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_created_id           INTEGER         NOT NULL                        
+  [2] name                      varchar(255)    NOT NULL                        
+  [3] description               longtext        NULL       DEFAULT NULL         
+  [4] updateDate                date            NULL       DEFAULT NULL         
+  [5] responsible               varchar(195)    NULL       DEFAULT NULL         
+  [6] currentDailyId            INTEGER         NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : service_hospital_center
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] service_id                INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] hospital_center_id        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+
+📇 INDEX :
+--------------------------------------------------------------------------------
+  sqlite_autoindex_service_hospital_center_1 (UNIQUE)
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 26
+
+  Analyse par colonne :
+    • service_id                | NULL:     0 (  0.0%) | Distinct:    26
+    • hospital_center_id        | NULL:     0 (  0.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  service_id                : 1
+  hospital_center_id        : 1
+
+================================================================================
+📦 TABLE : sms
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] title                     varchar(55)     NULL       DEFAULT NULL         
+  [2] body                      varchar(255)    NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 6
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:     6
+    • title                     | NULL:     0 (  0.0%) | Distinct:     6
+    • body                      | NULL:     0 (  0.0%) | Distinct:     6
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  title                     : Prise de RDV
+  body                      : Bonjour _nom _prenom. Votre RDV est le _date à _heure. Si...
+
+================================================================================
+📦 TABLE : status
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_created_id           INTEGER         NOT NULL                        
+  [2] name                      varchar(255)    NOT NULL                        
+  [3] updateDate                date            NULL       DEFAULT NULL         
+  [4] next_id                   INTEGER         NULL       DEFAULT NULL         
+  [5] previous_id               INTEGER         NULL       DEFAULT NULL         
+  [6] bg_color                  varchar(255)    NULL       DEFAULT NULL         
+  [7] fg_color                  varchar(255)    NULL       DEFAULT NULL         
+  [8] description               varchar(255)    NULL       DEFAULT NULL         
+  [9] type                      varchar(255)    NULL       DEFAULT NULL         
+  [10] enabled                   tinyINTEGER     NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : sterilization
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_created_id           INTEGER         NOT NULL                        
+  [2] material                  varchar(255)    NOT NULL                        
+  [3] number                    varchar(255)    NOT NULL                        
+  [4] date                      datetime        NULL       DEFAULT NULL         
+  [5] dateStart                 datetime        NULL       DEFAULT NULL         
+  [6] dateEnd                   datetime        NULL       DEFAULT NULL         
+  [7] temperature               varchar(255)    NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : supplier
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] name                      varchar(250)    NOT NULL                        
+  [2] quality                   varchar(250)    NULL       DEFAULT NULL         
+  [3] address                   longtext        NULL       DEFAULT NULL         
+  [4] town                      varchar(155)    NULL       DEFAULT NULL         
+  [5] country                   varchar(155)    NULL       DEFAULT NULL         
+  [6] phone                     varchar(55)     NULL       DEFAULT NULL         
+  [7] emergency_phone           varchar(55)     NULL       DEFAULT NULL         
+  [8] fix                       varchar(55)     NULL       DEFAULT NULL         
+  [9] fax                       varchar(55)     NULL       DEFAULT NULL         
+  [10] email                     varchar(255)    NULL       DEFAULT NULL         
+  [11] website                   varchar(255)    NULL       DEFAULT NULL         
+  [12] visible                   varchar(50)     NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : test
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_created_id           INTEGER         NOT NULL                        
+  [2] service_id                INTEGER         NOT NULL                        
+  [3] family                    varchar(255)    NOT NULL                        
+  [4] category                  varchar(255)    NOT NULL                        
+  [5] code                      varchar(55)     NULL       DEFAULT NULL         
+  [6] price                     REAL            NULL       DEFAULT NULL         
+  [7] availability              tinyINTEGER     NULL       DEFAULT NULL         
+  [8] updateDate                datetime        NULL       DEFAULT NULL         
+  [9] discr                     varchar(255)    NOT NULL                        
+  [10] priority                  INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : thread
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] created_by_id             INTEGER         NULL       DEFAULT NULL         
+  [2] subject                   varchar(255)    NOT NULL                        
+  [3] created_at                datetime        NOT NULL                        
+  [4] is_spam                   tinyINTEGER     NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : thread_metadata
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] thread_id                 INTEGER         NULL       DEFAULT NULL         
+  [2] participant_id            INTEGER         NULL       DEFAULT NULL         
+  [3] is_deleted                tinyINTEGER     NOT NULL                        
+  [4] last_participant_message_date datetime        NULL       DEFAULT NULL         
+  [5] last_message_date         datetime        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : udc
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] code1                     varchar(55)     NULL       DEFAULT NULL         
+  [2] code2                     varchar(55)     NULL       DEFAULT NULL         
+  [3] value                     longtext        NULL       DEFAULT NULL         
+  [4] description1              longtext        NULL       DEFAULT NULL         
+  [5] description2              longtext        NULL       DEFAULT NULL         
+  [6] description3              longtext        NULL       DEFAULT NULL         
+  [7] description4              longtext        NULL       DEFAULT NULL         
+  [8] description5              longtext        NULL       DEFAULT NULL         
+  [9] description6              longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 525
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:   525
+    • code1                     | NULL:     0 (  0.0%) | Distinct:    18
+    • code2                     | NULL:     0 (  0.0%) | Distinct:   516
+    • value                     | NULL:    30 (  5.7%) | Distinct:    70
+    • description1              | NULL:     0 (  0.0%) | Distinct:   281
+    • description2              | NULL:    85 ( 16.2%) | Distinct:     3
+    • description3              | NULL:    85 ( 16.2%) | Distinct:    23
+    • description4              | NULL:   243 ( 46.3%) | Distinct:   146
+    • description5              | NULL:   193 ( 36.8%) | Distinct:    14
+    • description6              | NULL:   350 ( 66.7%) | Distinct:    10
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 1
+  code1                     : 01
+  code2                     : 01
+  value                     : 0
+  description1              : Règlement
+  description2              : 0
+  description3              : 0
+  description4              : Règlement
+  description5              : 
+  description6              : #E15055
+
+================================================================================
+📦 TABLE : urological_surgery_consultation
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] medical_signs             longtext        NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : user
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] username                  varchar(255)    NOT NULL                        
+  [2] username_canonical        varchar(255)    NOT NULL                        
+  [3] enabled                   tinyINTEGER     NOT NULL                        
+  [4] salt                      varchar(255)    NOT NULL                        
+  [5] password                  varchar(255)    NOT NULL                        
+  [6] last_login                datetime        NULL       DEFAULT NULL         
+  [7] locked                    tinyINTEGER     NOT NULL                        
+  [8] expired                   tinyINTEGER     NOT NULL                        
+  [9] expires_at                datetime        NULL       DEFAULT NULL         
+  [10] confirmation_token        varchar(255)    NULL       DEFAULT NULL         
+  [11] password_requested_at     datetime        NULL       DEFAULT NULL         
+  [12] roles                     longtext        NOT NULL                        
+  [13] credentials_expired       tinyINTEGER     NOT NULL                        
+  [14] credentials_expire_at     datetime        NULL       DEFAULT NULL         
+  [15] picturePath               varchar(255)    NULL       DEFAULT NULL         
+  [16] pictureName               varchar(255)    NULL       DEFAULT NULL         
+  [17] lastName                  varchar(150)    NOT NULL                        
+  [18] firstName                 varchar(150)    NOT NULL                        
+  [19] birthDate                 date            NULL       DEFAULT NULL         
+  [20] birthPlace                varchar(155)    NULL       DEFAULT NULL         
+  [21] address                   varchar(255)    NULL       DEFAULT NULL         
+  [22] gender                    varchar(70)     NULL       DEFAULT NULL         
+  [23] phone                     varchar(35)     NULL       DEFAULT NULL         
+  [24] email                     varchar(255)    NULL       DEFAULT NULL         
+  [25] emailCanonical            varchar(255)    NULL       DEFAULT NULL         
+  [26] discr                     varchar(255)    NOT NULL                        
+  [27] last_activity             datetime        NULL       DEFAULT NULL         
+  [28] first_login_today         datetime        NULL       DEFAULT NULL         
+  [29] specialisation_id         INTEGER         NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 23
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct:    23
+    • username                  | NULL:     0 (  0.0%) | Distinct:    23
+    • username_canonical        | NULL:     0 (  0.0%) | Distinct:    23
+    • enabled                   | NULL:     0 (  0.0%) | Distinct:     2
+    • salt                      | NULL:     0 (  0.0%) | Distinct:    23
+    • password                  | NULL:     0 (  0.0%) | Distinct:    23
+    • last_login                | NULL:     0 (  0.0%) | Distinct:    23
+    • locked                    | NULL:     0 (  0.0%) | Distinct:     1
+    • expired                   | NULL:     0 (  0.0%) | Distinct:     1
+    • expires_at                | NULL:    23 (100.0%) | Distinct:     0
+    • confirmation_token        | NULL:    23 (100.0%) | Distinct:     0
+    • password_requested_at     | NULL:    23 (100.0%) | Distinct:     0
+    • roles                     | NULL:     0 (  0.0%) | Distinct:     4
+    • credentials_expired       | NULL:     0 (  0.0%) | Distinct:     1
+    • credentials_expire_at     | NULL:    23 (100.0%) | Distinct:     0
+    • picturePath               | NULL:    22 ( 95.7%) | Distinct:     1
+    • pictureName               | NULL:    22 ( 95.7%) | Distinct:     1
+    • lastName                  | NULL:     0 (  0.0%) | Distinct:    22
+    • firstName                 | NULL:     0 (  0.0%) | Distinct:    23
+    • birthDate                 | NULL:     5 ( 21.7%) | Distinct:    17
+    • birthPlace                | NULL:    14 ( 60.9%) | Distinct:     8
+    • address                   | NULL:    23 (100.0%) | Distinct:     0
+    • gender                    | NULL:     0 (  0.0%) | Distinct:     2
+    • phone                     | NULL:    19 ( 82.6%) | Distinct:     4
+    • email                     | NULL:    23 (100.0%) | Distinct:     0
+    • emailCanonical            | NULL:    23 (100.0%) | Distinct:     0
+    • discr                     | NULL:     0 (  0.0%) | Distinct:     2
+    • last_activity             | NULL:     0 (  0.0%) | Distinct:    23
+    • first_login_today         | NULL:     0 (  0.0%) | Distinct:    23
+    • specialisation_id         | NULL:     0 (  0.0%) | Distinct:     2
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 21
+  username                  : radio
+  username_canonical        : radio
+  enabled                   : 1
+  salt                      : ae38i296m6g48k08cws4wowk0sws004
+  password                  : keRvZgSdzvSt2FIP6asumkPj2YX9MbeA2NVJzlyagY9xUYIBHhqbFGNNL...
+  last_login                : 2024-11-04 09:58:15
+  locked                    : 0
+  expired                   : 0
+  expires_at                : NULL
+  confirmation_token        : NULL
+  password_requested_at     : NULL
+  roles                     : a:1:{i:0;s:11:"ROLE_DOCTOR";}
+  credentials_expired       : 0
+  credentials_expire_at     : NULL
+  picturePath               : NULL
+  pictureName               : NULL
+  lastName                  : RADIO
+  firstName                 : User
+  birthDate                 : NULL
+  birthPlace                : Paris
+  address                   : NULL
+  gender                    : Homme
+  phone                     : NULL
+  email                     : NULL
+  emailCanonical            : NULL
+  discr                     : Doctor
+  last_activity             : 2024-11-04 10:11:47
+  first_login_today         : 2024-11-04 09:58:15
+  specialisation_id         : 12
+
+================================================================================
+📦 TABLE : user_event
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] user_id                   INTEGER         NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+📦 TABLE : visit
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] current_location_id       INTEGER         NOT NULL                        
+  [2] current_hospital_center_id INTEGER         NOT NULL                        
+  [3] patient_id                INTEGER         NOT NULL                        
+  [4] user_created_id           INTEGER         NOT NULL                        
+  [5] visit_created_id          INTEGER         NULL       DEFAULT NULL         
+  [6] arrivalDate               datetime        NULL       DEFAULT NULL         
+  [7] currentLocalTimeAssignment datetime        NULL       DEFAULT NULL         
+  [8] status                    varchar(80)     NULL       DEFAULT NULL         
+  [9] price                     REAL            NULL       DEFAULT NULL         
+  [10] reason                    varchar(200)    NULL       DEFAULT NULL         
+  [11] priority                  INTEGER         NULL       DEFAULT NULL         
+  [12] discr                     varchar(255)    NOT NULL                        
+  [13] user_activated_id         INTEGER         NULL       DEFAULT NULL         
+  [14] startDate                 datetime        NULL       DEFAULT NULL         
+  [15] endDate                   datetime        NULL       DEFAULT NULL         
+  [16] starting_price            REAL            NULL       DEFAULT NULL         
+  [17] discount                  REAL            NULL       DEFAULT NULL         
+  [18] amount                    REAL            NULL       DEFAULT NULL         
+  [19] remaining_amount          REAL            NULL       DEFAULT NULL         
+  [20] first_payment             REAL            NULL       DEFAULT NULL         
+  [21] second_payment            REAL            NULL       DEFAULT NULL         
+  [22] payment_method            longtext        NULL       DEFAULT NULL         
+  [23] payment_note              longtext        NULL       DEFAULT NULL         
+  [24] notice                    longtext        NULL       DEFAULT NULL         
+  [25] act                       varchar(200)    NULL       DEFAULT NULL         
+  [26] type                      varchar(20)     NULL       DEFAULT NULL         
+  [27] next_visit_note           varchar(200)    NULL       DEFAULT NULL         
+  [28] bg_Color                  longtext        NULL       DEFAULT NULL         
+  [29] cashed_user_id            INTEGER         NULL       DEFAULT NULL         
+  [30] invoiced                  tinyINTEGER     NULL       DEFAULT NULL         
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 32486
+
+  Analyse par colonne :
+    • id                        | NULL:     0 (  0.0%) | Distinct: 32486
+    • current_location_id       | NULL:     0 (  0.0%) | Distinct:     1
+    • current_hospital_center_id | NULL:     0 (  0.0%) | Distinct:     1
+    • patient_id                | NULL:     0 (  0.0%) | Distinct: 11536
+    • user_created_id           | NULL:     0 (  0.0%) | Distinct:    20
+    • visit_created_id          | NULL: 31112 ( 95.8%) | Distinct:  1358
+    • arrivalDate               | NULL:     0 (  0.0%) | Distinct: 32485
+    • currentLocalTimeAssignment | NULL:     0 (  0.0%) | Distinct: 32485
+    • status                    | NULL:     0 (  0.0%) | Distinct:     7
+    • price                     | NULL:     0 (  0.0%) | Distinct:     1
+    • reason                    | NULL:  3872 ( 11.9%) | Distinct:    30
+    • priority                  | NULL:     0 (  0.0%) | Distinct:     1
+    • discr                     | NULL:     0 (  0.0%) | Distinct:     1
+    • user_activated_id         | NULL:  4661 ( 14.3%) | Distinct:    19
+    • startDate                 | NULL:  4661 ( 14.3%) | Distinct: 26082
+    • endDate                   | NULL:  5672 ( 17.5%) | Distinct: 26803
+    • starting_price            | NULL:     0 (  0.0%) | Distinct:     1
+    • discount                  | NULL:     0 (  0.0%) | Distinct:     1
+    • amount                    | NULL:     0 (  0.0%) | Distinct:     1
+    • remaining_amount          | NULL:     0 (  0.0%) | Distinct:     1
+    • first_payment             | NULL:    11 (  0.0%) | Distinct:     6
+    • second_payment            | NULL:     0 (  0.0%) | Distinct:     4
+    • payment_method            | NULL: 32486 (100.0%) | Distinct:     0
+    • payment_note              | NULL: 32486 (100.0%) | Distinct:     0
+    • notice                    | NULL: 32486 (100.0%) | Distinct:     0
+    • act                       | NULL: 32486 (100.0%) | Distinct:     0
+    • type                      | NULL:  3872 ( 11.9%) | Distinct:     8
+    • next_visit_note           | NULL: 32486 (100.0%) | Distinct:     0
+    • bg_Color                  | NULL:  3872 ( 11.9%) | Distinct:     4
+    • cashed_user_id            | NULL: 20449 ( 62.9%) | Distinct:     2
+    • invoiced                  | NULL:     0 (  0.0%) | Distinct:     1
+
+💾 EXEMPLE DE DONNÉES (première ligne) :
+--------------------------------------------------------------------------------
+  id                        : 2
+  current_location_id       : 12
+  current_hospital_center_id : 1
+  patient_id                : 2
+  user_created_id           : 24
+  visit_created_id          : NULL
+  arrivalDate               : 2023-02-03 23:34:44
+  currentLocalTimeAssignment : 2023-02-03 23:34:44
+  status                    : A revoir
+  price                     : 0.0
+  reason                    : NULL
+  priority                  : 1
+  discr                     : OrthodonticConsultation
+  user_activated_id         : 24
+  startDate                 : 2023-02-03 23:34:00
+  endDate                   : 2023-02-03 23:41:46
+  starting_price            : 0.0
+  discount                  : 0.0
+  amount                    : 0.0
+  remaining_amount          : 0.0
+  first_payment             : 0.0
+  second_payment            : 0.0
+  payment_method            : NULL
+  payment_note              : NULL
+  notice                    : NULL
+  act                       : NULL
+  type                      : NULL
+  next_visit_note           : NULL
+  bg_Color                  : NULL
+  cashed_user_id            : NULL
+  invoiced                  : 0
+
+================================================================================
+📦 TABLE : visit_test
+================================================================================
+
+🔧 SCHÉMA DES COLONNES :
+--------------------------------------------------------------------------------
+  [0] id                        INTEGER         NOT NULL                        🔑 PRIMARY KEY
+  [1] visit_id                  INTEGER         NOT NULL                        
+  [2] test_id                   INTEGER         NOT NULL                        
+  [3] testRequested             tinyINTEGER     NOT NULL                        
+  [4] testChecked               tinyINTEGER     NOT NULL                        
+
+📊 STATISTIQUES DES DONNÉES :
+--------------------------------------------------------------------------------
+  Nombre total de lignes : 0
+
+⚠️  Table vide - aucune donnée
+
+================================================================================
+✅ Analyse terminée

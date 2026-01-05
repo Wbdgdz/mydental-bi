@@ -1,413 +1,404 @@
-/* General Styles */
+/* --- IMPORTS & VARIABLES --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); /* Police "Inter" plus moderne que Roboto pour la Data */
+
+:root {
+    --primary-color: #0f62fe; /* Bleu "IBM Carbon" plus tech */
+    --primary-dark: #0043ce;
+    --secondary-bg: #f4f7f6;
+    --text-color: #161616;
+    --text-muted: #6f6f6f;
+    --border-radius: 16px; /* Arrondis plus prononcés (tendance actuelle) */
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.08);
+    --nav-height: 70px;
+    --sidebar-width: 280px;
+}
+
+/* --- BASE --- */
+html { scroll-behavior: smooth; }
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-}
-
-.title {
-    font-size: 24px;
-    text-align: center;
-    margin: 20px 0;
-    color: #333;
-}
-
-/* Menu latéral */
-.sidebar {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1000;
-    top: 0;
-    left: 0;
-    background-color: #333;
-    overflow-x: hidden;
-    transition: 0.3s;
-    padding-top: 60px;
-}
-
-.sidebar ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    padding: 10px 15px;
-}
-
-.sidebar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    display: block;
-    transition: 0.3s;
-}
-
-.sidebar ul li a:hover {
-    background-color: #575757;
-    color: #fff;
-}
-
-/* Style du bouton d'ouverture/fermeture */
-.menu-icon {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 30px;
-    cursor: pointer;
-    z-index: 1001;
-}
-
-/* Transition pour le menu */
-#menu-toggle.open + .sidebar {
-    width: 250px;
-}
-
-/* Ajustement des sections lorsque le menu est ouvert */
-body.with-sidebar {
-    margin-left: 250px;
-    transition: margin-left 0.3s;
-}
-
-/* Mobile-friendly */
-@media screen and (max-width: 768px) {
-    .sidebar {
-        width: 0;
-    }
-    #menu-toggle.open + .sidebar {
-        width: 200px;
-    }
-    body.with-sidebar {
-        margin-left: 200px;
-    }
-}
-
-/* Stats Card Container */
-#stats-card-container {
+    background-color: var(--secondary-bg);
+    color: var(--text-color);
+    padding-top: var(--nav-height); /* Espace pour la nav fixe */
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 40px;
-    padding: 0 20px;
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased; /* Rendu texte plus net */
+}
+
+/* --- NAVIGATION MODERNE (Glassmorphism léger) --- */
+.main-nav {
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    height: var(--nav-height);
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Séparation très subtile */
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 2000;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #161616;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.nav-logo {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%; /* Logo rond */
+    object-fit: cover;
+    background: #f0f0f0; /* Fond gris si image transparente */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 40px;
+    margin: 0;
+    padding: 0;
+    margin-left: auto; /* pousse le groupe de liens vers la droite */
+    margin-right: 32px; /* espace avant le bouton de déconnexion */
+}
+
+.nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: var(--primary-color);
+}
+
+/* Logout button in navbar */
+.nav-logout-btn {
+    background-color: #e53935;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: auto;
+}
+
+.nav-logout-btn:hover {
+    background-color: #c62828;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+}
+
+.nav-logout-btn:active {
+    transform: scale(0.98);
+}
+
+/* Titre de page plus élégant */
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 40px 0 30px 0;
+    color: #161616;
+}
+
+/* --- INPUTS & BOUTONS --- */
+.period-selector {
+    background: white;
+    padding: 15px 25px;
+    border-radius: 50px; /* Forme "Pill" très moderne */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 0 auto 40px auto;
+    width: fit-content;
     flex-wrap: wrap;
+    border: 1px solid #edf0f2;
+}
+
+input[type="date"], select {
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-color);
+    background: #f9f9f9;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(15, 98, 254, 0.2);
+}
+
+button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+/* --- CARTES KPI (Clean UI) --- */
+#stats-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 0 40px;
+    margin-bottom: 50px;
 }
 
 .stats-card {
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: var(--border-radius);
+    padding: 24px;
     text-align: center;
-    width: 30%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
 }
 
-.stats-card:hover {
-    transform: translateY(-5px);
-}
+.stats-card:hover { transform: translateY(-3px); }
 
 .stats-title {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #666;
-    min-height: 60px; /* Ensure uniform height for the titles */
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Vertically align the text */
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: #a0a0a0;
+    margin-bottom: 8px;
 }
 
 .stats-value {
     font-size: 28px;
-    font-weight: bold;
-    color: #333;
-    margin-top: 10px;
+    font-weight: 700;
+    color: #161616;
+    letter-spacing: -1px;
 }
 
-/* Charts Container */
+/* --- GRAPHIQUES & TABLEAUX --- */
 .charts-container {
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-bottom: 40px;
-    padding: 0 20px;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 .chart-container {
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
+    border-radius: var(--border-radius);
+    padding: 30px;
+    margin: 0 auto 30px auto;
+    width: 92%; /* Largeur confortable */
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(0,0,0,0.02);
+    position: relative;
+    overflow: hidden; /* Empêche les débordements SVG */
+}
+
+.chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    color: #161616;
+}
+
+/* --- CORRECTION BUG GRAPHIQUE NOIR (IMPORTANT) --- */
+/* D3.js path par défaut est rempli en noir. On force "none" pour les lignes */
+svg path {
+    fill: none; 
+}
+/* Les barres par défaut utilisent la couleur primaire, mais les couleurs inline (définies en JS) sont prioritaires */
+svg rect:not([fill]), svg .bar:not([fill]) {
+    fill: var(--primary-color);
+}
+/* Exceptions spécifiques pour vos classes D3 */
+.line {
+    fill: none !important; /* Force impératif */
+    stroke-width: 3px;
+}
+.area {
+    fill: var(--primary-color);
+    opacity: 0.1;
+}
+
+/* Style des axes */
+.domain { stroke: #e0e0e0; }
+.tick line { stroke: #f0f0f0; }
+.tick text { fill: #a0a0a0; font-size: 11px; font-family: 'Inter', sans-serif; }
+
+/* --- TABLEAUX --- */
+.table-container {
+    width: 92%;
+    margin: 0 auto 40px auto;
+    background: white;
+    padding: 0; /* Padding géré par les cellules */
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden; /* Pour les coins arrondis */
+}
+.table-container h2 { margin: 25px; font-size: 1.2rem; }
+
+table { width: 100%; border-collapse: collapse; }
+th {
+    background-color: #f9f9f9;
+    color: #555;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+td { padding: 18px 20px; border-bottom: 1px solid #f0f0f0; color: #333; font-size: 14px; }
+tr:last-child td { border-bottom: none; }
+
+/* --- FOOTER --- */
+.site-footer {
+    margin-top: auto;
+    background-color: white;
+    border-top: 1px solid #e0e0e0;
+    padding: 40px 0;
     text-align: center;
-    width: 65%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+.site-footer a { color: var(--primary-color); text-decoration: none; font-weight: 600; }
+
+/* --- BACK TO TOP --- */
+#back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    z-index: 99;
+    padding: 0;
 }
 
-/* Ajustement de la marge pour réduire l'espace entre le graphique et le texte */
-.chart-description, .chart-interpretation {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    line-height: 1.6;
+
+/* --- FIX SCROLL ANCHOR --- */
+/* Cela force le navigateur à s'arrêter 90px AVANT l'élément ciblé */
+/* (70px de nav + 20px d'espace) */
+:target, 
+.chart-container, 
+.table-container, 
+#stats-card-container,
+h2 {
+    scroll-margin-top: 150px;
 }
 
-/* SVG Chart Styles */
-svg {
+/* --- FIX SCROLL ANCHOR --- */
+:target, .chart-container, .table-container, #stats-card-container, h2 {
+    scroll-margin-top: 150px;
+}
+
+/* --- STYLE PAGE LOGIN (Nouveau design) --- */
+body.login-page {
+    padding-top: 0;
+    background: linear-gradient(135deg, #f4f7f6 0%, #e6e9f0 100%);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-wrapper {
     width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto;
+    max-width: 400px;
+    padding: 20px;
 }
 
-/* Tooltip styling */
+.login-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.login-header { margin-bottom: 30px; }
+
+.logo-container {
+    width: 80px; height: 80px;
+    background: #f0f0f0; border-radius: 50%;
+    margin: 0 auto 20px auto;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+}
+.logo-container img { width: 100%; height: 100%; object-fit: cover; }
+
+.login-header h1 { font-size: 1.6rem; font-weight: 700; color: var(--text-color); margin: 0 0 5px 0; }
+.login-header p { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
+
+.form-group { margin-bottom: 20px; text-align: left; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 8px; }
+.form-group input {
+    width: 100%; padding: 12px 15px;
+    border: 2px solid #e1e4e8; border-radius: 12px;
+    font-size: 1rem; transition: all 0.3s ease;
+    box-sizing: border-box; font-family: 'Inter', sans-serif;
+}
+.form-group input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 4px rgba(15, 98, 254, 0.1); }
+
+.btn-login {
+    width: 100%; padding: 14px;
+    background-color: var(--primary-color); color: white;
+    border: none; border-radius: 12px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: background 0.3s, transform 0.2s; margin-top: 10px;
+}
+.btn-login:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+
+.error-message {
+    margin-top: 20px; color: #da1e28; background-color: #fff0f1;
+    padding: 10px; border-radius: 8px; font-size: 0.9rem; display: none;
+}
+
+.login-footer { text-align: center; margin-top: 30px; color: #999; font-size: 0.8rem; }
+
+/* --- TOOLTIPS D3.js --- */
 .tooltip {
     position: absolute;
-    text-align: center;
-    padding: 8px;
-    font: 12px sans-serif;
-    background: rgba(0, 0, 0, 0.75);
-    color: #fff;
-    border: 0px;
+    padding: 10px 15px;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: white;
     border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
     pointer-events: none;
-    opacity: 0; /* Hidden by default */
-    transition: opacity 0.3s;
-}
-
-/* Legend styling */
-.legend rect {
-    stroke-width: 0;
-}
-
-.legend text {
-    font-size: 12px;
-    fill: #333;
-}
-
-/* Specific Styles for Visits and Revenue per Month Chart */
-#visits-revenue-chart .bar {
-    fill: steelblue;
-}
-
-#visits-revenue-chart .line {
-    fill: none;
-    stroke: orange;
-    stroke-width: 2px;
-}
-
-#visits-revenue-chart .axis-label {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-/* Specific Styles for Consultations per Doctor Chart */
-#consultations-chart .bar {
-    fill: steelblue;
-}
-
-#consultations-chart .line-new-patients {
-    fill: none;
-    stroke: blue;
-    stroke-width: 2px;
-}
-
-#consultations-chart .line-returning-patients {
-    fill: none;
-    stroke: green;
-    stroke-width: 2px;
-}
-
-#consultations-chart .axis-label {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-/* Specific Styles for Evolution of Patients with at least Two Visits Chart */
-#patient-visits-chart .bar-one-visit {
-    fill: #4682B4; /* SteelBlue for one visit */
-}
-
-#patient-visits-chart .bar-two-visits {
-    fill: #32CD32; /* LimeGreen for two visits */
-}
-
-#patient-visits-chart .line-two-visits {
-    fill: none;
-    stroke: #896F94; /* Custom color for cumulative two visits */
-    stroke-width: 3px;
-}
-
-#patient-visits-chart .line-one-visit {
-    fill: none;
-    stroke: #FF0000; /* Red for cumulative one visit */
-    stroke-width: 3px;
-}
-
-#patient-visits-chart .axis-label {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-/* Specific Styles for Doctor Indicators Chart */
-#doctor-indicators-chart .bar {
-    fill: steelblue;
-}
-
-#doctor-indicators-chart .line-new-patients {
-    fill: none;
-    stroke: blue;
-    stroke-width: 2px;
-}
-
-#doctor-indicators-chart .line-returning-patients {
-    fill: none;
-    stroke: green;
-    stroke-width: 2px;
-}
-
-#doctor-indicators-chart .axis-label {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-/* Table Styles */
-.table-container {
-    margin: 40px 0 40px 0; 
-    width: 80%;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.table-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 20px;
-}
-
-/* Style du tableau */
-#actes-table, #medecins-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 16px;
-    text-align: left;
-}
-
-#actes-table thead, #medecins-table thead {
-    background-color: #f4f4f4;
-    color: #333;
-    font-weight: bold;
-}
-
-#actes-table th, #actes-table td, #medecins-table th, #medecins-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-}
-
-#actes-table th, #medecins-table th {
-    text-align: left;
-    background-color: #f0f0f0;
-    font-weight: bold;
-}
-
-#actes-table tbody tr:nth-child(even), #medecins-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-#actes-table tbody tr:hover, #medecins-table tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-#actes-table .text-right, #medecins-table .text-right {
-    text-align: right;
-}
-
-#actes-table .highlight, #medecins-table .highlight {
-    font-weight: bold;
-    color: #007BFF; /* Couleur de mise en évidence */
-}
-
-/* Responsive Design for Table */
-@media (max-width: 768px) {
-    #acts-table, #acts-table thead, #acts-table tbody, #acts-table th, #acts-table td, #acts-table tr {
-        display: block;
-    }
-
-    #acts-table th {
-        display: none;
-    }
-
-    #acts-table td {
-        position: relative;
-        padding-left: 50%;
-        text-align: left;
-    }
-
-    #acts-table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        font-weight: bold;
-    }
-
-    .table-container {
-        width: 100%;
-    }
-}
-
-/* Responsive Table Design */
-@media (max-width: 768px) {
-    #actes-table, #actes-table thead, #actes-table tbody, #actes-table th, #actes-table td, #actes-table tr,
-    #medecins-table, #medecins-table thead, #medecins-table tbody, #medecins-table th, #medecins-table td, #medecins-table tr {
-        display: block;
-    }
-
-    #actes-table th, #medecins-table th {
-        display: none; /* Masquer les en-têtes dans la version mobile */
-    }
-
-    #actes-table td, #medecins-table td {
-        position: relative;
-        padding-left: 50%;
-        text-align: left;
-    }
-
-    #actes-table td::before, #medecins-table td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        font-weight: bold;
-    }
-
-    .table-container {
-        width: 100%;
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .charts-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .chart-container {
-        width: 90%;
-    }
-
-    #stats-card-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .stats-card {
-        width: 80%;
-        margin-bottom: 20px;
-    }
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.2s;
+    white-space: nowrap;
 }

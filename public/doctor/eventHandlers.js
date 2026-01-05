@@ -7,6 +7,7 @@ import { loadVisitsRevenue } from './visitsRevenue.js';
 import {updatePatientAnalysisChart} from './patientsChart.js';
 import {updateAppointmentsAnalysisChart} from './appointmentsChart.js'
 import {updateDoctorWorkTimeAnalysisChart} from './workingTimeChart.js'
+import { loadRentabiliteData } from './rentabiliteDoctor.js';
 
 export function setupEventListeners() {
     document.getElementById('apply-period').addEventListener('click', async () => {
@@ -32,5 +33,8 @@ export function setupEventListeners() {
         updatePatientAnalysisChart(monthlyStats); 
         updateAppointmentsAnalysisChart(monthlyStats);
         updateDoctorWorkTimeAnalysisChart(monthlyStats);
+        
+        // Charger les données de rentabilité filtrées par médecin
+        loadRentabiliteData(doctorId);
     });
 }

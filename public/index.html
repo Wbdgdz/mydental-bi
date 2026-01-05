@@ -6,40 +6,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord de la clinique</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="clinic-dashboard.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Bibliothèques pour l'export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
+    <nav class="main-nav">
+        <a href="/" class="nav-brand">
+            <img src="logo3.png" alt="Logo" class="nav-logo"> MYDental BI
+        </a>
+        <ul class="nav-links">
+            <li><a href="/" class="active">Tableau de bord Clinique</a></li>
+            <li><a href="/doctorPerformance.html">Performance Médecins</a></li>
+            <li><a href="/simulateur-rentabilite.html">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html">Analyse Financière</a></li>
+            <li><a href="/patient-analysis.html">Analyse Patients</a></li>
+        </ul>
+            <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
+    </nav>
+
     <!-- Bouton pour ouvrir/fermer le menu -->
     <div id="menu-toggle" class="menu-icon">
-        &#9776; <!-- Icône hamburger -->
+        &#9776;
     </div>
 
-    <!-- Menu latéral -->
     <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            Navigation Rapide
+        </div>
         <ul>
-            <li><a href="#stats-card-container">Indicateurs</a></li>
-            <li><a href="#visits-revenue-chart">Visites et Revenus</a></li>
-            <li><a href="#patient-visits-chart">Évolution des Patients</a></li>
-            <li><a href="#hourly-revenue-heatmap">Revenus Horaires</a></li>
-            <li><a href="#actes-table">Tableau des Actes</a></li>
-            <li><a href="#medecins-table">Performance des Médecins</a></li>
-            <li><a href="#tarif-heure-chart">Tarif et Temps Travaillé</a></li>
-            <li><a href="#waiting-time-monthly-chart">Temps d'Attente Clinique</a></li>
-            <li><a href="#waiting-time-doctors-chart">Temps d'Attente Médecin</a></li>
-            <li><a href="#stacked-bar-chart">Rendez-vous</a></li>
+            <li><a href="#stats-card-container">Indicateurs Clés</a></li>
+            <li><a href="#visits-revenue-chart">Analyse Visites & Revenus</a></li>
+            <li><a href="#hourly-revenue-heatmap">Analyse Horaire</a></li>
+            <li><a href="#actes-table">Détail des Actes</a></li>
+            <li><a href="#medecins-table">Performance Médecins</a></li>
+            <li><a href="#waiting-time-monthly-chart">Temps d'Attente</a></li>
+            <li><a href="#stacked-bar-chart">Analyse Rendez-vous</a></li>
+            <li><a href="#rentabilite-section">Rentabilité</a></li>
         </ul>
     </nav>
 
     <!-- Contenu principal -->
-    <div class="title">Tableau de bord des performances de la clinique
-        <div class="period-selector">
-            <label for="start-date">Début :</label>
-            <input type="date" id="start-date" name="start-date">
+    <h1 class="page-title">Tableau de bord de la clinique</h1>
+
+    <div class="period-selector">
+        <label for="start-date">Début :</label>
+        <input type="date" id="start-date">
+        <label for="end-date">Fin :</label>
+        <input type="date" id="end-date">
+        <button id="apply-period">Appliquer</button>
         
-            <label for="end-date">Fin :</label>
-            <input type="date" id="end-date" name="end-date">
-        
-            <button id="apply-period">Appliquer</button>
+        <div style="margin-left: auto; display: flex; gap: 10px;">
+            <button id="export-pdf-btn" class="btn-export" title="Exporter en PDF">
+                📄 Exporter PDF
+            </button>
         </div>
     </div>
 
@@ -122,7 +144,7 @@
     </div>
 
     <!-- Tableau des Actes Dentaires -->
-    <div class="title">Tableau des Actes Dentaires</div>
+    <!-- <div class="chart-title">Tableau des Actes Dentaires</div> -->
     <div class="table-container">
         <h2>Analyse des Actes Dentaires</h2>
         <table id="actes-table">
@@ -164,7 +186,7 @@
     <!-- Comparaison du tarif et du temps de travail -->
     <div class="chart-container">
         <h2>Comparaison du Tarif par Heure et du Temps Travaillé</h2>
-        <svg id="tarif-heure-chart" width="800" height="500"></svg>
+        <svg id="tarif-heure-chart"></svg>
     </div>
 
     <!-- Temps d'attente moyen par mois -->
@@ -191,6 +213,38 @@
         <svg id="stacked-bar-chart"></svg>
     </div>
 
+    <!-- Section Rentabilité des Actes (basée sur simulation sauvegardée) -->
+    <div id="rentabilite-section" class="chart-container" style="display: none;">
+        <h2>📊 Analyse de Rentabilité des Actes</h2>
+        <p class="section-description">
+            Données issues de la dernière simulation du simulateur de rentabilité.
+            <a href="/simulateur-rentabilite.html" class="btn-simulateur" style="display: inline-block; background-color: var(--primary-color); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-left: 10px; transition: all 0.3s ease;">
+                📈 Aller au simulateur
+            </a>
+        </p>
+        
+        <div id="rentabilite-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+            <strong>ℹ️ Simulation:</strong> <span id="simulation-info-text">Aucune simulation disponible</span>
+        </div>
+
+        <div id="rentabilite-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <!-- Stats seront ajoutées dynamiquement -->
+        </div>
+
+        <!-- Graphiques généraux -->
+        <div id="rentabilite-charts-container">
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Top 10 Actes par Chiffre d'Affaires</h3>
+                <div id="rentabilite-ca-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Distribution du CA par Acte</h3>
+                <div id="rentabilite-marge-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts pour les visualisations -->
     <script type="module"  src="./clinic/visitsRevenue.js"></script>
     <script type="module"  src="./clinic/patientVisits.js"></script>
@@ -205,6 +259,21 @@
     <script type="module"  src="./clinic/rendezvous.js"></script>
     <script type="module"  src="./clinic/main.js"></script><!-- New JS file for doctor performance -->
     <script type="module"  src="./utilities/utils.js"></script>
+
+
+
+    
+
+    <footer class="site-footer">
+        <div class="w-full mx-auto max-w-screen-xl p-4">
+            <span>© 2025 <a href="#">MyDental BI</a>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <button id="back-to-top" title="Retour en haut">↑</button>
+
+    <script type="module" src="./clinic/visitsRevenue.js"></script>
+    <script type="module" src="./utilities/utils.js"></script>
 
 </body>
 </html>

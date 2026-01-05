@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur de rentabilité - MYDental BI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="simulateur-rentabilite.css">
+</head>
+<body>
+    <!-- Navigation principale -->
+    <nav class="main-nav">
+        <a href="/" class="nav-brand">
+            <img src="logo3.png" alt="Logo" class="nav-logo">
+            MYDental BI
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Tableau de bord Clinique</a></li>
+            <li><a href="/doctorPerformance.html">Performance Médecins</a></li>
+            <li><a href="/simulateur-rentabilite.html" class="active">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html">Analyse Financière</a></li>
+            <li><a href="/patient-analysis.html">Analyse Patients</a></li>
+        </ul>
+            <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
+    </nav>
+
+    <!-- Titre de la page -->
+    <h1 class="page-title">Simulateur de rentabilité des actes</h1>
+
+    <!-- Sélecteur de période -->
+    <div class="period-selector-container">
+        <div class="period-selector">
+            <label for="start-date">Début :</label>
+            <input type="date" id="start-date" name="start-date">
+            
+            <label for="end-date">Fin :</label>
+            <input type="date" id="end-date" name="end-date">
+            
+            <label for="doctor-select">Médecin :</label>
+            <select id="doctor-select" name="doctor-select">
+                <option value="all">Tous les médecins</option>
+            </select>
+            
+            <button id="apply-period" class="btn-apply">Appliquer</button>
+        </div>
+    </div>
+
+    <!-- Conteneur principal -->
+    <div class="main-container">
+        
+        <!-- Section des paramètres -->
+        <div class="simulator-section">
+            <h2>Paramètres de rentabilité</h2>
+            <p class="section-description">
+                Définissez les pourcentages de rémunération du médecin et du coût pour le centre. 
+                <br>Ces valeurs permettront de calculer la marge brute de chaque acte.
+            </p>
+            
+            <div class="simulator-params">
+                <div class="param-card">
+                    <label for="remuneration-medecin">
+                        <span class="param-icon">👨‍⚕️</span>
+                        Rémunération Médecin
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="remuneration-medecin" value="40" min="0" max="100" step="0.1">
+                        <span class="input-suffix">%</span>
+                    </div>
+                    <small>Pourcentage du CA versé au praticien</small>
+                </div>
+                
+                <div class="param-card">
+                    <label for="cout-centre">
+                        <span class="param-icon">🏥</span>
+                        Coût Centre
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="cout-centre" value="25" min="0" max="100" step="0.1">
+                        <span class="input-suffix">%</span>
+                    </div>
+                    <small>Charges et coûts opérationnels</small>
+                </div>
+                
+                <div class="param-card">
+                    <label for="marge-cible">
+                        <span class="param-icon">🎯</span>
+                        Marge Cible
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="marge-cible" value="30" min="0" max="100" step="0.1">
+                        <span class="input-suffix">%</span>
+                    </div>
+                    <small>Objectif de rentabilité souhaité</small>
+                </div>
+            </div>
+
+            <!-- Résumé visuel -->
+            <div class="params-summary">
+                <div class="summary-card card-medecin">
+                    <div class="summary-icon">👨‍⚕️</div>
+                    <div class="summary-content">
+                        <span class="summary-label">Rémunération Médecin</span>
+                        <span class="summary-value" id="summary-rem-med">40%</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card card-centre">
+                    <div class="summary-icon">🏥</div>
+                    <div class="summary-content">
+                        <span class="summary-label">Coût Centre</span>
+                        <span class="summary-value" id="summary-cout-centre">25%</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card card-marge">
+                    <div class="summary-icon">📊</div>
+                    <div class="summary-content">
+                        <span class="summary-label">Marge Actuelle Calculée</span>
+                        <span class="summary-value" id="summary-marge-actuelle">35%</span>
+                    </div>
+                </div>
+                
+                <div class="summary-card card-cible">
+                    <div class="summary-icon">🎯</div>
+                    <div class="summary-content">
+                        <span class="summary-label">Marge Cible</span>
+                        <span class="summary-value" id="summary-marge-cible">30%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="action-buttons">
+                <button id="calculer-rentabilite" class="btn-primary">
+                    <span class="btn-icon">📊</span>
+                    Calculer la Rentabilité
+                </button>
+                <button id="suggerer-tarifs" class="btn-secondary">
+                    <span class="btn-icon">💡</span>
+                    Suggérer Nouveaux Tarifs
+                </button>
+                <button id="save-simulation" class="btn-save" style="display: none;">
+                    <span class="btn-icon">💾</span>
+                    Sauvegarder la Simulation
+                </button>
+                <button id="export-data" class="btn-export">
+                    <span class="btn-icon">📥</span>
+                    Exporter CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- Section de l'analyse de rentabilité -->
+        <div class="results-section" id="rentabilite-section" style="display: none;">
+            <h2>Analyse de Rentabilité par Acte</h2>
+            <p class="section-description">
+                Vue détaillée de la rentabilité de chaque acte dentaire sur la période sélectionnée.
+            </p>
+
+            <!-- Statistiques globales -->
+            <div class="global-stats" id="global-stats">
+                <div class="stat-box">
+                    <span class="stat-label">Nombre d'actes analysés</span>
+                    <span class="stat-value" id="total-actes">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">CA Total</span>
+                    <span class="stat-value" id="total-ca">0 DA</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Marge Brute Totale</span>
+                    <span class="stat-value" id="total-marge">0 DA</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Marge Moyenne</span>
+                    <span class="stat-value" id="marge-moyenne">0%</span>
+                </div>
+            </div>
+            
+            <!-- Tableau de rentabilité -->
+            <div class="table-wrapper">
+                <table id="rentabilite-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Acte</th>
+                            <th>Visites</th>
+                            <th>Patients</th>
+                            <th>CA Total (DA)</th>
+                            <th>Heures</th>
+                            <th>Rémunération Médecin (DA)</th>
+                            <th>Coût Centre (DA)</th>
+                            <th>Marge Brute (DA)</th>
+                            <th>Marge %</th>
+                            <th>Marge/Heure (DA)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="10" class="loading-cell">
+                                <div class="loading-spinner"></div>
+                                <span>Chargement des données...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section des suggestions de tarifs -->
+        <div class="results-section" id="suggestions-section" style="display: none;">
+            <h2>Suggestions de Nouveaux Tarifs</h2>
+            <div class="alert-info">
+                <span class="alert-icon">💡</span>
+                <p>
+                    Ces tarifs suggérés permettraient d'atteindre la marge cible de <strong><span id="target-margin">30</span>%</strong> 
+                    tout en conservant les pourcentages de rémunération médecin et de coût centre définis.
+                </p>
+            </div>
+
+            <!-- Statistiques des suggestions -->
+            <div class="suggestion-stats" id="suggestion-stats">
+                <div class="stat-box stat-positive">
+                    <span class="stat-label">Actes à augmenter</span>
+                    <span class="stat-value" id="actes-augmenter">0</span>
+                </div>
+                <div class="stat-box stat-negative">
+                    <span class="stat-label">Actes à diminuer</span>
+                    <span class="stat-value" id="actes-diminuer">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">Variation moyenne</span>
+                    <span class="stat-value" id="variation-moyenne">0%</span>
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="suggestions-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Acte</th>
+                            <th>Prix Actuel (DA)</th>
+                            <th>Tarif Suggéré (DA)</th>
+                            <th>Variation</th>
+                            <th>Marge Actuelle</th>
+                            <th>Marge Cible</th>
+                            <th>CA Actuel (DA)</th>
+                            <th>CA Projeté (DA)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="8" class="loading-cell">
+                                <div class="loading-spinner"></div>
+                                <span>Chargement des suggestions...</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="./simulator/simulateurRentabilite.js"></script>
+    <script type="module" src="./utilities/utils.js"></script>
+</body>
+</html>

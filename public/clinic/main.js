@@ -9,7 +9,9 @@ import {loadChartData} from '../clinic/patientVisits.js';
 import {loadHourlyRevenueHeatmap} from '../clinic/hourlyRevenueHeatmap.js';
 import {loadPatientsHeatmap} from '../clinic/heatmap.js';
 import {loadWaitingTimeHeatmap} from '../clinic/heatmap-waiting-time.js';
-import {loadStackedBarData} from '../clinic/rendezvous.js'
+import {loadStackedBarData} from '../clinic/rendezvous.js';
+import {loadRentabiliteData} from '../clinic/rentabiliteCharts.js';
+import {initClinicExportButtons} from '../clinic/clinicExport.js';
 
 
 
@@ -24,13 +26,19 @@ import {loadStackedBarData} from '../clinic/rendezvous.js'
 document.addEventListener('DOMContentLoaded', function() {
     checkAuth();
 
-    const { startDate, endDate } = getLastMonthDateRange();
+    // --- MODIFICATION ICI : Dates fixes du 01/01/2022 au 31/12/2024 ---
+    const startDate = '2022-01-01';
+    const endDate = '2024-12-31';
 
-    // Initialiser les champs de date avec les valeurs du mois précédent
-    document.getElementById('start-date').value = startDate;
-    document.getElementById('end-date').value = endDate;
+    // Initialiser les champs de date avec les valeurs définies ci-dessus
+    const startDateInput = document.getElementById('start-date');
+    const endDateInput = document.getElementById('end-date');
     
-    // Charger les données pour le mois précédent
+    // Vérification de sécurité au cas où l'élément n'existe pas encore
+    if (startDateInput) startDateInput.value = startDate;
+    if (endDateInput) endDateInput.value = endDate;
+    
+    // Charger les données pour cette période par défaut
     loadStats(startDate, endDate);
     loadMedecinsData(startDate, endDate);
     loadVisitsRevenue(startDate, endDate);
@@ -41,10 +49,14 @@ document.addEventListener('DOMContentLoaded', function() {
     loadWaitingTimes(startDate, endDate);
     loadWaitingTimeHeatmap(startDate, endDate);
     loadStackedBarData(startDate, endDate);
+    loadRentabiliteData(); // Charger les données de rentabilité si disponibles
+
+    // Initialiser les boutons d'export
+    initClinicExportButtons();
 
     // Ajouter un écouteur pour le bouton "Appliquer"
     document.getElementById('apply-period').addEventListener('click', function () {
-        const { startDate, endDate } = getSelectedDateRange();
+        const { startDate, endDate } = getSelectedDateRange(); // Cette fonction lit les inputs
 
         if (startDate && endDate) {
             loadVisitsRevenue(startDate, endDate);
@@ -62,13 +74,5 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Gestion du menu latéral
-    const menuToggle = document.getElementById("menu-toggle");
-    const sidebar = document.getElementById("sidebar");
-    
-    menuToggle.addEventListener("click", function() {
-        sidebar.style.width = sidebar.style.width === '250px' ? '0' : '250px';
-        document.body.classList.toggle("with-sidebar");
-        this.classList.toggle("open"); // Change l'icône de menu
-    });
+    // Menu burger géré par utils.js - on supprime le code dupliqué ici
 });

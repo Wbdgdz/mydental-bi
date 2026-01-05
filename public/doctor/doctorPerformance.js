@@ -207,34 +207,4 @@ function updateActsTable(actsData) {
     });
 }
 
-// Remplir le menu déroulant des médecins disponibles
-// Fonction pour remplir le menu déroulant des médecins disponibles
-document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem('token'); // Récupérer le token JWT du localStorage
-
-    if (!token) {
-        console.error('Utilisateur non authentifié');
-        window.location.href = 'login.html'; // Rediriger vers la page de connexion si pas de token
-        return;
-    }
-
-    // Appel à l'API pour récupérer la liste des médecins
-    fetch('/api/doctors', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`, // Ajouter le token JWT dans l'en-tête Authorization
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(doctors => {
-        const select = document.getElementById('doctor-select');
-        doctors.forEach(doctor => {
-            const option = document.createElement('option');
-            option.value = doctor.id;
-            option.textContent = `${doctor.firstName} ${doctor.lastName}`;
-            select.appendChild(option);
-        });
-    })
-    .catch(error => console.error('Erreur lors de la récupération des médecins:', error));
-});
+// Le remplissage du menu déroulant des médecins est géré dans main.js

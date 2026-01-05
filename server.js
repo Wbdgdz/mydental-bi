@@ -105,14 +105,22 @@ app.use('/api/waiting-times-heatmap', authenticateToken, require('./routes/waiti
 app.use('/api/waiting-times-heatmap-doctor', authenticateToken,require('./routes/waitingTimeHeatmapDoctorRoute')(connection));
 app.use('/api/rendezvous', authenticateToken,require('./routes/rendezvousRoute')(connection));
 
+// Nouvelle route pour le simulateur de rentabilité (protégée)
+app.use('/api/simulateur-rentabilite', authenticateToken, require('./routes/simulateurRentabiliteRoute')(connection));
 
 // Nouvelle route pour l'analyse des performances des médecins (protégée)
 app.use('/api/doctor-performance', authenticateToken,require('./routes/doctor/doctorPerformanceRoute')(connection));
 app.use('/api/doctor/patient-evolution',authenticateToken, require('./routes/doctor/patientEvolutionRoute')(connection));
 app.use('/api/doctor/monthly-stats', authenticateToken,require('./routes/doctor/monthlyStatsRoute')(connection));
 
+// Nouvelle route pour l'analyse financière avancée (protégée)
+app.use('/api/financial-analysis', authenticateToken, require('./routes/financialAnalysisRoute')(connection));
 
+// Nouvelle route pour l'analyse des patients (protégée)
+app.use('/api/patient-analysis', authenticateToken, require('./routes/patientAnalysisRoute')(connection));
 
+// Nouvelle route pour l'analyse des flux clients (protégée)
+app.use('/api/patient-flow', authenticateToken, require('./routes/patientFlowRoute')(connection));
 
 // Démarrer le serveur
 app.listen(port, () => {

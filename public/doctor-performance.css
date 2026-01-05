@@ -1,0 +1,29 @@
+/* CSS Spécifique aux Performances Médecins */
+
+/* On met en avant la zone de filtre */
+.period-selector {
+    background: linear-gradient(135deg, #ffffff 0%, #f1f7ff 100%);
+    border-left: 5px solid #0056b3;
+    padding: 25px;
+}
+
+/* Style spécifique pour le selecteur de médecin */
+#doctor-select {
+    min-width: 220px;
+    border: 2px solid #e0e0e0;
+    background-color: #fff;
+    margin-right: 15px;
+    transition: border-color 0.3s;
+}
+
+#doctor-select:focus {
+    border-color: #0056b3;
+}
+
+/* Ajustement des labels */
+label {
+    font-weight: 500;
+    color: #555;
+    margin-right: 8px;
+    font-size: 14px;
+}

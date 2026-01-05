@@ -4,62 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analyse des Performances des Médecins</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Reusing existing styles -->
-    <script src="https://d3js.org/d3.v7.min.js"></script> <!-- Include D3.js for charts -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="doctor-performance.css">
+    <link rel="stylesheet" href="doctor-comparison.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Bibliothèques pour l'export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
+    
+    <nav class="main-nav">
+        <a href="/" class="nav-brand">
+            <img src="logo3.png" alt="Logo" class="nav-logo">
+            MYDental BI
+        </a>
+        <ul class="nav-links">
+            <li><a href="/">Tableau de bord Clinique</a></li>
+            <li><a href="/doctorPerformance.html" class="active">Performance Médecins</a></li>
+            <li><a href="/simulateur-rentabilite.html">Simulateur de Rentabilité</a></li>
+            <li><a href="/financial-analysis.html">Analyse Financière</a></li>
+            <li><a href="/patient-analysis.html">Analyse Patients</a></li>
+        </ul>
+        <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
+    </nav>
 
-    <div class="title">Analyse des Performances des Médecins</div>
+    <h1 class="page-title">Analyse des performances des médecins</h1>
 
-    <!-- Form to select the doctor and time range -->
-    <div class="period-selector">
-        <label for="doctor-select">Sélectionnez un médecin :</label>
-        <select id="doctor-select">
-            <!-- Dynamic doctor options will be loaded here -->
-        </select>
-
-        <label for="start-date">Début :</label>
-        <input type="date" id="start-date" name="start-date">
-        
-        <label for="end-date">Fin :</label>
-        <input type="date" id="end-date" name="end-date">
-        
-        <button id="apply-period">Appliquer</button>
+    <!-- Onglets de Navigation -->
+    <div class="mode-tabs-container">
+        <button class="mode-tab active" data-mode="individual">
+            Un seul médecin
+        </button>
+        <button class="mode-tab" data-mode="comparison">
+            Plusieurs médecins
+        </button>
     </div>
 
-    <!-- Section for displaying the performance indicators -->
+    <!-- Mode Performance Individuelle -->
+    <div id="individual-mode" class="mode-content">
+        <div class="period-selector">
+            <label for="doctor-select">Médecin :</label>
+            <select id="doctor-select">
+            </select>
+
+            <label for="start-date">Début :</label>
+            <input type="date" id="start-date" name="start-date">
+            
+            <label for="end-date">Fin :</label>
+            <input type="date" id="end-date" name="end-date">
+            
+            <button id="apply-period">Appliquer</button>
+            
+            <div style="margin-left: auto; display: flex; gap: 10px;">
+                <button id="export-individual-pdf-btn" class="btn-export" title="Exporter en PDF">
+                    📄 Exporter PDF
+                </button>
+            </div>
+        </div>
+
     <div id="stats-card-container">
-        <!-- Existing Indicators -->
         <div class="stats-card">
-            <div class="stats-title">#Patients uniques</div>
+            <div class="stats-title">Patients uniques</div>
             <div class="stats-value" id="unique-patients">Chargement...</div>
         </div>
 
         <div class="stats-card">
-            <div class="stats-title">#Visites</div>
+            <div class="stats-title">Visites</div>
             <div class="stats-value" id="total-visits">Chargement...</div>
         </div>
+
         <div class="stats-card">
-            <div class="stats-title">#Patients (pas de retour)</div>
+            <div class="stats-title">Patients (sans retour)</div>
             <div class="stats-value" id="patients-premiere-visite-pas-retour">Chargement...</div>
         </div>
         
         <div class="stats-card">
-            <div class="stats-title">#Nouveaux patients</div>
+            <div class="stats-title">Nouveaux patients</div>
             <div class="stats-value" id="new-patients">Chargement...</div>
         </div>
 
         <div class="stats-card">
-            <div class="stats-title">#Visites générées par les nouveaux patients</div>
+            <div class="stats-title">Visites (Nouveaux patients)</div>
             <div class="stats-value" id="visits-generated-by-new-patients">Chargement...</div>
         </div>
-         <!-- New indicators based on your SQL query -->
-         <div class="stats-card">
-            <div class="stats-title">#Patients (1ère visite - clinique)</div>
+        
+        <div class="stats-card">
+            <div class="stats-title">Patients (1ère visite clinique)</div>
             <div class="stats-value" id="patients-premiere-visite">Chargement...</div>
         </div>
+
         <div class="stats-card">
-            <div class="stats-title">#Visites générées (1ère visite - clinique)</div>
+            <div class="stats-title">Visites (1ère visite clinique)</div>
             <div class="stats-value" id="visites-premiere-visite">Chargement...</div>
         </div>
 
@@ -69,7 +105,7 @@
         </div>
 
         <div class="stats-card">
-            <div class="stats-title">Visites de suivi des patients fidèles</div>
+            <div class="stats-title">Visites de suivi</div>
             <div class="stats-value" id="follow-up-visits">Chargement...</div>
         </div>
 
@@ -77,76 +113,250 @@
             <div class="stats-title">Total des revenus</div>
             <div class="stats-value" id="total-revenue-consultations">Chargement...</div>
         </div>
+
         <div class="stats-card">
-            <div class="stats-title">#heures patient</div>
+            <div class="stats-title">Heures patient</div>
             <div class="stats-value" id="total-hours-worked">Chargement...</div>
         </div>
+
         <div class="stats-card">
             <div class="stats-title">CA par heure</div>
             <div class="stats-value" id="revenue-per-hour">Chargement...</div>
         </div>
+
         <div class="stats-card">
             <div class="stats-title">Temps Patient moyen</div>
             <div class="stats-value" id="hours-worked">Chargement...</div>
         </div>
 
-        <!-- New card for average waiting time -->
         <div class="stats-card">
             <div class="stats-title">Temps d'attente moyen</div>
             <div class="stats-value" id="avg-waiting-time">Chargement...</div>
         </div>
     </div>
-    <div class="chart-container">
-        <div class="chart-title">Analyse de la relation entre le nombre de visites et les revenus par mois</div>
-        <svg id="visits-revenue-chart"></svg>
+
+    <div class="charts-container">
+        
+        <div class="chart-container">
+            <div class="chart-title">Analyse : Visites vs Revenus</div>
+            <svg id="visits-revenue-chart"></svg>
+        </div>
+
+        <div class="table-container">
+            <h2>Détail des Actes Effectués</h2>
+            <table id="actes-table">
+                <thead>
+                    <tr>
+                        <th>Acte</th>
+                        <th>Patients</th>
+                        <th>Nombre d'actes</th>
+                        <th>Revenus (DA)</th>
+                        <th>Heures</th>
+                        <th>Coût/Heure (DA)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Analyse de la fidélité des patients</div>
+            <svg id="patients-chart"></svg>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-title">Évolution du Temps</div>
+            <svg id="performance-chart"></svg>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Génération des rendez-vous</div>
+            <svg id="appointments-chart"></svg> 
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Temps de travail</div>
+            <svg id="work-time-chart"></svg> 
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-title">Temps d'Attente Moyen (Heatmap)</div>
+            <svg id="waiting-time-heatmap"></svg>
+        </div>
+
+    </div>
     </div>
 
-    
-    <!-- Table for showing the number of acts -->
-    <div class="table-container">
-        <h2>Nombre d'actes effectués</h2>
-        <table id="actes-table">
-            <thead>
-                <tr>
-                    <th>Acte</th>
-                    <th>Nombre de patients</th>
-                    <th>Nombre d'actes</th>
-                    <th>Total des revenus (DA)</th>
-                    <th>Total Heures</th>
-                    <th>Coût Moyen par Heure (DA)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Dynamic rows will be appended here -->
-            </tbody>
-        </table>
-    </div>
-   
-    <div class="chart-container">
-        <div class="chart-title">Analyse de la fidélité des patients</div>
-        <svg id="patients-chart"></svg> <!-- Correction de l'ID et structure -->
-    </div>
-    
-    <!-- Section for charts (e.g., performance evolution over time) -->
-    <div class="chart-container">
-        <div class="chart-title">Évolution du Temps</div>
-        <svg id="performance-chart"></svg> <!-- Updated title for time analysis -->
+    <!-- Mode Comparaison -->
+    <div id="comparison-mode" class="mode-content" style="display: none;">
+        <!-- Section de sélection -->
+        <div class="comparison-selector">
+            <div class="doctor-selectors">
+                <div class="doctor-selector-group">
+                    <label for="doctor-select-1">Médecin 1 :</label>
+                    <select id="doctor-select-1" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+                <div class="doctor-selector-group">
+                    <label for="doctor-select-2">Médecin 2 :</label>
+                    <select id="doctor-select-2" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+                <div class="doctor-selector-group">
+                    <label for="doctor-select-3">Médecin 3 (optionnel) :</label>
+                    <select id="doctor-select-3" class="doctor-compare-select">
+                        <option value="">-- Sélectionner --</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="comparison-period">
+                <label for="comparison-start-date">Début :</label>
+                <input type="date" id="comparison-start-date" name="comparison-start-date">
+                
+                <label for="comparison-end-date">Fin :</label>
+                <input type="date" id="comparison-end-date" name="comparison-end-date">
+            </div>
+
+            <button id="compare-btn" class="btn-compare" disabled>
+                <span class="btn-icon">📊</span>
+                Comparer les médecins
+            </button>
+        </div>
+
+        <!-- Section des résultats -->
+        <div id="comparison-results" class="comparison-results">
+            <div class="empty-state">
+                <div class="empty-icon">📊</div>
+                <h3>Aucune comparaison en cours</h3>
+                <p>Sélectionnez au moins 2 médecins et une période pour commencer</p>
+            </div>
+        </div>
     </div>
 
-    <div class="chart-container">
-        <div class="chart-title">Génération des rendez-vous</div>
-        <svg id="appointments-chart"></svg> 
+    <!-- Section Rentabilité des Actes (basée sur simulation sauvegardée) -->
+    <div id="rentabilite-section" class="chart-container" style="display: none;">
+        <h2>📊 Analyse de Rentabilité par Médecin</h2>
+        <p class="section-description">
+            Données issues de la dernière simulation du simulateur de rentabilité.
+            <a href="/simulateur-rentabilite.html" class="btn-simulateur" style="display: inline-block; background-color: var(--primary-color); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; margin-left: 10px; transition: all 0.3s ease;">
+                📈 Aller au simulateur
+            </a>
+        </p>
+        
+        <div id="rentabilite-info" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+            <strong>ℹ️ Simulation:</strong> <span id="simulation-info-text">Aucune simulation disponible</span>
+        </div>
+
+        <div id="rentabilite-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <!-- Stats seront ajoutées dynamiquement -->
+        </div>
+
+        <!-- Graphiques spécifiques pour l'analyse par médecin -->
+        <div id="rentabilite-charts-container">
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Analyse Marge vs Chiffre d'Affaires</h3>
+                <p style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px;">
+                    Position des actes selon leur CA et leur marge. Plus les bulles sont grandes, plus il y a de visites.
+                </p>
+                <div id="rentabilite-scatter-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Top 10 des Actes les Plus Rentables</h3>
+                <div id="rentabilite-top-marge-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3 style="margin-bottom: 15px;">Potentiel d'Optimisation (Gain possible en atteignant la cible)</h3>
+                <p style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px;">
+                    Actes avec le plus fort potentiel d'amélioration de la marge.
+                </p>
+                <div id="rentabilite-potentiel-chart" style="width: 100%; min-height: 400px;"></div>
+            </div>
+        </div>
     </div>
-    <div class="chart-container"></div>
-        <div class="chart-title">Génération des rendez-vous</div>
-        <svg id="work-time-chart"></svg> 
-    </div>
-    <div class="chart-container">
-        <h2>Temps d'Attente Moyen par Plage Horaire et par Mois</h2>
-        <svg id="waiting-time-heatmap"></svg>
-    </div>
-    <!-- Include your JavaScript file -->
-    <script type="module" src="./doctor/main.js"></script><!-- New JS file for doctor performance -->
+
     <script type="module" src="./utilities/utils.js"></script>
+    <script type="module" src="./doctor/doctorPerformance.js"></script>
+    <script type="module" src="./doctor/doctorComparisonPage.js"></script>
+    <script type="module">
+        // Gestion des onglets
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.mode-tab');
+            const individualMode = document.getElementById('individual-mode');
+            const comparisonMode = document.getElementById('comparison-mode');
+            
+            // Fonction pour changer de mode
+            function switchMode(mode) {
+                // Retirer la classe active de tous les onglets
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Ajouter la classe active au bon onglet
+                const activeTab = document.querySelector(`[data-mode="${mode}"]`);
+                if (activeTab) {
+                    activeTab.classList.add('active');
+                }
+                
+                // Afficher le bon mode
+                if (mode === 'individual') {
+                    individualMode.style.display = 'block';
+                    comparisonMode.style.display = 'none';
+                    // Afficher la section rentabilité en mode individuel
+                    const rentabiliteSection = document.getElementById('rentabilite-section');
+                    if (rentabiliteSection) {
+                        rentabiliteSection.style.display = 'block';
+                    }
+                } else {
+                    individualMode.style.display = 'none';
+                    comparisonMode.style.display = 'block';
+                    // Masquer la section rentabilité en mode comparaison
+                    const rentabiliteSection = document.getElementById('rentabilite-section');
+                    if (rentabiliteSection) {
+                        rentabiliteSection.style.display = 'none';
+                    }
+                }
+            }
+            
+            // Gérer le clic sur les onglets
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const mode = tab.dataset.mode;
+                    switchMode(mode);
+                    // Mettre à jour l'URL sans recharger la page
+                    window.location.hash = mode === 'comparison' ? 'comparison' : '';
+                });
+            });
+            
+            // Vérifier l'URL au chargement pour afficher le bon onglet
+            const hash = window.location.hash.substring(1);
+            if (hash === 'comparison') {
+                switchMode('comparison');
+            } else {
+                switchMode('individual');
+            }
+            
+            // Écouter les changements de hash
+            window.addEventListener('hashchange', () => {
+                const hash = window.location.hash.substring(1);
+                switchMode(hash === 'comparison' ? 'comparison' : 'individual');
+            });
+        });
+    </script>
+
+    <footer class="site-footer">
+        <div class="w-full mx-auto max-w-screen-xl p-4">
+            <span>© 2025 <a href="#">MyDental BI</a>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <button id="back-to-top" title="Retour en haut">↑</button>
+
+    <script type="module" src="./doctor/main.js"></script>
+    <script type="module" src="./utilities/utils.js"></script>
+    <script type="module" src="./doctor/comparisonMode.js"></script>
 </body>
 </html>

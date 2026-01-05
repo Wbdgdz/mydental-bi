@@ -1,99 +1,85 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connexion</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f0f0f0;
-    }
-    .login-container {
-      padding: 20px;
-      background-color: #f4f4f4;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 300px;
-      text-align: center;
-    }
-    /* Style pour une sélection elliptique pour le logo */
-    .login-container img {
-      width: 100px;
-      height: 100px;
-      object-fit: contain;
-      border-radius: 80% / 80%; /* Création de l'ellipse */
-      margin-bottom: 20px;
-    }
-    .login-container input {
-      display: block;
-      margin-bottom: 10px;
-      width: 100%;
-      padding: 10px;
-    }
-    .login-container button {
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      cursor: pointer;
-      width: 100%;
-    }
-    #message {
-      margin-top: 10px;
-      color: red;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - MYDental BI</title>
+    <link rel="stylesheet" href="styles.css"> 
 </head>
-<body>
-  <div class="login-container">
-    <!-- Ajout du logo -->
-    <img src="logo.png" alt="Logo de l'application">
+<body class="login-page">
     
-    <h2>Connexion</h2>
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="Nom d'utilisateur" required>
-      <input type="password" id="password" placeholder="Mot de passe" required>
-      <button type="submit">Se connecter</button>
-    </form>
-    <div id="message"></div>
-  </div>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-container">
+                    <img src="logo3.png" alt="Logo MYDental">
+                </div>
+                <h1>Bienvenue</h1>
+                <p>Connectez-vous à votre espace décisionnel</p>
+            </div>
 
-  <script>
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Identifiant</label>
+                    <input type="text" id="username" name="username" placeholder="Entrez votre identifiant" required>
+                </div>
 
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
 
-      try {
-        const response = await fetch('http://localhost:3000/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
+                <button type="submit" class="btn-login">Se connecter</button>
+            </form>
+
+            <div id="message" class="error-message"></div>
+        </div>
+        
+        <div class="login-footer">
+            © 2025 MYDental BI. Tous droits réservés.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+
+            // On efface le message précédent
+            messageDiv.style.display = 'none';
+            messageDiv.textContent = '';
+
+            try {
+                // Utilisation d'un chemin relatif '/login' au lieu de 'http://localhost:3000/login'
+                // Cela évite les problèmes si tu changes de port ou déploies sur un serveur.
+                const response = await fetch('/login', { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Stocker le token JWT dans le localStorage
+                    localStorage.setItem('token', data.token);
+                    // Redirection vers la racine (qui charge index.html)
+                    window.location.href = '/'; 
+                } else {
+                    messageDiv.style.display = 'block';
+                    messageDiv.textContent = 'Erreur : ' + (data.error || 'Identifiants incorrects');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la connexion', error);
+                messageDiv.style.display = 'block';
+                messageDiv.textContent = 'Impossible de contacter le serveur.';
+            }
         });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          // Stocker le token JWT dans le localStorage
-          localStorage.setItem('token', data.token);
-          // Rediriger vers index.html après succès de la connexion
-          window.location.href = 'index.html';
-        } else {
-          document.getElementById('message').textContent = 'Erreur : ' + (data.error || 'Connexion échouée');
-        }
-      } catch (error) {
-        console.error('Erreur lors de la connexion', error);
-        document.getElementById('message').textContent = 'Erreur lors de la connexion.';
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
