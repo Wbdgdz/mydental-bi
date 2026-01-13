@@ -34,9 +34,9 @@ async function loadGlobalIndicators(startDate, endDate) {
         });
         const data = await response.json();
 
+        // Ensure other indicators are updated correctly
         document.getElementById('total-patients').textContent = data.total_patients || 0;
         document.getElementById('new-patients').textContent = data.new_patients || 0;
-        document.getElementById('returning-patients').textContent = data.returning_patients || 0;
         document.getElementById('retention-rate').textContent = (data.retention_rate || 0) + '%';
         document.getElementById('new-patients-returned').textContent = data.new_patients_returned || 0;
         document.getElementById('avg-visits-per-patient').textContent = data.avg_visits_per_patient || 0;
@@ -67,7 +67,6 @@ async function loadMonthlyEvolution(startDate, endDate) {
                 <td><strong>${row.month}</strong></td>
                 <td>${row.total_patients}</td>
                 <td style="color: #27ae60;">${row.new_patients}</td>
-                <td style="color: #3498db;">${row.returning_patients}</td>
                 <td>${row.total_visits}</td>
                 <td><strong>${row.avg_visits_per_patient}</strong></td>
             </tr>
@@ -104,7 +103,7 @@ function createMonthlyEvolutionChart(data) {
         .padding(0.2);
 
     const y = d3.scaleLinear()
-        .domain([0, d3.max(data, d => Math.max(d.new_patients, d.returning_patients, d.total_patients))])
+        .domain([0, d3.max(data, d => Math.max(d.new_patients, d.total_patients))])
         .nice()
         .range([height, 0]);
 
@@ -121,26 +120,6 @@ function createMonthlyEvolutionChart(data) {
         .on("mouseover", function(event, d) {
             globalTooltip.transition().duration(200).style("opacity", .9);
             globalTooltip.html(`Nouveaux patients: ${d.new_patients}`)
-                .style("left", (event.pageX + 5) + "px")
-                .style("top", (event.pageY - 28) + "px");
-        })
-        .on("mouseout", function() {
-            globalTooltip.transition().duration(500).style("opacity", 0);
-        });
-
-    // Barres pour patients fidèles
-    svg.selectAll(".bar-returning")
-        .data(data)
-        .enter().append("rect")
-        .attr("class", "bar-returning")
-        .attr("x", d => x(d.month) + x.bandwidth() / 2)
-        .attr("y", d => y(d.returning_patients))
-        .attr("width", x.bandwidth() / 2)
-        .attr("height", d => height - y(d.returning_patients))
-        .attr("fill", "#3498db")
-        .on("mouseover", function(event, d) {
-            globalTooltip.transition().duration(200).style("opacity", .9);
-            globalTooltip.html(`Patients fidèles: ${d.returning_patients}`)
                 .style("left", (event.pageX + 5) + "px")
                 .style("top", (event.pageY - 28) + "px");
         })
@@ -195,7 +174,6 @@ function createMonthlyEvolutionChart(data) {
 
     const legendData = [
         { label: "Nouveaux", color: "#27ae60" },
-        { label: "Fidèles", color: "#3498db" },
         { label: "Total", color: "#e74c3c" }
     ];
 
