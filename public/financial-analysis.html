@@ -23,10 +23,11 @@
         <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
     </nav>
 
-    <h1 class="page-title">📊 Analyse Financière Avancée - Gestion des Impayés</h1>
+    <h1 class="page-title">📊 Analyse Financière Avancée & Trésorerie</h1>
 
     <div class="main-container">
         <div class="metrics-grid" id="metrics-grid">
+            
             <div class="metric-card">
                 <h3>💰 Taux d'Impayés Global</h3>
                 <div class="metric-value" id="unpaid-rate">-</div>
@@ -38,13 +39,42 @@
                     </div>
                     <div class="metric-secondary-item">
                         <div class="metric-secondary-value" id="total-remaining">-</div>
-                        <div class="metric-secondary-label">Reste à charge</div>
+                        <div class="metric-secondary-label">Total Dû</div>
                     </div>
                 </div>
             </div>
 
             <div class="metric-card">
-                <h3>📈 Taux de Recouvrement (CA)</h3>
+                <h3>🔍 Nature des Impayés</h3>
+                <div class="breakdown-container" style="margin-top: 15px;">
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">🔴 Dette Patient (Risque)</span>
+                        <span class="breakdown-value" id="patient-debt">-</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span class="breakdown-label">🟡 Attente Tiers Payant</span>
+                        <span class="breakdown-value" id="insurance-debt">-</span>
+                    </div>
+                </div>
+                <div class="metric-label" style="margin-top:10px; font-size: 0.8em; color: #666;">
+                    Distinction basée sur le mode de paiement
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>🛒 Panier Moyen</h3>
+                <div class="metric-value" id="average-ticket">-</div>
+                <div class="metric-label">Valeur moyenne par acte</div>
+                <div class="metric-secondary">
+                    <div class="metric-secondary-item">
+                        <div class="metric-secondary-value" id="total-transactions">-</div>
+                        <div class="metric-secondary-label">Nb Actes</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>📈 Recouvrement & Trésorerie</h3>
                 <div class="metric-value" id="full-payment-rate">-</div>
                 <div class="metric-label">Part du CA encaissée</div>
                 <div class="metric-secondary">
@@ -56,198 +86,147 @@
             </div>
         </div>
 
-        <div class="chart-card">
-            <h3>👥 Top 10 Patients (Reste à charge > 0)</h3>
-            <table class="patients-table" id="patients-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Patient</th>
-                        <th>Montant Impayé</th>
-                        <th>Dossiers en cours</th>
-                        <th>Dernier RDV</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="5" class="loading">Chargement des données...</td></tr>
-                </tbody>
-            </table>
+        <div class="charts-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+            
+            <div class="chart-card">
+                <h3>💳 Répartition des Modes de Paiement</h3>
+                <table class="patients-table" id="payment-methods-table">
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Volume (€)</th>
+                            <th>Nb Trans.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" class="loading">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="chart-card">
+                <h3>👥 Top 10 Patients (Reste à charge)</h3>
+                <table class="patients-table" id="patients-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Patient</th>
+                            <th>Montant</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="4" class="loading">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="chart-card">
+        <div class="chart-card" style="margin-top: 20px;">
             <h3>📊 Évolution Mensuelle des Créances</h3>
             <div id="monthly-chart" class="loading">Chargement des données...</div>
-        </div>
-
-        <div class="chart-card">
-            <h3>💳 Volumétrie des Dossiers</h3>
-            <div class="recovery-stats" id="recovery-stats">
-                <div class="loading">Chargement des données...</div>
-            </div>
         </div>
     </div>
 
     <script>
-        // Gestion de l'authentification
         const token = localStorage.getItem('token');
-        if (!token) {
-            window.location.href = '/login.html';
-        }
+        if (!token) window.location.href = '/login.html';
 
-        // Dates fixes pour toute la page
         const START_DATE = '2015-12-01';
         const END_DATE = new Date().toISOString().split('T')[0];
 
-        // Fonction pour formater les montants
         function formatCurrency(amount) {
-            return new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: 'EUR'
-            }).format(amount || 0);
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount || 0);
         }
-
-        // Fonction pour formater les dates
         function formatDate(dateString) {
             if (!dateString) return '-';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('fr-FR');
+            return new Date(dateString).toLocaleDateString('fr-FR');
         }
 
-        // Chargement du taux d'impayés
+        // 1. Taux Impayés
         async function loadUnpaidRate() {
             try {
-                const response = await fetch(`/api/financial-analysis/unpaid-rate?startDate=${START_DATE}&endDate=${END_DATE}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                // Correction affichage
+                const res = await fetch(`/api/financial-analysis/unpaid-rate?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
                 document.getElementById('unpaid-rate').textContent = (data.unpaid_rate_percent || 0) + '%';
                 document.getElementById('total-amount').textContent = formatCurrency(data.total_amount);
                 document.getElementById('total-remaining').textContent = formatCurrency(data.total_remaining);
-            } catch (error) {
-                console.error('Erreur lors du chargement du taux d\'impayés:', error);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Chargement des top patients avec impayés
-        async function loadTopUnpaidPatients() {
+        // 2. Panier Moyen
+        async function loadAverageTicket() {
             try {
-                const response = await fetch(`/api/financial-analysis/top-unpaid-patients?startDate=${START_DATE}&endDate=${END_DATE}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
+                const res = await fetch(`/api/financial-analysis/average-ticket?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                document.getElementById('average-ticket').textContent = formatCurrency(data.average_ticket);
+                document.getElementById('total-transactions').textContent = data.total_transactions;
+            } catch (e) { console.error(e); }
+        }
 
-                const tbody = document.querySelector('#patients-table tbody');
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Aucun patient avec impayés</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = data.map((patient, index) => `
+        // 3. Répartition Paiements
+        async function loadPaymentMethods() {
+            try {
+                const res = await fetch(`/api/financial-analysis/payment-methods?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                const tbody = document.querySelector('#payment-methods-table tbody');
+                tbody.innerHTML = data.map(row => `
                     <tr>
-                        <td>${index + 1}</td>
-                        <td>${patient.patient_name}</td>
-                        <td class="amount-unpaid">${formatCurrency(patient.total_unpaid)}</td>
-                        <td>${patient.payment_count}</td>
-                        <td>${formatDate(patient.last_payment_date)}</td>
+                        <td>${row.method}</td>
+                        <td>${formatCurrency(row.total_amount)}</td>
+                        <td>${row.transaction_count}</td>
                     </tr>
                 `).join('');
-            } catch (error) {
-                console.error('Erreur lors du chargement des patients avec impayés:', error);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Chargement du taux de recouvrement
-        async function loadRecoveryRate() {
+        // 4. Distinction Impayés
+        async function loadUnpaidBreakdown() {
             try {
-                const response = await fetch(`/api/financial-analysis/recovery-rate?startDate=${START_DATE}&endDate=${END_DATE}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                // Sécurisation de l'affichage avec toFixed pour éviter les décimales infinies
-                const fullRate = parseFloat(data.full_payment_rate || 0);
-                const partialRate = parseFloat(data.partial_payment_rate || 0);
-
-                document.getElementById('full-payment-rate').textContent = fullRate.toFixed(2) + '%';
-                document.getElementById('partial-payment-rate').textContent = partialRate.toFixed(2) + '%';
-
-                const recoveryStatsHtml = `
-                    <div class="recovery-stat-item">
-                        <div class="recovery-stat-value" style="color: #27ae60;">${data.full_payments || 0}</div>
-                        <div class="recovery-stat-label">Dossiers Soldés</div>
-                    </div>
-                    <div class="recovery-stat-item">
-                        <div class="recovery-stat-value" style="color: #3498db;">${data.total_payments || 0}</div>
-                        <div class="recovery-stat-label">Total Visites Facturées</div>
-                    </div>
-                `;
-                document.getElementById('recovery-stats').innerHTML = recoveryStatsHtml;
-            } catch (error) {
-                console.error('Erreur lors du chargement du taux de recouvrement:', error);
-            }
+                const res = await fetch(`/api/financial-analysis/unpaid-breakdown?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                document.getElementById('patient-debt').textContent = formatCurrency(data.patient_debt);
+                document.getElementById('insurance-debt').textContent = formatCurrency(data.insurance_pending);
+            } catch (e) { console.error(e); }
         }
 
-        // Chargement de l'évolution mensuelle
-        async function loadMonthlyEvolution() {
-            try {
-                const response = await fetch(`/api/financial-analysis/monthly-receivables?startDate=${START_DATE}&endDate=${END_DATE}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-
-                if (!data || data.length === 0) {
-                    document.getElementById('monthly-chart').innerHTML = '<p style="text-align: center;">Aucune donnée disponible</p>';
-                    return;
-                }
-
-                const chartHtml = `
-                    <table class="patients-table">
-                        <thead>
-                            <tr>
-                                <th>Mois</th>
-                                <th>CA Facturé</th>
-                                <th>Reste à Charge</th>
-                                <th>Taux Impayés</th>
-                                <th>Nb Dossiers</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.map(row => `
-                                <tr>
-                                    <td>${row.month}</td>
-                                    <td>${formatCurrency(row.total_amount)}</td>
-                                    <td class="amount-unpaid">${formatCurrency(row.total_remaining)}</td>
-                                    <td>${row.unpaid_rate_percent || 0}%</td>
-                                    <td>${row.payment_count}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-                document.getElementById('monthly-chart').innerHTML = chartHtml;
-            } catch (error) {
-                console.error('Erreur lors du chargement de l\'évolution mensuelle:', error);
-                document.getElementById('monthly-chart').innerHTML = '<div class="error-message">Erreur de chargement</div>';
-            }
+        // 5. Autres fonctions existantes (Top Patients, Recouvrement, Mensuel)
+        async function loadTopPatients() {
+             const res = await fetch(`/api/financial-analysis/top-unpaid-patients?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+             const data = await res.json();
+             document.querySelector('#patients-table tbody').innerHTML = data.map((p, i) => `
+                <tr><td>${i+1}</td><td>${p.patient_name}</td><td class="amount-unpaid">${formatCurrency(p.total_unpaid)}</td><td>${formatDate(p.last_payment_date)}</td></tr>
+             `).join('');
         }
 
-        // Charger toutes les données
-        function loadAllData() {
+        async function loadRecovery() {
+            const res = await fetch(`/api/financial-analysis/recovery-rate?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            document.getElementById('full-payment-rate').textContent = parseFloat(data.full_payment_rate).toFixed(2) + '%';
+            document.getElementById('partial-payment-rate').textContent = parseFloat(data.partial_payment_rate).toFixed(2) + '%';
+        }
+
+        async function loadMonthly() {
+            const res = await fetch(`/api/financial-analysis/monthly-receivables?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            document.getElementById('monthly-chart').innerHTML = `<table class="patients-table">
+                <thead><tr><th>Mois</th><th>CA</th><th>Reste</th><th>% Impayé</th></tr></thead>
+                <tbody>${data.map(r => `<tr><td>${r.month}</td><td>${formatCurrency(r.total_amount)}</td><td class="amount-unpaid">${formatCurrency(r.total_remaining)}</td><td>${r.unpaid_rate_percent}%</td></tr>`).join('')}</tbody>
+            </table>`;
+        }
+
+        function loadAll() {
             loadUnpaidRate();
-            loadTopUnpaidPatients();
-            loadRecoveryRate();
-            loadMonthlyEvolution();
+            loadAverageTicket();
+            loadPaymentMethods();
+            loadUnpaidBreakdown();
+            loadTopPatients();
+            loadRecovery();
+            loadMonthly();
         }
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('token');
-            window.location.href = '/login.html';
-        });
-
-        // Initialisation - charger directement les données
-        loadAllData();
+        document.getElementById('logout-btn').addEventListener('click', () => { localStorage.removeItem('token'); window.location.href = '/login.html'; });
+        loadAll();
     </script>
 </body>
 </html>
