@@ -6,6 +6,7 @@
     <title>Analyse Financière - MYDental BI</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="finanial-analysis.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <nav class="main-nav">
@@ -48,7 +49,7 @@
                 <h3>🔍 Nature des Impayés</h3>
                 <div class="breakdown-container" style="margin-top: 15px;">
                     <div class="breakdown-item">
-                        <span class="breakdown-label">🔴 Dette Patient (Risque)</span>
+                        <span class="breakdown-label">🔴 Dette Patient</span>
                         <span class="breakdown-value" id="patient-debt">-</span>
                     </div>
                     <div class="breakdown-item">
@@ -62,19 +63,13 @@
             </div>
 
             <div class="metric-card">
-                <h3>🛒 Panier Moyen</h3>
+                <h3>🛒 Prix Moyen des prestations</h3>
                 <div class="metric-value" id="average-ticket">-</div>
                 <div class="metric-label">Valeur moyenne par acte</div>
-                <div class="metric-secondary">
-                    <div class="metric-secondary-item">
-                        <div class="metric-secondary-value" id="total-transactions">-</div>
-                        <div class="metric-secondary-label">Nb Actes</div>
-                    </div>
-                </div>
             </div>
 
             <div class="metric-card">
-                <h3>📈 Recouvrement & Trésorerie</h3>
+                <h3>📈 Recouvrement</h3>
                 <div class="metric-value" id="full-payment-rate">-</div>
                 <div class="metric-label">Part du CA encaissée</div>
                 <div class="metric-secondary">
@@ -95,7 +90,7 @@
                         <tr>
                             <th>Mode</th>
                             <th>Volume (€)</th>
-                            <th>Nb Trans.</th>
+                            <th style="width: 80px; text-align: right;">Part (%)</th> 
                         </tr>
                     </thead>
                     <tbody>
@@ -123,8 +118,10 @@
         </div>
 
         <div class="chart-card" style="margin-top: 20px;">
-            <h3>📊 Évolution Mensuelle des Créances</h3>
-            <div id="monthly-chart" class="loading">Chargement des données...</div>
+            <h3>📊 Cash Flow : Facturé vs Encaissé</h3>
+            <div style="height: 400px; position: relative;">
+                <canvas id="monthlyChartCanvas"></canvas>
+            </div>
         </div>
     </div>
 
@@ -134,6 +131,8 @@
 
         const START_DATE = '2015-12-01';
         const END_DATE = new Date().toISOString().split('T')[0];
+        
+        let monthlyChartInstance = null; // Instance pour le graphique mensuel
 
         function formatCurrency(amount) {
             return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount || 0);
@@ -154,30 +153,57 @@
             } catch (e) { console.error(e); }
         }
 
-        // 2. Panier Moyen
+        // 2. Panier Moyen (Sans volume)
         async function loadAverageTicket() {
             try {
                 const res = await fetch(`/api/financial-analysis/average-ticket?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
                 const data = await res.json();
                 document.getElementById('average-ticket').textContent = formatCurrency(data.average_ticket);
-                document.getElementById('total-transactions').textContent = data.total_transactions;
             } catch (e) { console.error(e); }
         }
 
-        // 3. Répartition Paiements
+        // 3. Répartition Paiements (Tableau)
         async function loadPaymentMethods() {
             try {
-                const res = await fetch(`/api/financial-analysis/payment-methods?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const res = await fetch(`/api/financial-analysis/payment-methods?startDate=${START_DATE}&endDate=${END_DATE}`, { 
+                    headers: { 'Authorization': `Bearer ${token}` } 
+                });
                 const data = await res.json();
+                
+                // 1. Calcul du total global pour faire le pourcentage
+                // On utilise reduce pour sommer tous les 'total_amount'
+                const totalRevenue = data.reduce((acc, curr) => acc + (parseFloat(curr.total_amount) || 0), 0);
+
                 const tbody = document.querySelector('#payment-methods-table tbody');
-                tbody.innerHTML = data.map(row => `
-                    <tr>
-                        <td>${row.method}</td>
-                        <td>${formatCurrency(row.total_amount)}</td>
-                        <td>${row.transaction_count}</td>
-                    </tr>
-                `).join('');
-            } catch (e) { console.error(e); }
+                
+                // Sécurité si aucune donnée
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center">Aucune donnée</td></tr>';
+                    return;
+                }
+
+                // 2. Génération des lignes avec le calcul du %
+                tbody.innerHTML = data.map(row => {
+                    const amount = parseFloat(row.total_amount) || 0;
+                    // Calcul du pourcentage (sécurité division par zéro)
+                    const percent = totalRevenue > 0 ? ((amount / totalRevenue) * 100).toFixed(1) : 0;
+
+                    return `
+                        <tr>
+                            <td>${row.method}</td>
+                            <td style="font-weight: bold;">${formatCurrency(amount)}</td>
+                            <td style="text-align: right;">
+                                ${percent}%
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (e) { 
+                console.error('Erreur chargement modes de paiement:', e); 
+                document.querySelector('#payment-methods-table tbody').innerHTML = 
+                    '<tr><td colspan="3" style="color:red">Erreur de chargement</td></tr>';
+            }
         }
 
         // 4. Distinction Impayés
@@ -190,11 +216,13 @@
             } catch (e) { console.error(e); }
         }
 
-        // 5. Autres fonctions existantes (Top Patients, Recouvrement, Mensuel)
+        // 5. Autres (Top Patients, Recouvrement)
         async function loadTopPatients() {
              const res = await fetch(`/api/financial-analysis/top-unpaid-patients?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
              const data = await res.json();
-             document.querySelector('#patients-table tbody').innerHTML = data.map((p, i) => `
+             const tbody = document.querySelector('#patients-table tbody');
+             if(!data || data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" align="center">Aucun patient</td></tr>'; return; }
+             tbody.innerHTML = data.map((p, i) => `
                 <tr><td>${i+1}</td><td>${p.patient_name}</td><td class="amount-unpaid">${formatCurrency(p.total_unpaid)}</td><td>${formatDate(p.last_payment_date)}</td></tr>
              `).join('');
         }
@@ -206,13 +234,70 @@
             document.getElementById('partial-payment-rate').textContent = parseFloat(data.partial_payment_rate).toFixed(2) + '%';
         }
 
-        async function loadMonthly() {
-            const res = await fetch(`/api/financial-analysis/monthly-receivables?startDate=${START_DATE}&endDate=${END_DATE}`, { headers: { 'Authorization': `Bearer ${token}` } });
-            const data = await res.json();
-            document.getElementById('monthly-chart').innerHTML = `<table class="patients-table">
-                <thead><tr><th>Mois</th><th>CA</th><th>Reste</th><th>% Impayé</th></tr></thead>
-                <tbody>${data.map(r => `<tr><td>${r.month}</td><td>${formatCurrency(r.total_amount)}</td><td class="amount-unpaid">${formatCurrency(r.total_remaining)}</td><td>${r.unpaid_rate_percent}%</td></tr>`).join('')}</tbody>
-            </table>`;
+        // 7. Graphique Mensuel (Bar Chart)
+        async function loadMonthlyEvolution() {
+            try {
+                const response = await fetch(`/api/financial-analysis/monthly-receivables?startDate=${START_DATE}&endDate=${END_DATE}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (!data || data.length === 0) {
+                    document.querySelector('#monthlyChartCanvas').parentNode.innerHTML = '<p style="text-align: center; padding: 20px;">Aucune donnée sur cette période</p>';
+                    return;
+                }
+
+                const labels = data.map(d => d.month);
+                const billedData = data.map(d => d.billed_revenue);
+                const collectedData = data.map(d => d.collected_cash);
+
+                const ctx = document.getElementById('monthlyChartCanvas').getContext('2d');
+                if (monthlyChartInstance) monthlyChartInstance.destroy();
+
+                monthlyChartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Facturé (Activité)',
+                                data: billedData,
+                                backgroundColor: '#3498db',
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Encaissé (Banque)',
+                                data: collectedData,
+                                backgroundColor: '#2ecc71',
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: function(value) { return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumSignificantDigits: 3 }).format(value); } }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        label += new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(context.raw);
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) { console.error('Erreur graphique mensuel:', error); }
         }
 
         function loadAll() {
@@ -222,7 +307,7 @@
             loadUnpaidBreakdown();
             loadTopPatients();
             loadRecovery();
-            loadMonthly();
+            loadMonthlyEvolution();
         }
 
         document.getElementById('logout-btn').addEventListener('click', () => { localStorage.removeItem('token'); window.location.href = '/login.html'; });
