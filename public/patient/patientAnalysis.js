@@ -36,7 +36,6 @@ async function loadGlobalIndicators(startDate, endDate) {
 
         // Ensure other indicators are updated correctly
         document.getElementById('total-patients').textContent = data.total_patients || 0;
-        document.getElementById('new-patients').textContent = data.new_patients || 0;
         document.getElementById('retention-rate').textContent = (data.retention_rate || 0) + '%';
         document.getElementById('new-patients-returned').textContent = data.new_patients_returned || 0;
         document.getElementById('avg-visits-per-patient').textContent = data.avg_visits_per_patient || 0;
