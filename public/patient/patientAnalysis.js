@@ -61,13 +61,13 @@ async function loadMonthlyEvolution(startDate, endDate) {
             return;
         }
 
+        // Removed references to 'returning_patients' and 'avg_visits_per_patient' columns in the table
         tbody.innerHTML = data.map(row => `
             <tr>
                 <td><strong>${row.month}</strong></td>
                 <td>${row.total_patients}</td>
                 <td style="color: #27ae60;">${row.new_patients}</td>
                 <td>${row.total_visits}</td>
-                <td><strong>${row.avg_visits_per_patient}</strong></td>
             </tr>
         `).join('');
 
