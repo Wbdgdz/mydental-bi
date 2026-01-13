@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="finanial-analysis.css">
 </head>
 <body>
-    <!-- Navigation principale -->
     <nav class="main-nav">
         <a href="/" class="nav-brand">
             <img src="logo3.png" alt="Logo" class="nav-logo">
@@ -24,11 +23,9 @@
         <button id="logout-btn" class="nav-logout-btn">Déconnexion</button>
     </nav>
 
-    <!-- Titre de la page -->
     <h1 class="page-title">📊 Analyse Financière Avancée - Gestion des Impayés</h1>
 
     <div class="main-container">
-        <!-- Indicateurs clés -->
         <div class="metrics-grid" id="metrics-grid">
             <div class="metric-card">
                 <h3>💰 Taux d'Impayés Global</h3>
@@ -37,39 +34,38 @@
                 <div class="metric-secondary">
                     <div class="metric-secondary-item">
                         <div class="metric-secondary-value" id="total-amount">-</div>
-                        <div class="metric-secondary-label">CA Total</div>
+                        <div class="metric-secondary-label">CA Facturé</div>
                     </div>
                     <div class="metric-secondary-item">
                         <div class="metric-secondary-value" id="total-remaining">-</div>
-                        <div class="metric-secondary-label">Impayés</div>
+                        <div class="metric-secondary-label">Reste à charge</div>
                     </div>
                 </div>
             </div>
 
             <div class="metric-card">
-                <h3>📈 Taux de Recouvrement</h3>
+                <h3>📈 Taux de Recouvrement (CA)</h3>
                 <div class="metric-value" id="full-payment-rate">-</div>
-                <div class="metric-label">Paiements complets</div>
+                <div class="metric-label">Part du CA encaissée</div>
                 <div class="metric-secondary">
                     <div class="metric-secondary-item">
                         <div class="metric-secondary-value" id="partial-payment-rate">-</div>
-                        <div class="metric-secondary-label">Paiements partiels</div>
+                        <div class="metric-secondary-label">Reste à recouvrer</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Top 10 patients avec impayés -->
         <div class="chart-card">
-            <h3>👥 Top 10 Patients avec Soldes Impayés</h3>
+            <h3>👥 Top 10 Patients (Reste à charge > 0)</h3>
             <table class="patients-table" id="patients-table">
                 <thead>
                     <tr>
                         <th>#</th>
                         <th>Patient</th>
                         <th>Montant Impayé</th>
-                        <th>Nombre de Paiements</th>
-                        <th>Dernier Paiement</th>
+                        <th>Dossiers en cours</th>
+                        <th>Dernier RDV</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,15 +74,13 @@
             </table>
         </div>
 
-        <!-- Évolution mensuelle -->
         <div class="chart-card">
             <h3>📊 Évolution Mensuelle des Créances</h3>
             <div id="monthly-chart" class="loading">Chargement des données...</div>
         </div>
 
-        <!-- Statistiques de recouvrement -->
         <div class="chart-card">
-            <h3>💳 Détail des Paiements</h3>
+            <h3>💳 Volumétrie des Dossiers</h3>
             <div class="recovery-stats" id="recovery-stats">
                 <div class="loading">Chargement des données...</div>
             </div>
@@ -127,6 +121,7 @@
                 });
                 const data = await response.json();
 
+                // Correction affichage
                 document.getElementById('unpaid-rate').textContent = (data.unpaid_rate_percent || 0) + '%';
                 document.getElementById('total-amount').textContent = formatCurrency(data.total_amount);
                 document.getElementById('total-remaining').textContent = formatCurrency(data.total_remaining);
@@ -144,7 +139,7 @@
                 const data = await response.json();
 
                 const tbody = document.querySelector('#patients-table tbody');
-                if (data.length === 0) {
+                if (!data || data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Aucun patient avec impayés</td></tr>';
                     return;
                 }
@@ -171,17 +166,21 @@
                 });
                 const data = await response.json();
 
-                document.getElementById('full-payment-rate').textContent = (data.full_payment_rate || 0) + '%';
-                document.getElementById('partial-payment-rate').textContent = (data.partial_payment_rate || 0) + '%';
+                // Sécurisation de l'affichage avec toFixed pour éviter les décimales infinies
+                const fullRate = parseFloat(data.full_payment_rate || 0);
+                const partialRate = parseFloat(data.partial_payment_rate || 0);
+
+                document.getElementById('full-payment-rate').textContent = fullRate.toFixed(2) + '%';
+                document.getElementById('partial-payment-rate').textContent = partialRate.toFixed(2) + '%';
 
                 const recoveryStatsHtml = `
                     <div class="recovery-stat-item">
                         <div class="recovery-stat-value" style="color: #27ae60;">${data.full_payments || 0}</div>
-                        <div class="recovery-stat-label">Paiements complets</div>
+                        <div class="recovery-stat-label">Dossiers Soldés</div>
                     </div>
                     <div class="recovery-stat-item">
                         <div class="recovery-stat-value" style="color: #3498db;">${data.total_payments || 0}</div>
-                        <div class="recovery-stat-label">Total paiements</div>
+                        <div class="recovery-stat-label">Total Visites Facturées</div>
                     </div>
                 `;
                 document.getElementById('recovery-stats').innerHTML = recoveryStatsHtml;
@@ -198,7 +197,7 @@
                 });
                 const data = await response.json();
 
-                if (data.length === 0) {
+                if (!data || data.length === 0) {
                     document.getElementById('monthly-chart').innerHTML = '<p style="text-align: center;">Aucune donnée disponible</p>';
                     return;
                 }
@@ -208,10 +207,10 @@
                         <thead>
                             <tr>
                                 <th>Mois</th>
-                                <th>CA Total</th>
-                                <th>Impayés</th>
-                                <th>Taux d'Impayés</th>
-                                <th>Nb Paiements</th>
+                                <th>CA Facturé</th>
+                                <th>Reste à Charge</th>
+                                <th>Taux Impayés</th>
+                                <th>Nb Dossiers</th>
                             </tr>
                         </thead>
                         <tbody>
