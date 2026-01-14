@@ -2,70 +2,126 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (connection) => {
-  // Endpoint: Taux d'impayés (Unpaid rate)
-  // Note: remaining_amount represents the unpaid portion of a payment
-  // Formula: unpaid_rate = (total_remaining / total_amount) * 100
+
+  // 1. Endpoint: Taux d'impayés Global (CORRIGÉ : Ignore les négatifs)
   router.get('/unpaid-rate', (req, res) => {
     const { startDate, endDate } = req.query;
 
-    if (!startDate || !endDate) {
-      return res.status(400).json({ error: 'Les dates de début et de fin sont requises.' });
-    }
+    if (!startDate || !endDate) return res.status(400).json({ error: 'Dates requises.' });
 
     const query = `
       SELECT 
-        SUM(amount) AS total_amount,
-        SUM(remaining_amount) AS total_remaining,
-        ROUND((SUM(remaining_amount) / NULLIF(SUM(amount), 0)) * 100, 2) AS unpaid_rate_percent
+        -- CA Facturé : On ignore les lignes négatives (avoirs/erreurs) pour ne pas fausser le total
+        SUM(CASE WHEN amount + remaining_amount > 0 THEN amount + remaining_amount ELSE 0 END) AS total_amount,
+        
+        -- Reste à charge : On ignore les montants négatifs (trop perçu)
+        SUM(CASE WHEN remaining_amount > 0 THEN remaining_amount ELSE 0 END) AS total_remaining,
+        
+        -- Pourcentage recalculé sur ces bases saines
+        ROUND((
+          SUM(CASE WHEN remaining_amount > 0 THEN remaining_amount ELSE 0 END) 
+          / 
+          NULLIF(SUM(CASE WHEN amount + remaining_amount > 0 THEN amount + remaining_amount ELSE 0 END), 0)
+        ) * 100, 2) AS unpaid_rate_percent
       FROM payment
       WHERE date BETWEEN ? AND ?;
     `;
 
     connection.query(query, [startDate, endDate], (error, results) => {
       if (error) {
-        console.error('Erreur lors de la récupération du taux d\'impayés:', error);
-        return res.status(500).json({ error: 'Erreur du serveur' });
+        console.error('Erreur SQL Unpaid Rate:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
       }
       res.json(results[0]);
     });
   });
 
-  // Endpoint: Créances par ancienneté (Receivables by aging)
-  router.get('/receivables-aging', (req, res) => {
+  // 2. Endpoint: Panier Moyen
+  router.get('/average-ticket', (req, res) => {
     const { startDate, endDate } = req.query;
 
-    if (!startDate || !endDate) {
-      return res.status(400).json({ error: 'Les dates de début et de fin sont requises.' });
-    }
+    if (!startDate || !endDate) return res.status(400).json({ error: 'Dates requises.' });
 
     const query = `
       SELECT 
-        SUM(CASE WHEN DATEDIFF(CURDATE(), date) < 30 THEN remaining_amount ELSE 0 END) AS less_than_30_days,
-        SUM(CASE WHEN DATEDIFF(CURDATE(), date) BETWEEN 30 AND 59 THEN remaining_amount ELSE 0 END) AS between_30_60_days,
-        SUM(CASE WHEN DATEDIFF(CURDATE(), date) BETWEEN 60 AND 89 THEN remaining_amount ELSE 0 END) AS between_60_90_days,
-        SUM(CASE WHEN DATEDIFF(CURDATE(), date) >= 90 THEN remaining_amount ELSE 0 END) AS more_than_90_days,
-        SUM(remaining_amount) AS total_receivables
+        ROUND(AVG(amount + remaining_amount), 2) AS average_ticket
       FROM payment
-      WHERE date BETWEEN ? AND ? AND remaining_amount > 0;
+      WHERE date BETWEEN ? AND ? 
+      AND (amount + remaining_amount) > 0; -- On exclut les actes gratuits ou annulés
     `;
 
     connection.query(query, [startDate, endDate], (error, results) => {
       if (error) {
-        console.error('Erreur lors de la récupération des créances par ancienneté:', error);
-        return res.status(500).json({ error: 'Erreur du serveur' });
+        console.error('Erreur SQL Average Ticket:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
       }
       res.json(results[0]);
     });
   });
 
-  // Endpoint: Top 10 patients avec soldes impayés (Top 10 patients with unpaid balances)
-  // Note: payment.consultation_id references visit.id (consultation extends visit)
+  // 3. Endpoint: Répartition par Mode de Paiement
+  router.get('/payment-methods', (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) return res.status(400).json({ error: 'Dates requises.' });
+
+    const query = `
+      SELECT 
+        IFNULL(payment_type, 'Non spécifié') AS method,
+        SUM(amount) AS total_amount
+      FROM payment
+      WHERE date BETWEEN ? AND ?
+      GROUP BY payment_type
+      ORDER BY total_amount DESC;
+    `;
+
+    connection.query(query, [startDate, endDate], (error, results) => {
+      if (error) {
+        console.error('Erreur SQL Payment Methods:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+      }
+      res.json(results);
+    });
+  });
+
+  // 4. Endpoint: Distinction "Vrai Impayé" vs "Attente Tiers Payant"
+  router.get('/unpaid-breakdown', (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) return res.status(400).json({ error: 'Dates requises.' });
+
+    const query = `
+      SELECT 
+        -- Dette Patient (Espèces, CB, ou vide)
+        SUM(CASE 
+          WHEN (payment_type IN ('Espèces', 'Carte Bancaire', 'Carte') OR payment_type IS NULL) 
+          THEN remaining_amount ELSE 0 
+        END) AS patient_debt,
+
+        -- Attente Tiers Payant (Virement, Chèque, Assurance)
+        SUM(CASE 
+          WHEN payment_type IN ('Virement', 'Chèque', 'Tiers Payant', 'Assurance', 'Convention') 
+          THEN remaining_amount ELSE 0 
+        END) AS insurance_pending
+      FROM payment
+      WHERE date BETWEEN ? AND ? 
+      AND remaining_amount > 0; -- Sécurité : on ne regarde que les vraies dettes
+    `;
+
+    connection.query(query, [startDate, endDate], (error, results) => {
+      if (error) {
+        console.error('Erreur SQL Breakdown:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+      }
+      res.json(results[0]);
+    });
+  });
+
+  // 5. Endpoint: Top 10 patients avec soldes impayés
   router.get('/top-unpaid-patients', (req, res) => {
     const { startDate, endDate } = req.query;
 
-    if (!startDate || !endDate) {
-      return res.status(400).json({ error: 'Les dates de début et de fin sont requises.' });
-    }
+    if (!startDate || !endDate) return res.status(400).json({ error: 'Dates requises.' });
 
     const query = `
       SELECT 
@@ -85,27 +141,76 @@ module.exports = (connection) => {
 
     connection.query(query, [startDate, endDate], (error, results) => {
       if (error) {
-        console.error('Erreur lors de la récupération des patients avec impayés:', error);
-        return res.status(500).json({ error: 'Erreur du serveur' });
+        console.error('Erreur SQL Top Patients:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
       }
       res.json(results);
     });
   });
 
-  // Endpoint: Évolution mensuelle des créances (Monthly evolution of receivables)
+  // 6. Endpoint: Taux de recouvrement
+  router.get('/recovery-rate', (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) return res.status(400).json({ error: 'Dates requises.' });
+
+    const query = `
+      SELECT 
+        -- On applique aussi la logique "positive" ici pour la cohérence
+        ROUND((
+          SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) 
+          / 
+          NULLIF(SUM(CASE WHEN amount + remaining_amount > 0 THEN amount + remaining_amount ELSE 0 END), 0)
+        ) * 100, 2) AS full_payment_rate,
+        
+        COUNT(CASE WHEN remaining_amount <= 0.01 THEN 1 END) AS count_full_payments,
+        COUNT(id) AS total_payments_count
+      FROM payment
+      WHERE date BETWEEN ? AND ?;
+    `;
+
+    connection.query(query, [startDate, endDate], (error, results) => {
+      if (error) {
+        console.error('Erreur SQL Recovery Rate:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
+      }
+      
+      const data = results[0];
+      res.json({
+          full_payment_rate: data.full_payment_rate || 0, 
+          partial_payment_rate: (100 - (data.full_payment_rate || 0)).toFixed(2),
+          full_payments: data.count_full_payments,
+          total_payments: data.total_payments_count
+      });
+    });
+  });
+
+  // 7. Endpoint: Évolution mensuelle (Facturé vs Encaissé)
   router.get('/monthly-receivables', (req, res) => {
     const { startDate, endDate } = req.query;
 
-    if (!startDate || !endDate) {
-      return res.status(400).json({ error: 'Les dates de début et de fin sont requises.' });
-    }
+    if (!startDate || !endDate) return res.status(400).json({ error: 'Dates requises.' });
 
     const query = `
       SELECT 
         DATE_FORMAT(date, '%Y-%m') AS month,
-        SUM(amount) AS total_amount,
-        SUM(remaining_amount) AS total_remaining,
-        ROUND((SUM(remaining_amount) / NULLIF(SUM(amount), 0)) * 100, 2) AS unpaid_rate_percent,
+        
+        -- CA Facturé (Nettoyé des négatifs)
+        SUM(CASE WHEN amount + remaining_amount > 0 THEN amount + remaining_amount ELSE 0 END) AS billed_revenue,
+        
+        -- Encaissé (Nettoyé)
+        SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) AS collected_cash,
+        
+        -- Reste à charge (Nettoyé)
+        SUM(CASE WHEN remaining_amount > 0 THEN remaining_amount ELSE 0 END) AS total_remaining,
+        
+        -- Taux recalculé
+        ROUND((
+            SUM(CASE WHEN remaining_amount > 0 THEN remaining_amount ELSE 0 END) 
+            / 
+            NULLIF(SUM(CASE WHEN amount + remaining_amount > 0 THEN amount + remaining_amount ELSE 0 END), 0)
+        ) * 100, 2) AS unpaid_rate_percent,
+        
         COUNT(id) AS payment_count
       FROM payment
       WHERE date BETWEEN ? AND ?
@@ -115,43 +220,10 @@ module.exports = (connection) => {
 
     connection.query(query, [startDate, endDate], (error, results) => {
       if (error) {
-        console.error('Erreur lors de la récupération de l\'évolution mensuelle:', error);
-        return res.status(500).json({ error: 'Erreur du serveur' });
+        console.error('Erreur SQL Monthly:', error);
+        return res.status(500).json({ error: 'Erreur serveur' });
       }
       res.json(results);
-    });
-  });
-
-  // Endpoint: Taux de recouvrement (Recovery rate)
-  // Payment categorization:
-  // - partial_payments: 0 < remaining_amount < amount (partially paid)
-  // - full_payments: remaining_amount = 0 (fully paid)
-  // - no_payments: remaining_amount = amount (not paid at all)
-  router.get('/recovery-rate', (req, res) => {
-    const { startDate, endDate } = req.query;
-
-    if (!startDate || !endDate) {
-      return res.status(400).json({ error: 'Les dates de début et de fin sont requises.' });
-    }
-
-    const query = `
-      SELECT 
-        COUNT(DISTINCT CASE WHEN remaining_amount > 0 AND remaining_amount < amount THEN id END) AS partial_payments,
-        COUNT(DISTINCT CASE WHEN remaining_amount = 0 THEN id END) AS full_payments,
-        COUNT(DISTINCT CASE WHEN remaining_amount = amount THEN id END) AS no_payments,
-        COUNT(DISTINCT id) AS total_payments,
-        ROUND((COUNT(DISTINCT CASE WHEN remaining_amount = 0 THEN id END) / NULLIF(COUNT(DISTINCT id), 0)) * 100, 2) AS full_payment_rate,
-        ROUND((COUNT(DISTINCT CASE WHEN remaining_amount > 0 AND remaining_amount < amount THEN id END) / NULLIF(COUNT(DISTINCT id), 0)) * 100, 2) AS partial_payment_rate
-      FROM payment
-      WHERE date BETWEEN ? AND ?;
-    `;
-
-    connection.query(query, [startDate, endDate], (error, results) => {
-      if (error) {
-        console.error('Erreur lors de la récupération du taux de recouvrement:', error);
-        return res.status(500).json({ error: 'Erreur du serveur' });
-      }
-      res.json(results[0]);
     });
   });
 
